@@ -225,8 +225,8 @@ public:
     uint64_t JoinLobby1(CSteamID steamIDLobby)
     {
         PrintFunction();
-        uint64_t callID = NULL;
-        LobbyEnter_t *Response = nullptr;
+        uint64_t callID;
+        LobbyEnter_t *Response;
 
         callID = SteamCallback::RegisterCall();
         Response = static_cast<LobbyEnter_t*>(malloc(sizeof(LobbyEnter_t)));
@@ -268,8 +268,8 @@ public:
     uint64_t CreateLobby3(uint32_t eLobbyType, int cMaxMembers)
     {
         PrintFunction();
-        uint64_t callID = NULL;
-        LobbyCreated_t *Response = nullptr;
+        uint64_t callID;
+        LobbyCreated_t *Response;
         CSteamID ID = CSteamID(1337132, 0x40000, 1, k_EAccountTypeChat);
 
         callID = SteamCallback::RegisterCall();

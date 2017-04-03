@@ -160,7 +160,7 @@ extern "C"
             }
 
             // Read the uint32.
-            fscanf_s(Filehandle, "%d", &Steamconfig::ApplicationID);
+            fscanf_s(Filehandle, "%u", &Steamconfig::ApplicationID);
             fclose(Filehandle);
         }
 
@@ -190,13 +190,13 @@ extern "C"
         {
             DWORD UserID = Steamconfig::UserID & 0xffffffff;
             DWORD ProcessID = GetCurrentProcessId();
-            const char *Clientpath32 = va("%s\\steamclient.dll", Steamconfig::Path).c_str();
-            const char *Clientpath64 = va("%s\\steamclient64.dll", Steamconfig::Path).c_str();
+            std::string Clientpath32 = va("%s\\steamclient.dll", Steamconfig::Path);
+            std::string Clientpath64 = va("%s\\steamclient64.dll", Steamconfig::Path);
 
             RegSetValueExA(hRegKey, "ActiveUser", NULL, REG_DWORD, (LPBYTE)&UserID, sizeof(DWORD));
             RegSetValueExA(hRegKey, "pid", NULL, REG_DWORD, (LPBYTE)&ProcessID, sizeof(DWORD));
-            RegSetValueExA(hRegKey, "SteamClientDll", NULL, REG_SZ, (LPBYTE)Clientpath32, (DWORD)std::strlen(Clientpath32) + 1);
-            RegSetValueExA(hRegKey, "SteamClientDll64", NULL, REG_SZ, (LPBYTE)Clientpath64, (DWORD)std::strlen(Clientpath64) + 1);
+            RegSetValueExA(hRegKey, "SteamClientDll", NULL, REG_SZ, (LPBYTE)Clientpath32.c_str(), Clientpath32.length() + 1);
+            RegSetValueExA(hRegKey, "SteamClientDll64", NULL, REG_SZ, (LPBYTE)Clientpath64.c_str(), Clientpath64.length() + 1);
             RegSetValueExA(hRegKey, "Universe", NULL, REG_SZ, (LPBYTE)"Public", (DWORD)std::strlen("Public") + 1);
 
             RegCloseKey(hRegKey);

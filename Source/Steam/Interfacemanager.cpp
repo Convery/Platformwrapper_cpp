@@ -29,8 +29,8 @@ void Setmapbyname(eInterfaceType Type, const char *Name)
 void Interfacemanager::Initialize()
 {
     // Check for a cache file.
-    const char *Cachename = "./Plugins/Platformwrapper/Steam_Interfacecache";
     {
+        const char *Cachename = "./Plugins/Platformwrapper/Steam_Interfacecache";
         std::FILE *Filehandle = std::fopen(Cachename, "rt");
         if (Filehandle)
         {
@@ -74,8 +74,8 @@ void Interfacemanager::Initialize()
     }
 
     // Check for a backup file, in the case of devs compiling as a steam_api replacement.
-    std::string Backupname = std::string(Steamdllname) + ".bak";
     {
+        std::string Backupname = std::string(Steamdllname) + ".bak";
         std::FILE *Filehandle = std::fopen(Backupname.c_str(), "rb");
         if(!Filehandle) Filehandle = std::fopen(Steamdllname, "rb");
         if (!Filehandle)
