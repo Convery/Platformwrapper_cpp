@@ -146,6 +146,7 @@
     <ClInclude Include="Source\Configuration\Macros.h" />
     <ClInclude Include="Source\Configuration\Warnings.h" />
     <ClInclude Include="Source\StdInclude.h" />
+    <ClInclude Include="Source\Steam\Steam.h" />
     <ClInclude Include="Source\Utilities\Binary\Hooking.h" />
     <ClInclude Include="Source\Utilities\Binary\Memprotect.h" />
     <ClInclude Include="Source\Utilities\Crypto\FNV1.h" />
@@ -158,6 +159,9 @@
     <ClCompile Include="Source\Utilities\Binary\Hooking.cpp" />
     <ClCompile Include="Source\Utilities\Binary\Memprotect.cpp" />
     <ClCompile Include="Source\Utilities\Data\Bytebuffer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Platformwrapper_cpp.licenseheader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
