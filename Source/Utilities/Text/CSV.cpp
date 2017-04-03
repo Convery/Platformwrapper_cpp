@@ -15,7 +15,6 @@ std::string va(const char *Format, ...) { return Format; };
 
 // Reimplementation of standard functionality.
 #ifdef _WIN32
-#define _CRT_SECURE_NO_WARNINGS
 char *strsep(char **String, const char *Delimiter)
 {
     char *Start = *String;
@@ -107,7 +106,7 @@ bool CSV::Writefile(const char *Filepath)
     if (!Filehandle) return false;
 
     // Create the header.
-    fputs("# This file is generated via Ayrias CSV manager.\n", Filehandle);
+    fputs("# This file is generated via Ayrias CSV utility.\n", Filehandle);
     fputs("# Layout:", Filehandle);
     for (size_t i = 0; i < EntryBuffer[0].size(); ++i)
         fputs(va(" %c,", 0x41 + i).c_str(), Filehandle);
