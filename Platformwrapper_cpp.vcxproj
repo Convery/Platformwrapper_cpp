@@ -151,6 +151,7 @@
     <ClInclude Include="Source\Steam\Interfaces\All.h" />
     <ClInclude Include="Source\Steam\Steam.h" />
     <ClInclude Include="Source\Steam\Steamcallbacks.h" />
+    <ClInclude Include="Source\Utilities\Binary\GetIAT.h" />
     <ClInclude Include="Source\Utilities\Binary\Hooking.h" />
     <ClInclude Include="Source\Utilities\Binary\Memprotect.h" />
     <ClInclude Include="Source\Utilities\Crypto\FNV1.h" />
@@ -175,6 +176,7 @@
     <ClCompile Include="Source\Steam\Steam.cpp" />
     <ClCompile Include="Source\Steam\Steamcallback.cpp" />
     <ClCompile Include="Source\Steam\Steamconfig.cpp" />
+    <ClCompile Include="Source\Utilities\Binary\GetIAT.cpp" />
     <ClCompile Include="Source\Utilities\Binary\Hooking.cpp" />
     <ClCompile Include="Source\Utilities\Binary\Memprotect.cpp" />
     <ClCompile Include="Source\Utilities\Data\Bytebuffer.cpp" />
