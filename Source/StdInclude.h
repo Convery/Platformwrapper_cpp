@@ -18,6 +18,7 @@
 #include "Utilities/Binary/Hooking.h"
 #include "Utilities/Text/Logfile.h"
 #include "Utilities/Crypto/FNV1.h"
+#include "Utilities/Text/CSV.h"
 
 // Includes for the standard libraries.
 #include <cstdint>

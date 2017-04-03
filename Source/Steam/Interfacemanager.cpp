@@ -6,7 +6,7 @@
 
 #include "Steam.h"
 #include <unordered_map>
-#include "Interfaces\All.h"
+#include "Interfaces/All.h"
 #include "Interfacemanager.h"
 
 constexpr const char *Steamdllname = sizeof(size_t) == sizeof(uint64_t) ? "steam_api64.dll" : "steam_api.dll";

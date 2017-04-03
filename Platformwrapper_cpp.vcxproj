@@ -155,6 +155,7 @@
     <ClInclude Include="Source\Utilities\Binary\Memprotect.h" />
     <ClInclude Include="Source\Utilities\Crypto\FNV1.h" />
     <ClInclude Include="Source\Utilities\Data\Bytebuffer.h" />
+    <ClInclude Include="Source\Utilities\Text\CSV.h" />
     <ClInclude Include="Source\Utilities\Text\Logfile.h" />
     <ClInclude Include="Source\Utilities\Text\Variadicstring.h" />
   </ItemGroup>
@@ -167,6 +168,7 @@
     <ClCompile Include="Source\Utilities\Binary\Hooking.cpp" />
     <ClCompile Include="Source\Utilities\Binary\Memprotect.cpp" />
     <ClCompile Include="Source\Utilities\Data\Bytebuffer.cpp" />
+    <ClCompile Include="Source\Utilities\Text\CSV.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Platformwrapper_cpp.licenseheader" />
