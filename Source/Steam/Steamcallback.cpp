@@ -122,7 +122,7 @@ bool SteamCallback::CallComplete(uint64_t call)
     return Result;
 }
 
-static std::unordered_map<uint32_t, char *> CallbackNames;
+static std::unordered_map<uint32_t, std::string> CallbackNames;
 void BuildCallbackMap();
 const char *SteamCallback::GetCallbackName(int32_t ID)
 {
@@ -134,7 +134,7 @@ const char *SteamCallback::GetCallbackName(int32_t ID)
     ID = 0;
 #endif
 
-    return CallbackNames[ID];
+    return CallbackNames[ID].c_str();
 }
 void BuildCallbackMap()
 {

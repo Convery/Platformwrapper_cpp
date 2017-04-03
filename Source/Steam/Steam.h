@@ -6,8 +6,31 @@
 
 #pragma once
 #include "../StdInclude.h"
+#include "Interfacemanager.h"
+#include "Steamcallbacks.h"
+#include "CSteamID.h"
 #include <cstdint>
 
+// Configuration.
+namespace Steamconfig
+{
+    // Application info.
+    extern char Language[32];
+    extern uint32_t ApplicationID;
+    extern int64_t StartupTimestamp;
+
+    // Network access.
+    extern bool LAN;
+    extern bool Server;
+    extern bool Offline;
+
+    // User information.
+    extern char Path[260];
+    extern uint64_t UserID;
+    extern char Username[17];
+}
+
+// Exports.
 extern "C"
 {
     // Interface access.
