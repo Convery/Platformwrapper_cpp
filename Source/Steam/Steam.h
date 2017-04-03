@@ -5,8 +5,8 @@
 */
 
 #pragma once
-#include <cstdint>
 #include "../StdInclude.h"
+#include <cstdint>
 
 extern "C"
 {
