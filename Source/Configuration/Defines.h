@@ -51,3 +51,8 @@
 #define _SCL_SECURE_NO_WARNINGS
 #define WIN32_LEAN_AND_MEAN
 #endif
+
+// Printing the names of steam callbacks.
+#ifndef NDEBUG
+#define STEAM_PRINTCALLBACKS
+#endif
