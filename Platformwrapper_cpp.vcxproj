@@ -164,6 +164,7 @@
     <ClCompile Include="Source\Steam\Interfacemanager.cpp" />
     <ClCompile Include="Source\Steam\Interfaces\SteamApps.cpp" />
     <ClCompile Include="Source\Steam\Interfaces\SteamFriends.cpp" />
+    <ClCompile Include="Source\Steam\Interfaces\SteamGameserver.cpp" />
     <ClCompile Include="Source\Steam\Steamcallback.cpp" />
     <ClCompile Include="Source\Steam\Steamconfig.cpp" />
     <ClCompile Include="Source\Utilities\Binary\Hooking.cpp" />
