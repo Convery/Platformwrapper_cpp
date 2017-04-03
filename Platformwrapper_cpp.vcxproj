@@ -172,6 +172,7 @@
     <ClCompile Include="Source\Steam\Interfaces\SteamUser.cpp" />
     <ClCompile Include="Source\Steam\Interfaces\SteamUserstats.cpp" />
     <ClCompile Include="Source\Steam\Interfaces\SteamUtilities.cpp" />
+    <ClCompile Include="Source\Steam\Steam.cpp" />
     <ClCompile Include="Source\Steam\Steamcallback.cpp" />
     <ClCompile Include="Source\Steam\Steamconfig.cpp" />
     <ClCompile Include="Source\Utilities\Binary\Hooking.cpp" />
