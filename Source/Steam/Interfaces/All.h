@@ -5,6 +5,7 @@
 */
 
 #pragma once
+#include "../Steam.h"
 
 // A structure to mimic an actual class.
 struct __declspec(novtable) Fakeclass
