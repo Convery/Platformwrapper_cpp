@@ -26,6 +26,100 @@ void Setmapbyname(eInterfaceType Type, const char *Name)
 {
     Interfacemap[Type] = Interfacemanager::Fetchinterface(Name);
 }
+void Scanfile(std::FILE *Filehandle)
+{
+    /*
+        TODO(Convery):
+        Implement a less stupid way of doing this.
+        Preferably not at 5am.
+    */
+
+    std::vector<std::string> Scanwords = 
+    {
+        "STEAMAPPS_INTERFACE_VERSION0",
+        "STEAMHTTP_INTERFACE_VERSION0",
+        "STEAMREMOTESTORAGE_INTERFACE_VERSION0",
+        "STEAMSCREENSHOTS_INTERFACE_VERSION0",
+        "STEAMUSERSTATS_INTERFACE_VERSION0",
+        "SteamClient0",
+        "SteamContentServer0",
+        "SteamFriends0",
+        "SteamGameServer0",
+        "SteamGameServerStats0",
+        "SteamMatchMaking0",
+        "SteamMatchMakingServers0",
+        "SteamNetworking0",
+        "SteamUtils0",
+    };
+    std::vector<std::pair<std::string, std::string>> Replacementwords =
+    {
+        { "STEAMAPPS_INTERFACE_VERSION0", "SteamApps0"},
+        { "STEAMHTTP_INTERFACE_VERSION0", "SteamHTTP0" },
+        { "STEAMREMOTESTORAGE_INTERFACE_VERSION0", "SteamRemotestorage0" },
+        { "STEAMSCREENSHOTS_INTERFACE_VERSION0", "SteamScreenshots0" },
+        { "STEAMUSERSTATS_INTERFACE_VERSION0", "SteamUserstats0" },
+        { "SteamMatchMakingServers0", "SteamMatchamkingservers0" },
+        { "SteamUtils0", "SteamUtilities0" },
+    };
+    
+    std::fseek(Filehandle, 0, SEEK_END);
+    auto Filesize = std::ftell(Filehandle);
+    std::fseek(Filehandle, 0, SEEK_SET);
+
+    auto Buffer = std::make_unique<char[]>(Filesize);
+    std::fread(Buffer.get(), Filesize, 1, Filehandle);
+
+    for (uint64_t i = 0; i < Filesize; ++i)
+    {
+        if (Buffer[i] != 'S') continue;
+
+        for (auto &Item : Scanwords)
+        {
+            if (std::strstr((Buffer.get() + i), Item.c_str()))
+            {
+                for (auto &Replacement : Replacementwords)
+                {
+                    if (std::strstr(Item.c_str(), Replacement.first.c_str()))
+                    {
+                        i += int64_t(Replacement.first.size() - Replacement.second.size());
+                        std::memcpy((Buffer.get() + i), Replacement.second.c_str(), Replacement.second.size());
+                    }
+                }
+
+                #define BChecktype(Interfacename, Type)             \
+                if(std::strstr((Buffer.get() + i), Interfacename))  \
+                { Setmapbyname(Type, Buffer.get() + i); continue; } \
+
+                // Add by type.
+                BChecktype("SteamUGC0", STEAM_UGC);
+                BChecktype("SteamApps0", STEAM_APPS);
+                BChecktype("SteamUser0", STEAM_USER);
+                BChecktype("SteamHTTP0", STEAM_HTTP);
+                BChecktype("SteamMusic0", STEAM_MUSIC);
+                BChecktype("SteamVideo0", STEAM_VIDEO);
+                BChecktype("SteamClient0", STEAM_CLIENT);
+                BChecktype("SteamUtilities0", STEAM_UTILS);
+                BChecktype("SteamFriends0", STEAM_FRIENDS);
+                BChecktype("SteamApplist0", STEAM_APPLIST);
+                BChecktype("SteamInventory0", STEAM_INVENTORY);
+                BChecktype("SteamUserstats0", STEAM_USERSTATS);
+                BChecktype("SteamController0", STEAM_CONTROLLER);
+                BChecktype("SteamGameserver0", STEAM_GAMESERVER);
+                BChecktype("SteamNetworking0", STEAM_NETWORKING);
+                BChecktype("SteamHTMLSurface0", STEAM_HTMLSURFACE);
+                BChecktype("SteamMusicremote0", STEAM_MUSICREMOTE);
+                BChecktype("SteamScreenshots0", STEAM_SCREENSHOTS);
+                BChecktype("SteamMatchmaking0", STEAM_MATCHMAKING);
+                BChecktype("SteamRemotestorage0", STEAM_REMOTESTORAGE);
+                BChecktype("SteamContentServer0", STEAM_CONTENTSERVER);
+                BChecktype("SteamUnifiedmessages0", STEAM_UNIFIEDMESSAGES);
+                BChecktype("SteamGameserverStats0", STEAM_GAMESERVERSTATS);
+                BChecktype("SteamMatchamkingservers0", STEAM_MATCHMAKINGSERVERS);
+                BChecktype("SteamMasterserverUpdater0", STEAM_MASTERSERVERUPDATER);
+            }
+        }
+    }
+}
 void Interfacemanager::Initialize()
 {
     // Check for a cache file.
@@ -62,6 +156,7 @@ void Interfacemanager::Initialize()
                 Checktype("SteamScreenshots0", STEAM_SCREENSHOTS);
                 Checktype("SteamMatchmaking0", STEAM_MATCHMAKING);
                 Checktype("SteamRemotestorage0", STEAM_REMOTESTORAGE);
+                Checktype("SteamContentServer0", STEAM_CONTENTSERVER);
                 Checktype("SteamUnifiedmessages0", STEAM_UNIFIEDMESSAGES);
                 Checktype("SteamGameserverStats0", STEAM_GAMESERVERSTATS);
                 Checktype("SteamMatchamkingservers0", STEAM_MATCHMAKINGSERVERS);
@@ -85,10 +180,8 @@ void Interfacemanager::Initialize()
             return;
         }
 
-        /*
-            TODO(Convery):
-            Something something scan the dll for interfaces.
-        */
+        Scanfile(Filehandle);
+        std::fclose(Filehandle);
     }
 }
 void *Interfacemanager::Fetchinterface(const char *Name)
