@@ -21,9 +21,13 @@ extern "C"
         
         constexpr const char *Steamdll = sizeof(size_t) == sizeof(uint64_t) ? "steam_api64.dll" : "steam_api.dll";
 
-        #define PATCH_STEAM_IAT(Function)                                           \
-        size_t Address ##Function = GetIATFunction(Steamdll, #Function);            \
-        if(Address ##Function) *(size_t *)Address ##Function = size_t(Function);    \
+        #define PATCH_STEAM_IAT(Function)                                       \
+        {                                                                       \
+            size_t Address = GetIATFunction(Steamdll, #Function);               \
+            auto Protection = Memprotect::Unprotectrange((void *)Address, 20);  \
+            if(Address) *(size_t *)Address = size_t(Function);                  \
+            Memprotect::Protectrange((void *)Address, 20, Protection);          \
+        }
 
         // Steamworks exports.
         {
