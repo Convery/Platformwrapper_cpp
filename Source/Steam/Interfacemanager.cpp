@@ -11,12 +11,6 @@
 
 constexpr const char *Steamdllname = sizeof(size_t) == sizeof(uint64_t) ? "steam_api64.dll" : "steam_api.dll";
 
-// Interface names to scan for and their type.
-std::unordered_map<eInterfaceType, std::string> Scannames =
-{
-    {eInterfaceType::STEAM_APPLIST, "test"}
-};
-
 // The interfaces we support.
 std::vector<std::pair<eInterfaceType /* Type */, void * /* Interface */>> Interfacestore;
 std::unordered_map<eInterfaceType /* Type */, void * /* Interface */> Interfacemap;

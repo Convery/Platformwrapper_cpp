@@ -5,13 +5,7 @@
 */
 
 #include "CSV.h"
-
-// Variadic string support, should never be a problem.
-#if __has_include("Variadicstring.h")
 #include "Variadicstring.h"
-#else
-std::string va(const char *Format, ...) { return Format; };
-#endif
 
 // Reimplementation of standard functionality.
 #ifdef _WIN32
