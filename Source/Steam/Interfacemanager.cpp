@@ -10,173 +10,241 @@
 #include "Interfacemanager.h"
 
 constexpr const char *Steamdllname = sizeof(size_t) == sizeof(uint64_t) ? "steam_api64.dll" : "steam_api.dll";
-
-// The interfaces we support.
 std::vector<std::pair<eInterfaceType /* Type */, void * /* Interface */>> Interfacestore;
 std::unordered_map<eInterfaceType /* Type */, void * /* Interface */> Interfacemap;
 std::unordered_map<std::string /* Name */, void * /* Interface */> Interfacenames;
+std::unordered_map<const char *, std::pair<const char *, eInterfaceType>> Scandata =
+{
+    //        Scanstring                     Interface              Type
+    { "STEAMAPPS_INTERFACE_VERSION001", {"SteamApps001", eInterfaceType::STEAM_APPS } },
+    { "STEAMAPPS_INTERFACE_VERSION002", {"SteamApps002", eInterfaceType::STEAM_APPS } },
+    { "STEAMAPPS_INTERFACE_VERSION003", {"SteamApps003", eInterfaceType::STEAM_APPS } },
+    { "STEAMAPPS_INTERFACE_VERSION004", {"SteamApps004", eInterfaceType::STEAM_APPS } },
+    { "STEAMAPPS_INTERFACE_VERSION005", {"SteamApps005", eInterfaceType::STEAM_APPS } },
+    { "STEAMAPPS_INTERFACE_VERSION006", {"SteamApps006", eInterfaceType::STEAM_APPS } },
+    { "STEAMAPPS_INTERFACE_VERSION007", {"SteamApps007", eInterfaceType::STEAM_APPS } },
 
+    { "SteamFriends001", {"SteamFriends001", eInterfaceType::STEAM_FRIENDS } },
+    { "SteamFriends002", {"SteamFriends002", eInterfaceType::STEAM_FRIENDS } },
+    { "SteamFriends003", {"SteamFriends003", eInterfaceType::STEAM_FRIENDS } },
+    { "SteamFriends004", {"SteamFriends004", eInterfaceType::STEAM_FRIENDS } },
+    { "SteamFriends005", {"SteamFriends005", eInterfaceType::STEAM_FRIENDS } },
+    { "SteamFriends006", {"SteamFriends006", eInterfaceType::STEAM_FRIENDS } },
+    { "SteamFriends007", {"SteamFriends007", eInterfaceType::STEAM_FRIENDS } },
+    { "SteamFriends008", {"SteamFriends008", eInterfaceType::STEAM_FRIENDS } },
+    { "SteamFriends009", {"SteamFriends009", eInterfaceType::STEAM_FRIENDS } },
+    { "SteamFriends010", {"SteamFriends010", eInterfaceType::STEAM_FRIENDS } },
+    { "SteamFriends011", {"SteamFriends011", eInterfaceType::STEAM_FRIENDS } },
+    { "SteamFriends012", {"SteamFriends012", eInterfaceType::STEAM_FRIENDS } },
+    { "SteamFriends013", {"SteamFriends013", eInterfaceType::STEAM_FRIENDS } },
+    { "SteamFriends014", {"SteamFriends014", eInterfaceType::STEAM_FRIENDS } },
+    { "SteamFriends015", {"SteamFriends015", eInterfaceType::STEAM_FRIENDS } },
+
+    { "SteamGameServer001", {"SteamGameserver001", eInterfaceType::STEAM_GAMESERVER } },
+    { "SteamGameServer002", {"SteamGameserver002", eInterfaceType::STEAM_GAMESERVER } },
+    { "SteamGameServer003", {"SteamGameserver003", eInterfaceType::STEAM_GAMESERVER } },
+    { "SteamGameServer004", {"SteamGameserver004", eInterfaceType::STEAM_GAMESERVER } },
+    { "SteamGameServer005", {"SteamGameserver005", eInterfaceType::STEAM_GAMESERVER } },
+    { "SteamGameServer006", {"SteamGameserver006", eInterfaceType::STEAM_GAMESERVER } },
+    { "SteamGameServer007", {"SteamGameserver007", eInterfaceType::STEAM_GAMESERVER } },
+    { "SteamGameServer008", {"SteamGameserver008", eInterfaceType::STEAM_GAMESERVER } },
+    { "SteamGameServer009", {"SteamGameserver009", eInterfaceType::STEAM_GAMESERVER } },
+    { "SteamGameServer010", {"SteamGameserver010", eInterfaceType::STEAM_GAMESERVER } },
+    { "SteamGameServer011", {"SteamGameserver011", eInterfaceType::STEAM_GAMESERVER } },
+    { "SteamGameServer012", {"SteamGameserver012", eInterfaceType::STEAM_GAMESERVER } },
+
+    { "SteamMatchMaking001", {"SteamMatchmaking001", eInterfaceType::STEAM_MATCHMAKING } },
+    { "SteamMatchMaking002", {"SteamMatchmaking002", eInterfaceType::STEAM_MATCHMAKING } },
+    { "SteamMatchMaking003", {"SteamMatchmaking003", eInterfaceType::STEAM_MATCHMAKING } },
+    { "SteamMatchMaking004", {"SteamMatchmaking004", eInterfaceType::STEAM_MATCHMAKING } },
+    { "SteamMatchMaking005", {"SteamMatchmaking005", eInterfaceType::STEAM_MATCHMAKING } },
+    { "SteamMatchMaking006", {"SteamMatchmaking006", eInterfaceType::STEAM_MATCHMAKING } },
+    { "SteamMatchMaking007", {"SteamMatchmaking007", eInterfaceType::STEAM_MATCHMAKING } },
+    { "SteamMatchMaking008", {"SteamMatchmaking008", eInterfaceType::STEAM_MATCHMAKING } },
+    { "SteamMatchMaking009", {"SteamMatchmaking009", eInterfaceType::STEAM_MATCHMAKING } },
+
+    { "SteamNetworking001", {"SteamNetworking001", eInterfaceType::STEAM_NETWORKING } },
+    { "SteamNetworking002", {"SteamNetworking002", eInterfaceType::STEAM_NETWORKING } },
+    { "SteamNetworking003", {"SteamNetworking003", eInterfaceType::STEAM_NETWORKING } },
+    { "SteamNetworking004", {"SteamNetworking004", eInterfaceType::STEAM_NETWORKING } },
+    { "SteamNetworking005", {"SteamNetworking005", eInterfaceType::STEAM_NETWORKING } },
+
+    { "STEAMREMOTESTORAGE_INTERFACE_VERSION001", {"SteamRemotestorage001", eInterfaceType::STEAM_REMOTESTORAGE } },
+    { "STEAMREMOTESTORAGE_INTERFACE_VERSION002", {"SteamRemotestorage002", eInterfaceType::STEAM_REMOTESTORAGE } },
+    { "STEAMREMOTESTORAGE_INTERFACE_VERSION003", {"SteamRemotestorage003", eInterfaceType::STEAM_REMOTESTORAGE } },
+    { "STEAMREMOTESTORAGE_INTERFACE_VERSION004", {"SteamRemotestorage004", eInterfaceType::STEAM_REMOTESTORAGE } },
+    { "STEAMREMOTESTORAGE_INTERFACE_VERSION005", {"SteamRemotestorage005", eInterfaceType::STEAM_REMOTESTORAGE } },
+    { "STEAMREMOTESTORAGE_INTERFACE_VERSION006", {"SteamRemotestorage006", eInterfaceType::STEAM_REMOTESTORAGE } },
+    { "STEAMREMOTESTORAGE_INTERFACE_VERSION007", {"SteamRemotestorage007", eInterfaceType::STEAM_REMOTESTORAGE } },
+    { "STEAMREMOTESTORAGE_INTERFACE_VERSION008", {"SteamRemotestorage008", eInterfaceType::STEAM_REMOTESTORAGE } },
+    { "STEAMREMOTESTORAGE_INTERFACE_VERSION009", {"SteamRemotestorage009", eInterfaceType::STEAM_REMOTESTORAGE } },
+    { "STEAMREMOTESTORAGE_INTERFACE_VERSION010", {"SteamRemotestorage010", eInterfaceType::STEAM_REMOTESTORAGE } },
+    { "STEAMREMOTESTORAGE_INTERFACE_VERSION011", {"SteamRemotestorage011", eInterfaceType::STEAM_REMOTESTORAGE } },
+    { "STEAMREMOTESTORAGE_INTERFACE_VERSION012", {"SteamRemotestorage012", eInterfaceType::STEAM_REMOTESTORAGE } },
+
+    { "STEAMSCREENSHOTS_INTERFACE_VERSION001", {"SteamScreenshots001", eInterfaceType::STEAM_SCREENSHOTS } },
+    { "STEAMSCREENSHOTS_INTERFACE_VERSION002", {"SteamScreenshots002", eInterfaceType::STEAM_SCREENSHOTS } },
+
+    { "SteamUser001", {"SteamUser001", eInterfaceType::STEAM_USER } },
+    { "SteamUser002", {"SteamUser002", eInterfaceType::STEAM_USER } },
+    { "SteamUser003", {"SteamUser003", eInterfaceType::STEAM_USER } },
+    { "SteamUser004", {"SteamUser004", eInterfaceType::STEAM_USER } },
+    { "SteamUser005", {"SteamUser005", eInterfaceType::STEAM_USER } },
+    { "SteamUser006", {"SteamUser006", eInterfaceType::STEAM_USER } },
+    { "SteamUser007", {"SteamUser007", eInterfaceType::STEAM_USER } },
+    { "SteamUser008", {"SteamUser008", eInterfaceType::STEAM_USER } },
+    { "SteamUser009", {"SteamUser009", eInterfaceType::STEAM_USER } },
+    { "SteamUser010", {"SteamUser010", eInterfaceType::STEAM_USER } },
+    { "SteamUser011", {"SteamUser011", eInterfaceType::STEAM_USER } },
+    { "SteamUser012", {"SteamUser012", eInterfaceType::STEAM_USER } },
+    { "SteamUser013", {"SteamUser013", eInterfaceType::STEAM_USER } },
+    { "SteamUser014", {"SteamUser014", eInterfaceType::STEAM_USER } },
+    { "SteamUser015", {"SteamUser015", eInterfaceType::STEAM_USER } },
+    { "SteamUser016", {"SteamUser016", eInterfaceType::STEAM_USER } },
+    { "SteamUser017", {"SteamUser017", eInterfaceType::STEAM_USER } },
+    { "SteamUser018", {"SteamUser018", eInterfaceType::STEAM_USER } },
+
+    { "STEAMUSERSTATS_INTERFACE_VERSION001", {"SteamUserstats001", eInterfaceType::STEAM_USERSTATS } },
+    { "STEAMUSERSTATS_INTERFACE_VERSION002", {"SteamUserstats002", eInterfaceType::STEAM_USERSTATS } },
+    { "STEAMUSERSTATS_INTERFACE_VERSION003", {"SteamUserstats003", eInterfaceType::STEAM_USERSTATS } },
+    { "STEAMUSERSTATS_INTERFACE_VERSION004", {"SteamUserstats004", eInterfaceType::STEAM_USERSTATS } },
+    { "STEAMUSERSTATS_INTERFACE_VERSION005", {"SteamUserstats005", eInterfaceType::STEAM_USERSTATS } },
+    { "STEAMUSERSTATS_INTERFACE_VERSION006", {"SteamUserstats006", eInterfaceType::STEAM_USERSTATS } },
+    { "STEAMUSERSTATS_INTERFACE_VERSION007", {"SteamUserstats007", eInterfaceType::STEAM_USERSTATS } },
+    { "STEAMUSERSTATS_INTERFACE_VERSION008", {"SteamUserstats008", eInterfaceType::STEAM_USERSTATS } },
+    { "STEAMUSERSTATS_INTERFACE_VERSION009", {"SteamUserstats009", eInterfaceType::STEAM_USERSTATS } },
+    { "STEAMUSERSTATS_INTERFACE_VERSION010", {"SteamUserstats010", eInterfaceType::STEAM_USERSTATS } },
+    { "STEAMUSERSTATS_INTERFACE_VERSION011", {"SteamUserstats011", eInterfaceType::STEAM_USERSTATS } },
+
+    { "SteamUtils001", {"SteamUtilities001", eInterfaceType::STEAM_UTILS } },
+    { "SteamUtils002", {"SteamUtilities002", eInterfaceType::STEAM_UTILS } },
+    { "SteamUtils003", {"SteamUtilities003", eInterfaceType::STEAM_UTILS } },
+    { "SteamUtils004", {"SteamUtilities004", eInterfaceType::STEAM_UTILS } },
+    { "SteamUtils005", {"SteamUtilities005", eInterfaceType::STEAM_UTILS } },
+    { "SteamUtils006", {"SteamUtilities006", eInterfaceType::STEAM_UTILS } },
+    { "SteamUtils007", {"SteamUtilities007", eInterfaceType::STEAM_UTILS } },
+
+    /* More interfaces */
+};
+
+// Create the map from cache.
 void Setmapbyname(eInterfaceType Type, const char *Name)
 {
     Interfacemap[Type] = Interfacemanager::Fetchinterface(Name);
 }
-void Scanfile(std::FILE *Filehandle)
+void Createcache(std::FILE *Filehandle)
 {
-    /*
-        TODO(Convery):
-        Implement a less stupid way of doing this.
-        Preferably not at 5am.
-    */
+    std::vector<const char *> Results;
 
-    std::vector<std::string> Scanwords = 
-    {
-        "STEAMAPPS_INTERFACE_VERSION0",
-        "STEAMHTTP_INTERFACE_VERSION0",
-        "STEAMREMOTESTORAGE_INTERFACE_VERSION0",
-        "STEAMSCREENSHOTS_INTERFACE_VERSION0",
-        "STEAMUSERSTATS_INTERFACE_VERSION0",
-        "SteamClient0",
-        "SteamContentServer0",
-        "SteamFriends0",
-        "SteamGameServer0",
-        "SteamGameServerStats0",
-        "SteamMatchMaking0",
-        "SteamMatchMakingServers0",
-        "SteamNetworking0",
-        "SteamUtils0",
-    };
-    std::vector<std::pair<std::string, std::string>> Replacementwords =
-    {
-        { "STEAMAPPS_INTERFACE_VERSION0", "SteamApps0"},
-        { "STEAMHTTP_INTERFACE_VERSION0", "SteamHTTP0" },
-        { "STEAMREMOTESTORAGE_INTERFACE_VERSION0", "SteamRemotestorage0" },
-        { "STEAMSCREENSHOTS_INTERFACE_VERSION0", "SteamScreenshots0" },
-        { "STEAMUSERSTATS_INTERFACE_VERSION0", "SteamUserstats0" },
-        { "SteamMatchMakingServers0", "SteamMatchamkingservers0" },
-        { "SteamUtils0", "SteamUtilities0" },
-    };
-    
+    // Check the filesize.
     std::fseek(Filehandle, 0, SEEK_END);
     auto Filesize = std::ftell(Filehandle);
     std::fseek(Filehandle, 0, SEEK_SET);
 
+    // Read into a buffer.
     auto Buffer = std::make_unique<char[]>(Filesize);
     std::fread(Buffer.get(), Filesize, 1, Filehandle);
 
-    for (uint64_t i = 0; i < Filesize; ++i)
+    // Iterate through the buffer and find the interfaces.
+    for (long i = 0; i < Filesize; ++i)
     {
+        // Skip to the interesting data.
         if (Buffer[i] != 'S') continue;
 
-        for (auto &Item : Scanwords)
+        // Check all scandata.
+        for (auto &Item : Scandata)
         {
-            if (std::strstr((Buffer.get() + i), Item.c_str()))
+            if (std::strstr(&Buffer[i], Item.first))
             {
-                for (auto &Replacement : Replacementwords)
-                {
-                    if (std::strstr(Item.c_str(), Replacement.first.c_str()))
-                    {
-                        i += int64_t(Replacement.first.size() - Replacement.second.size());
-                        std::memcpy((Buffer.get() + i), Replacement.second.c_str(), Replacement.second.size());
-                    }
-                }
-
-                #define BChecktype(Interfacename, Type)             \
-                if(std::strstr((Buffer.get() + i), Interfacename))  \
-                { Setmapbyname(Type, Buffer.get() + i); continue; } \
-
-                // Add by type.
-                BChecktype("SteamUGC0", STEAM_UGC);
-                BChecktype("SteamApps0", STEAM_APPS);
-                BChecktype("SteamUser0", STEAM_USER);
-                BChecktype("SteamHTTP0", STEAM_HTTP);
-                BChecktype("SteamMusic0", STEAM_MUSIC);
-                BChecktype("SteamVideo0", STEAM_VIDEO);
-                BChecktype("SteamClient0", STEAM_CLIENT);
-                BChecktype("SteamUtilities0", STEAM_UTILS);
-                BChecktype("SteamFriends0", STEAM_FRIENDS);
-                BChecktype("SteamApplist0", STEAM_APPLIST);
-                BChecktype("SteamInventory0", STEAM_INVENTORY);
-                BChecktype("SteamUserstats0", STEAM_USERSTATS);
-                BChecktype("SteamController0", STEAM_CONTROLLER);
-                BChecktype("SteamGameserver0", STEAM_GAMESERVER);
-                BChecktype("SteamNetworking0", STEAM_NETWORKING);
-                BChecktype("SteamHTMLSurface0", STEAM_HTMLSURFACE);
-                BChecktype("SteamMusicremote0", STEAM_MUSICREMOTE);
-                BChecktype("SteamScreenshots0", STEAM_SCREENSHOTS);
-                BChecktype("SteamMatchmaking0", STEAM_MATCHMAKING);
-                BChecktype("SteamRemotestorage0", STEAM_REMOTESTORAGE);
-                BChecktype("SteamContentServer0", STEAM_CONTENTSERVER);
-                BChecktype("SteamUnifiedmessages0", STEAM_UNIFIEDMESSAGES);
-                BChecktype("SteamGameserverStats0", STEAM_GAMESERVERSTATS);
-                BChecktype("SteamMatchamkingservers0", STEAM_MATCHMAKINGSERVERS);
-                BChecktype("SteamMasterserverUpdater0", STEAM_MASTERSERVERUPDATER);
+                Setmapbyname(Item.second.second, Item.second.first);
+                Results.push_back(Item.second.first);
+                break;
             }
+        }
+    }
+
+    // Write to the cache.
+    {
+        const char *Cachename = "./Plugins/Platformwrapper/Steam_Interfacecache";
+        std::FILE *Filehandle = std::fopen(Cachename, "wt");
+        if (Filehandle)
+        {
+            for (auto &Item : Results)
+            {
+                std::fputs(Item, Filehandle);
+                std::fputs("\n", Filehandle);
+            }
+
+            std::fclose(Filehandle);
         }
     }
 }
+bool Readcache()
+{
+    const char *Cachename = "./Plugins/Platformwrapper/Steam_Interfacecache";
+    std::FILE *Filehandle = std::fopen(Cachename, "rt");
+    if (!Filehandle) return false;
+
+    char Inputstring[1024]{};
+    while (std::fgets(Inputstring, 1024, Filehandle))
+    {
+        // Remove the newline if needed.
+        Inputstring[std::strcspn(Inputstring, "\n")] = '\0';
+
+        #define Checktype(Interfacename, Type)          \
+        if(std::strstr(Inputstring, Interfacename))     \
+        { Setmapbyname(Type, Inputstring); continue; }  \
+
+        // Add the interface by type.
+        Checktype("SteamUGC0", STEAM_UGC);
+        Checktype("SteamApps0", STEAM_APPS);
+        Checktype("SteamUser0", STEAM_USER);
+        Checktype("SteamHTTP0", STEAM_HTTP);
+        Checktype("SteamMusic0", STEAM_MUSIC);
+        Checktype("SteamVideo0", STEAM_VIDEO);
+        Checktype("SteamClient0", STEAM_CLIENT);
+        Checktype("SteamUtilities0", STEAM_UTILS);
+        Checktype("SteamFriends0", STEAM_FRIENDS);
+        Checktype("SteamApplist0", STEAM_APPLIST);
+        Checktype("SteamInventory0", STEAM_INVENTORY);
+        Checktype("SteamUserstats0", STEAM_USERSTATS);
+        Checktype("SteamController0", STEAM_CONTROLLER);
+        Checktype("SteamGameserver0", STEAM_GAMESERVER);
+        Checktype("SteamNetworking0", STEAM_NETWORKING);
+        Checktype("SteamHTMLSurface0", STEAM_HTMLSURFACE);
+        Checktype("SteamMusicremote0", STEAM_MUSICREMOTE);
+        Checktype("SteamScreenshots0", STEAM_SCREENSHOTS);
+        Checktype("SteamMatchmaking0", STEAM_MATCHMAKING);
+        Checktype("SteamRemotestorage0", STEAM_REMOTESTORAGE);
+        Checktype("SteamContentServer0", STEAM_CONTENTSERVER);
+        Checktype("SteamUnifiedmessages0", STEAM_UNIFIEDMESSAGES);
+        Checktype("SteamGameserverStats0", STEAM_GAMESERVERSTATS);
+        Checktype("SteamMatchamkingservers0", STEAM_MATCHMAKINGSERVERS);
+        Checktype("SteamMasterserverUpdater0", STEAM_MASTERSERVERUPDATER);
+    }
+
+    std::fclose(Filehandle);
+    return true;
+}
+
+// Initialize and read the interfaces as needed.
 void Interfacemanager::Initialize()
 {
-    // Check for a cache file.
+    // Read the configuration from cache.
+    if (Readcache()) return;
+
+    // Else we create a new cache.
+    std::string Backupname = std::string(Steamdllname) + ".bak";
+    std::FILE *Filehandle = std::fopen(Backupname.c_str(), "rb");
+    if (!Filehandle) Filehandle = std::fopen(Steamdllname, "rb");
+    if (!Filehandle)
     {
-        const char *Cachename = "./Plugins/Platformwrapper/Steam_Interfacecache";
-        std::FILE *Filehandle = std::fopen(Cachename, "rt");
-        if (Filehandle)
-        {
-            char InputString[1024]{};
-            while (fgets(InputString, 1024, Filehandle))
-            {
-                #define Checktype(Interfacename, Type)          \
-                if(std::strstr(InputString, Interfacename))     \
-                { Setmapbyname(Type, InputString); continue; }  \
-
-                // Add by type.
-                Checktype("SteamUGC0", STEAM_UGC);
-                Checktype("SteamApps0", STEAM_APPS);
-                Checktype("SteamUser0", STEAM_USER);
-                Checktype("SteamHTTP0", STEAM_HTTP);
-                Checktype("SteamMusic0", STEAM_MUSIC);
-                Checktype("SteamVideo0", STEAM_VIDEO);
-                Checktype("SteamClient0", STEAM_CLIENT);
-                Checktype("SteamUtilities0", STEAM_UTILS);
-                Checktype("SteamFriends0", STEAM_FRIENDS);
-                Checktype("SteamApplist0", STEAM_APPLIST);
-                Checktype("SteamInventory0", STEAM_INVENTORY);
-                Checktype("SteamUserstats0", STEAM_USERSTATS);
-                Checktype("SteamController0", STEAM_CONTROLLER);
-                Checktype("SteamGameserver0", STEAM_GAMESERVER);
-                Checktype("SteamNetworking0", STEAM_NETWORKING);
-                Checktype("SteamHTMLSurface0", STEAM_HTMLSURFACE);
-                Checktype("SteamMusicremote0", STEAM_MUSICREMOTE);
-                Checktype("SteamScreenshots0", STEAM_SCREENSHOTS);
-                Checktype("SteamMatchmaking0", STEAM_MATCHMAKING);
-                Checktype("SteamRemotestorage0", STEAM_REMOTESTORAGE);
-                Checktype("SteamContentServer0", STEAM_CONTENTSERVER);
-                Checktype("SteamUnifiedmessages0", STEAM_UNIFIEDMESSAGES);
-                Checktype("SteamGameserverStats0", STEAM_GAMESERVERSTATS);
-                Checktype("SteamMatchamkingservers0", STEAM_MATCHMAKINGSERVERS);
-                Checktype("SteamMasterserverUpdater0", STEAM_MASTERSERVERUPDATER);
-            }
-
-            fclose(Filehandle);
-            return;
-        }
+        InfoPrint("No interfaces could be loaded, contact the developers.");
+        InfoPrint("The Platformwrapper will use the latest version of interfaces as a hail Mary.");
+        return;
     }
-
-    // Check for a backup file, in the case of devs compiling as a steam_api replacement.
-    {
-        std::string Backupname = std::string(Steamdllname) + ".bak";
-        std::FILE *Filehandle = std::fopen(Backupname.c_str(), "rb");
-        if(!Filehandle) Filehandle = std::fopen(Steamdllname, "rb");
-        if (!Filehandle)
-        {
-            InfoPrint("No interfaces could be loaded, contact the developers.");
-            InfoPrint("The Platformwrapper will use the latest version of interfaces as a hail Mary.");
-            return;
-        }
-
-        Scanfile(Filehandle);
-        std::fclose(Filehandle);
-    }
+    Createcache(Filehandle);
+    std::fclose(Filehandle);
 }
 void *Interfacemanager::Fetchinterface(const char *Name)
 {

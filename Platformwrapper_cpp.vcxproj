@@ -75,6 +75,7 @@
     <TargetExt>.ayria$(PlatformArchitecture)</TargetExt>
     <UseMultiToolTask>true</UseMultiToolTask>
     <LinkIncremental>false</LinkIncremental>
+    <TargetName>Platformwrapper</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(ProjectDir)Bin\</OutDir>
@@ -82,6 +83,7 @@
     <TargetExt>.ayria$(PlatformArchitecture)</TargetExt>
     <UseMultiToolTask>true</UseMultiToolTask>
     <LinkIncremental>false</LinkIncremental>
+    <TargetName>Platformwrapper</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)Bin\</OutDir>
@@ -89,6 +91,7 @@
     <TargetExt>.ayria$(PlatformArchitecture)</TargetExt>
     <UseMultiToolTask>true</UseMultiToolTask>
     <LinkIncremental>false</LinkIncremental>
+    <TargetName>Platformwrapper</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)Bin\</OutDir>
@@ -96,6 +99,7 @@
     <TargetExt>.ayria$(PlatformArchitecture)</TargetExt>
     <UseMultiToolTask>true</UseMultiToolTask>
     <LinkIncremental>false</LinkIncremental>
+    <TargetName>Platformwrapper</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

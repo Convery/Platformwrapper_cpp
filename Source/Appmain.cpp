@@ -18,7 +18,7 @@ extern "C"
         static bool Initialized = false;
         if (Initialized) return;
         else Initialized = true;
-        
+
         constexpr const char *Steamdll = sizeof(size_t) == sizeof(uint64_t) ? "steam_api64.dll" : "steam_api.dll";
 
         #define PATCH_STEAM_IAT(Function)                                       \
@@ -87,7 +87,7 @@ extern "C"
         static bool Initialized = false;
         if (Initialized) return;
         else Initialized = true;
-        
+
         /*
             Usage:
             ----------------------------------------------------------------------
