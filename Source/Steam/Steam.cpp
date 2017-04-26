@@ -153,15 +153,13 @@ extern "C"
             // Open the configuration file.
             Filehandle = fopen("steam_appid.txt", "r");
             if (!Filehandle) Filehandle = fopen("ayria_appid.txt", "r");
-            if (!Filehandle)
-            {
-                DebugPrint("No appconfig file found. Exiting.");
-                exit(0xDEAD);
-            }
 
             // Read the uint32.
-            fscanf_s(Filehandle, "%u", &Steamconfig::ApplicationID);
-            fclose(Filehandle);
+            if (Filehandle)
+            {
+                fscanf_s(Filehandle, "%u", &Steamconfig::ApplicationID);
+                fclose(Filehandle);
+            }
         }
 
         // If no application ID is provided, we can't do much.
@@ -274,7 +272,7 @@ extern "C"
             SteamCallback::UnregisterCallResult(hAPICall, static_cast<CallbackBase *>(pCallback));
     }
 
-    // Dedicated server mode.    
+    // Dedicated server mode.
     EXPORT_ATTR bool SteamGameServer_BSecure()
     {
         return true;
