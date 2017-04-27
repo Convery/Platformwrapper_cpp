@@ -241,7 +241,7 @@ void Interfacemanager::Initialize()
     if (!Filehandle) Filehandle = std::fopen(Steamdllname, "rb");
     if (!Filehandle)
     {
-        InfoPrint("No interfaces could be loaded, contact the developers.");
+        InfoPrint("No interface-information could be loaded, missing steam_api.dll");
         InfoPrint("The Platformwrapper will use the latest version of interfaces as a hail Mary.");
         return;
     }
