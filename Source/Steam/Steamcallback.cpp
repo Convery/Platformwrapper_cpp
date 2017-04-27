@@ -37,7 +37,7 @@ void SteamCallback::RegisterCallResult(uint64_t call, CallbackBase *result)
 }
 void SteamCallback::UnregisterCallback(CallbackBase *handler, int32_t callback)
 {
-    DebugPrint(va("%s <%s>", __FUNCTION__, GetCallbackName(callback)).c_str());
+    DebugPrint(va("%s <%s>", __FUNCTION__, GetCallbackName(handler->GetICallback())).c_str());
 }
 void SteamCallback::UnregisterCallResult(uint64_t call, CallbackBase *result)
 {
