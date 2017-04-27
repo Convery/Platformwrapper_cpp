@@ -430,3 +430,9 @@ struct SteamScreenshots002 : public Fakeclass
 {
     SteamScreenshots002();
 };
+
+// Server browser.
+struct SteamMasterserverUpdater001 : public Fakeclass
+{
+    SteamMasterserverUpdater001();
+};

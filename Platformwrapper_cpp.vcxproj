@@ -170,6 +170,7 @@
     <ClCompile Include="Source\Steam\Interfaces\SteamApps.cpp" />
     <ClCompile Include="Source\Steam\Interfaces\SteamFriends.cpp" />
     <ClCompile Include="Source\Steam\Interfaces\SteamGameserver.cpp" />
+    <ClCompile Include="Source\Steam\Interfaces\SteamMasterserverUpdater.cpp" />
     <ClCompile Include="Source\Steam\Interfaces\SteamMatchmaking.cpp" />
     <ClCompile Include="Source\Steam\Interfaces\SteamNetworking.cpp" />
     <ClCompile Include="Source\Steam\Interfaces\SteamRemotestorage.cpp" />
