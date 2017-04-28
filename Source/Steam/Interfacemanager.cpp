@@ -218,7 +218,7 @@ bool Readcache()
         Checktype("SteamScreenshots0", STEAM_SCREENSHOTS);
         Checktype("SteamMatchmaking0", STEAM_MATCHMAKING);
         Checktype("SteamRemotestorage0", STEAM_REMOTESTORAGE);
-        Checktype("SteamContentServer0", STEAM_CONTENTSERVER);
+        Checktype("SteamContentserver0", STEAM_CONTENTSERVER);
         Checktype("SteamUnifiedmessages0", STEAM_UNIFIEDMESSAGES);
         Checktype("SteamGameserverStats0", STEAM_GAMESERVERSTATS);
         Checktype("SteamMatchamkingservers0", STEAM_MATCHMAKINGSERVERS);
