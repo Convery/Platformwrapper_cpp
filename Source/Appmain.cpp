@@ -125,6 +125,15 @@ BOOLEAN WINAPI DllMain(HINSTANCE hDllHandle, DWORD nReason, LPVOID Reserved)
     {
         case DLL_PROCESS_ATTACH:
         {
+            /*
+                Using the bootstrapper may be annoying for developers.
+                So we load a local module in debugmode if available.
+            */
+            #ifndef NDEBUG
+            LoadLibraryA("Localbootstrap.dll");
+            #endif
+
+
             // Rather not handle all thread updates.
             DisableThreadLibraryCalls(hDllHandle);
             break;
