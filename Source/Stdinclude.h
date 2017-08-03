@@ -1,6 +1,6 @@
 /*
     Initial author: Convery (tcn@ayria.se)
-    Started: 29-07-2017
+    Started: 03-08-2017
     License: MIT
     Notes:
 */
@@ -37,4 +37,4 @@
 #include "Utility/Data/Base64.h"
 
 // Includes for our components.
-/* ... */
+#include "Steam/Steam.h"
