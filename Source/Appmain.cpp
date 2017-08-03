@@ -56,7 +56,7 @@ extern "C"
     }
 }
 
-// Default entrypoint for windows.
+// Load the bootsrapper on startup for developers that doesn't want to inject.
 #ifdef _WIN32
 #include <Windows.h>
 BOOLEAN WINAPI DllMain(HINSTANCE hDllHandle, DWORD nReason, LPVOID Reserved)
@@ -67,10 +67,25 @@ BOOLEAN WINAPI DllMain(HINSTANCE hDllHandle, DWORD nReason, LPVOID Reserved)
         {
             // Rather not handle all thread updates.
             DisableThreadLibraryCalls(hDllHandle);
+
+            #if !defined (NDEBUG)
+                LoadLibraryA("Localbootstrap");
+            #endif
             break;
         }
     }
 
     return TRUE;
 }
+
+#else
+#include <dlfcn.h>
+
+__attribute__((constructor)) void DllMain()
+{
+    #if !defined (NDEBUG)
+        dlopen("Localbootstrap", RTLD_LAZY);
+    #endif
+}
 #endif
+
