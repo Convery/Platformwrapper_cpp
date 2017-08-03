@@ -250,6 +250,7 @@ void Interfacemanager::Initialize()
     std::string Backupname = Libraryname + ".bak";
     std::FILE *Filehandle = std::fopen(Backupname.c_str(), "rb");
     if (!Filehandle) Filehandle = std::fopen(Libraryname.c_str(), "rb");
+    if (!Filehandle) Filehandle = std::fopen(("lib/" + Libraryname).c_str(), "rb");
     if (!Filehandle)
     {
         Infoprint("No interface-information could be loaded, missing steam_api.");

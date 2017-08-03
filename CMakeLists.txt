@@ -16,3 +16,5 @@ set_target_properties(Platformwrapper64 PROPERTIES COMPILE_FLAGS "-m64" LINK_FLA
 set_target_properties(Platformwrapper32 Platformwrapper64 PROPERTIES PREFIX "")
 set_target_properties(Platformwrapper32 PROPERTIES SUFFIX "ayria32")
 set_target_properties(Platformwrapper64 PROPERTIES SUFFIX "ayria64")
+
+set_target_properties(steam_api PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")

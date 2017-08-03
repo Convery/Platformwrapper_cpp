@@ -87,5 +87,5 @@ __attribute__((constructor)) void DllMain()
         dlopen("Localbootstrap", RTLD_LAZY);
     #endif
 }
-#endif
 
+#endif
