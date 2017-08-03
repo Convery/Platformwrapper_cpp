@@ -12,6 +12,7 @@
 #include "Configuration/Macros.h"
 
 // Includes for standard libraries.
+#include <unordered_map>
 #include <cstdint>
 #include <cstdlib>
 #include <cstdarg>
@@ -37,4 +38,5 @@
 #include "Utility/Data/Base64.h"
 
 // Includes for our components.
+#include "Steam/Steamcallback.h"
 #include "Steam/Steam.h"

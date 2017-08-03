@@ -42,3 +42,6 @@
 #if defined (_WIN32)
     #define _CRT_SECURE_NO_WARNINGS
 #endif
+
+// Print the steam async calls to the log.
+#define STEAM_PRINTCALLBACKS
