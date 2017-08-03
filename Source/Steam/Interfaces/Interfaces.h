@@ -67,3 +67,33 @@ struct SteamUserstats011 : public Fakeclass
 {
     SteamUserstats011();
 };
+
+// Steam utility interfaces.
+struct SteamUtilities001 : public Fakeclass
+{
+    SteamUtilities001();
+};
+struct SteamUtilities002 : public Fakeclass
+{
+    SteamUtilities002();
+};
+struct SteamUtilities003 : public Fakeclass
+{
+    SteamUtilities003();
+};
+struct SteamUtilities004 : public Fakeclass
+{
+    SteamUtilities004();
+};
+struct SteamUtilities005 : public Fakeclass
+{
+    SteamUtilities005();
+};
+struct SteamUtilities006 : public Fakeclass
+{
+    SteamUtilities006();
+};
+struct SteamUtilities007 : public Fakeclass
+{
+    SteamUtilities007();
+};
