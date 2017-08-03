@@ -38,5 +38,6 @@
 #include "Utility/Data/Base64.h"
 
 // Includes for our components.
+#include "Steam/Steaminterface.h"
 #include "Steam/Steamcallback.h"
 #include "Steam/Steam.h"
