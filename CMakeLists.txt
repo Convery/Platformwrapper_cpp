@@ -7,6 +7,8 @@ set(LIBRARY_OUTPUT_PATH "Bin")
 
 file(GLOB_RECURSE SOURCES "Source/*.cpp")
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
+
 add_library(Platformwrapper32 SHARED ${SOURCES})
 add_library(Platformwrapper64 SHARED ${SOURCES})
 add_library(steam_api SHARED ${SOURCES})
