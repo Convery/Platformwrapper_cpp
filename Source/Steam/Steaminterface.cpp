@@ -14,9 +14,9 @@ constexpr const char *Steamso = "libsteam_api.so";
 constexpr const char *Steamdll = sizeof(size_t) == sizeof(uint64_t) ? "steam_api64.dll" : "steam_api.dll";
 
 // Steam interface scanning.
-std::vector<std::pair<eInterfaceType /* Type */, void * /* Interface */>> Interfacestore;
+std::vector<std::pair<eInterfaceType /* Type */, void * /* Interface */>> *Interfacestore;
 std::unordered_map<eInterfaceType /* Type */, void * /* Interface */> Interfacemap;
-std::unordered_map<std::string /* Name */, void * /* Interface */> Interfacenames;
+std::unordered_map<std::string /* Name */, void * /* Interface */> *Interfacenames;
 std::unordered_map<const char *, std::pair<const char *, eInterfaceType>> Scandata =
 {
     //        Scanstring                     Interface              Type
@@ -250,6 +250,7 @@ void Interfacemanager::Initialize()
     std::string Backupname = Libraryname + ".bak";
     std::FILE *Filehandle = std::fopen(Backupname.c_str(), "rb");
     if (!Filehandle) Filehandle = std::fopen(Libraryname.c_str(), "rb");
+    if (!Filehandle) Filehandle = std::fopen(("lib/" + Backupname).c_str(), "rb");
     if (!Filehandle) Filehandle = std::fopen(("lib/" + Libraryname).c_str(), "rb");
     if (!Filehandle)
     {
@@ -262,8 +263,8 @@ void Interfacemanager::Initialize()
 }
 void *Interfacemanager::Fetchinterface(const char *Name)
 {
-    auto Result = Interfacenames.find(Name);
-    if (Result != Interfacenames.end()) return Result->second;
+    auto Result = Interfacenames->find(Name);
+    if (Result != Interfacenames->end()) return Result->second;
 
     Debugprint(va("%s had no interface with the name \"%s\".", __FUNCTION__, Name));
     return nullptr;
@@ -276,7 +277,7 @@ void *Interfacemanager::Fetchinterface(eInterfaceType Type)
         return Result->second;
 
     // Search through the created interfaces to find the latest version as a fallback.
-    for (auto Iterator = Interfacestore.rbegin(); Iterator != Interfacestore.rend(); Iterator++)
+    for (auto Iterator = Interfacestore->rbegin(); Iterator != Interfacestore->rend(); Iterator++)
     {
         if (Iterator->first == Type)
             return Iterator->second;
@@ -287,6 +288,9 @@ void *Interfacemanager::Fetchinterface(eInterfaceType Type)
 }
 void Interfacemanager::Addinterface(eInterfaceType Type, const char *Name, void *Interface)
 {
-    Interfacestore.push_back({ Type, Interface });
-    Interfacenames[Name] = Interface;
+    if(!Interfacestore) Interfacestore = new std::vector<std::pair<eInterfaceType, void *>>();
+    if(!Interfacenames) Interfacenames = new std::unordered_map<std::string, void *>();
+
+    Interfacestore->push_back({ Type, Interface });
+    Interfacenames->emplace(Name, Interface);
 }

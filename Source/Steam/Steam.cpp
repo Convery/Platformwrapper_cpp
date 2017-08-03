@@ -164,10 +164,8 @@ extern "C"
         // is too old to use RestartApp or a dev build.
         if (Steamconfig::ApplicationID == 0)
         {
-            std::FILE *Filehandle;
-
             // Open the configuration file.
-            Filehandle = std::fopen("steam_appid.txt", "r");
+            std::FILE *Filehandle = std::fopen("steam_appid.txt", "r");
             if (!Filehandle) Filehandle = std::fopen("ayria_appid.txt", "r");
 
             // Read the uint32.

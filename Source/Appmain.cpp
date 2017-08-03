@@ -11,6 +11,9 @@
 // Delete the last sessions log on startup.
 namespace { struct Deletelog { Deletelog() { Clearlog(); } }; static Deletelog Deleted{}; }
 
+// Create a directory for our configfiles on startup.
+namespace { struct Createdir { Createdir() { system("mkdir Plugins/Platformwrapper"); }; }; static Createdir Created{}; }
+
 // The callback system for Ayria plugins.
 extern "C"
 {
