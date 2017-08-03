@@ -45,10 +45,23 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
-/.vs/Plugintemplate_cpp/v15
+/.vs/
 /Bin
 *.filters
 *.user
 *.sln
-/.vs/Platformwrapper_cpp/v15
 *.licenseheader
+
+CMakeFiles
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+Bin
+.vscode
+/.vs
+/obj/x64/Debug
+*.sln
+*.user
+*.licenseheader
+*.log
+*.db
