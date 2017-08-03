@@ -36,6 +36,7 @@
 #include "Utility/Binary/Hooking.h"
 #include "Utility/Text/Logfile.h"
 #include "Utility/Data/Base64.h"
+#include "Utility/Text/CSV.h"
 
 // Includes for our components.
 #include "Steam/Interfaces/Interfaces.h"
