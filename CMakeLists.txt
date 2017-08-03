@@ -19,4 +19,8 @@ set_target_properties(Platformwrapper32 Platformwrapper64 PROPERTIES PREFIX "")
 set_target_properties(Platformwrapper32 PROPERTIES SUFFIX "ayria32")
 set_target_properties(Platformwrapper64 PROPERTIES SUFFIX "ayria64")
 
-set_target_properties(steam_api PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
+target_link_libraries(Platformwrapper32 dl pthread)
+target_link_libraries(Platformwrapper64 dl pthread)
+
+set_target_properties(steam_api PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32 -static-libgcc -static-libstdc++")
+target_link_libraries(steam_api dl pthread)
