@@ -12,7 +12,13 @@
 namespace { struct Deletelog { Deletelog() { Clearlog(); } }; static Deletelog Deleted{}; }
 
 // Create a directory for our configfiles on startup.
-namespace { struct Createdir { Createdir() { system("mkdir Plugins/Platformwrapper"); }; }; static Createdir Created{}; }
+#if !defined (_WIN32)
+#include <sys/stat.h>
+namespace { struct Createdir { Createdir() { mkdir("./Plugins/Platformwrapper", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); }; }; static Createdir Created{}; }
+#else
+#include <Windows.h>
+namespace { struct Createdir { Createdir() { _mkdir("./Plugins/Platformwrapper"); }; }; static Createdir Created{}; }
+#endif
 
 // The callback system for Ayria plugins.
 extern "C"

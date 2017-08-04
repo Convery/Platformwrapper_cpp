@@ -931,8 +931,14 @@ struct Steamremotestorageloader
         Interfacemanager::Addinterface(STEAM_REMOTESTORAGE, "SteamRemotestorage010", new SteamRemotestorage010);
         Interfacemanager::Addinterface(STEAM_REMOTESTORAGE, "SteamRemotestorage011", new SteamRemotestorage011);
         Interfacemanager::Addinterface(STEAM_REMOTESTORAGE, "SteamRemotestorage012", new SteamRemotestorage012);
-
-        system("mkdir Plugins/Platformwrapper/Steamstorage");
     }
 };
 static Steamremotestorageloader Interfaceloader{};
+
+#if !defined (_WIN32)
+#include <sys/stat.h>
+namespace { struct Createdir { Createdir() { mkdir("./Plugins/Platformwrapper/Steamstorage", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); }; }; static Createdir Created{}; }
+#else
+#include <Windows.h>
+namespace { struct Createdir { Createdir() { _mkdir("./Plugins/Platformwrapper/Steamstorage"); }; }; static Createdir Created{}; }
+#endif
