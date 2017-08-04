@@ -1,10 +1,12 @@
 /*
-    Initial author: Convery
-    Started: 2017-4-3
+    Initial author: Convery (tcn@ayria.se)
+    Started: 03-08-2017
     License: MIT
+    Notes:
+        Steam social information.
 */
 
-#include "All.h"
+#include "../../Stdinclude.h"
 
 #define Createmethod(Index, Class, Function)    \
 auto Temp ##Function = &Class::Function;        \
@@ -68,21 +70,21 @@ public:
     }
     void SetPersonaName0(const char *pchPersonaName)
     {
-        PrintFunction();
-        strcpy_s(Steamconfig::Username, 16, pchPersonaName);
+        Printfunction();
+        std::strcpy(Steamconfig::Username, pchPersonaName);
     }
     uint32_t GetPersonaState()
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     void SetPersonaState(uint32_t ePersonaState)
     {
-        PrintFunction();
+        Printfunction();
     }
     bool AddFriend(CSteamID steamIDFriend)
     {
-        PrintFunction();
+        Printfunction();
 
         // Add to local cache.
         Friendcache.push_back({ false, steamIDFriend.ConvertToUint64(), "unknown" });
@@ -96,7 +98,7 @@ public:
     }
     bool RemoveFriend(CSteamID steamIDFriend)
     {
-        PrintFunction();
+        Printfunction();
 
         // Find and remove the friend.
         for (auto Iterator = Friendcache.begin(); Iterator != Friendcache.end(); ++Iterator)
@@ -117,7 +119,7 @@ public:
     }
     bool HasFriend0(CSteamID steamIDFriend)
     {
-        PrintFunction();
+        Printfunction();
 
         for (auto Iterator = Friendcache.begin(); Iterator != Friendcache.end(); ++Iterator)
         {
@@ -131,14 +133,14 @@ public:
     }
     uint32_t GetFriendRelationship(CSteamID steamIDFriend)
     {
-        PrintFunction();
+        Printfunction();
 
         // EFriendRelationship::Friend
         return 3;
     }
     uint32_t GetFriendPersonaState(CSteamID steamIDFriend)
     {
-        PrintFunction();
+        Printfunction();
 
         for (auto Iterator = Friendcache.begin(); Iterator != Friendcache.end(); ++Iterator)
         {
@@ -156,12 +158,12 @@ public:
     }
     bool Deprecated_GetFriendGamePlayed(CSteamID steamIDFriend, int32_t *pnGameID, uint32_t *punGameIP, uint16_t *pusGamePort)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     const char *GetFriendPersonaName(CSteamID steamIDFriend)
     {
-        PrintFunction();
+        Printfunction();
         for (auto Iterator = Friendcache.begin(); Iterator != Friendcache.end(); ++Iterator)
         {
             if (Iterator->XUID == steamIDFriend.ConvertToUint64())
@@ -174,7 +176,7 @@ public:
     }
     uint32_t AddFriendByName(const char *pchEmailOrAccountName)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     int GetFriendCount0()
@@ -183,68 +185,68 @@ public:
     }
     CSteamID GetFriendByIndex0(int iFriend)
     {
-        PrintFunction();
+        Printfunction();
         return CSteamID(Friendcache[iFriend].XUID);
     }
     void SendMsgToFriend0(CSteamID steamIDFriend, uint32_t eFriendMsgType, const char *pchMsgBody)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetFriendRegValue(CSteamID steamIDFriend, const char *pchKey, const char *pchValue)
     {
-        PrintFunction();
+        Printfunction();
     }
     const char *GetFriendRegValue(CSteamID steamIDFriend, const char *pchKey)
     {
-        PrintFunction();
+        Printfunction();
         return "";
     }
     const char *GetFriendPersonaNameHistory(CSteamID steamIDFriend, int iPersonaName)
     {
-        PrintFunction();
+        Printfunction();
         return "";
     }
     int GetChatMessage(CSteamID steamIDFriend, int iChatID, void *pvData, int cubData, uint32_t *peFriendMsgType)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool SendMsgToFriend1(CSteamID steamIDFriend, uint32_t eFriendMsgType, const void *pvMsgBody, int cubMsgBody)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     int GetChatIDOfChatHistoryStart(CSteamID steamIDFriend)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     void SetChatHistoryStart(CSteamID steamIDFriend, int iChatID)
     {
-        PrintFunction();
+        Printfunction();
     }
     void ClearChatHistory(CSteamID steamIDFriend)
     {
-        PrintFunction();
+        Printfunction();
     }
     uint32_t InviteFriendByEmail0(const char *pchEmailOrAccountName)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint32_t GetBlockedFriendCount()
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool GetFriendGamePlayed0(CSteamID steamIDFriend, uint64_t *pulGameID, uint32_t *punGameIP, uint16_t *pusGamePort)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool GetFriendGamePlayed2(CSteamID steamDIFriend, uint64_t *pulGameID, uint32_t *punGameIP, uint16_t *pusGamePort, uint16_t *pusQueryPort)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     int GetFriendCount1(uint32_t iFriendFlags)
@@ -253,17 +255,17 @@ public:
     }
     CSteamID GetFriendByIndex1(int iFriend, uint32_t iFriendFlags)
     {
-        PrintFunction();
+        Printfunction();
         return CSteamID(Friendcache[iFriend].XUID);
     }
     bool GetFriendGamePlayed1(CSteamID steamIDFriend, uint64_t *pulGameID, uint32_t *punGameIP, uint16_t *pusGamePort, uint16_t *pusQueryPort)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool HasFriend1(CSteamID steamIDFriend, uint32_t iFriendFlags)
     {
-        PrintFunction();
+        Printfunction();
 
         for (auto Iterator = Friendcache.begin(); Iterator != Friendcache.end(); ++Iterator)
         {
@@ -277,32 +279,32 @@ public:
     }
     bool InviteFriendByEmail1(const char *emailAddr)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     int GetClanCount()
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     CSteamID GetClanByIndex(int iClan)
     {
-        PrintFunction();
+        Printfunction();
         return CSteamID(Steamconfig::UserID);
     }
     const char *GetClanName(CSteamID steamIDClan)
     {
-        PrintFunction();
+        Printfunction();
         return "AYA";
     }
     bool InviteFriendToClan(CSteamID steamIDfriend, CSteamID steamIDclan)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool AcknowledgeInviteToClan(CSteamID steamID, bool)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     int GetFriendCountFromSource(CSteamID steamIDSource)
@@ -311,120 +313,120 @@ public:
     }
     CSteamID GetFriendFromSourceByIndex(CSteamID steamIDSource, int iFriend)
     {
-        PrintFunction();
+        Printfunction();
         return CSteamID(Steamconfig::UserID);
     }
     int GetFriendAvatar0(CSteamID steamIDFriend)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool IsUserInSource(CSteamID steamIDUser, CSteamID steamIDSource)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     void SetInGameVoiceSpeaking(CSteamID steamIDUser, bool bSpeaking)
     {
-        PrintFunction();
+        Printfunction();
     }
     void ActivateGameOverlay(const char *pchDialog)
     {
-        PrintFunction();
+        Printfunction();
     }
     int GetFriendAvatar1(CSteamID steamIDFriend, int eAvatarSize)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     CSteamID GetFriendByIndex2(int iFriend, int iFriendFlags)
     {
-        PrintFunction();
+        Printfunction();
         return CSteamID(Steamconfig::UserID);
     }
     bool GetFriendGamePlayed3(CSteamID steamIDFriend, struct FriendGameInfo_t *pFriendGameInfo)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     void ActivateGameOverlayToUser(const char *pchDialog, CSteamID steamID)
     {
-        PrintFunction();
+        Printfunction();
     }
     void ActivateGameOverlayToWebPage(const char *pchURL)
     {
-        PrintFunction();
+        Printfunction();
     }
     void ActivateGameOverlayToStore0(uint32_t nAppID)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetPlayedWith(CSteamID steamIDUserPlayedWith)
     {
-        PrintFunction();
+        Printfunction();
     }
     const char *GetClanTag(CSteamID steamIDClan)
     {
-        PrintFunction();
+        Printfunction();
         return "AYA";
     }
     void ActivateGameOverlayInviteDialog(CSteamID steamIDLobby)
     {
-        PrintFunction();
+        Printfunction();
     }
     int GetSmallFriendAvatar(CSteamID steamIDFriend)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     int GetMediumFriendAvatar(CSteamID steamIDFriend)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     int GetLargeFriendAvatar(CSteamID steamIDFriend)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool RequestUserInformation(CSteamID steamIDUser, bool bRequireNameOnly)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     uint64_t RequestClanOfficerList(CSteamID steamIDClan)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     CSteamID GetClanOwner(CSteamID steamIDClan)
     {
-        PrintFunction();
+        Printfunction();
         return CSteamID(Steamconfig::UserID);
     }
     int GetClanOfficerCount(CSteamID steamIDClan)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     CSteamID GetClanOfficerByIndex(CSteamID steamIDClan, int iOfficer)
     {
-        PrintFunction();
+        Printfunction();
         return CSteamID(Steamconfig::UserID);
     }
     uint32_t GetUserRestrictions()
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     int GetFriendCount2(int iFriendFlags)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool HasFriend2(CSteamID steamIDFriend, int iFriendFlags)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool SetRichPresence(const char *pchKey, const char *pchValue)
@@ -433,192 +435,192 @@ public:
     }
     void ClearRichPresence()
     {
-        PrintFunction();
+        Printfunction();
     }
     const char *GetFriendRichPresence(CSteamID steamIDFriend, const char *pchKey)
     {
-        PrintFunction();
+        Printfunction();
         return "";
     }
     int GetFriendRichPresenceKeyCount(CSteamID steamIDFriend)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     const char *GetFriendRichPresenceKeyByIndex(CSteamID steamIDFriend, int iKey)
     {
-        PrintFunction();
+        Printfunction();
         return "";
     }
     bool InviteUserToGame(CSteamID steamIDFriend, const char *pchConnectString)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     int GetCoplayFriendCount()
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     CSteamID GetCoplayFriend(int iCoplayFriend)
     {
-        PrintFunction();
+        Printfunction();
         return CSteamID(Steamconfig::UserID);
     }
     int GetFriendCoplayTime(CSteamID steamIDFriend)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint32_t GetFriendCoplayGame(CSteamID steamIDFriend)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool GetClanActivityCounts(CSteamID steamID, int *pnOnline, int *pnInGame, int *pnChatting)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     uint64_t DownloadClanActivityCounts(CSteamID groupIDs[], int nIds)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint64_t JoinClanChatRoom(CSteamID groupID)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool LeaveClanChatRoom(CSteamID groupID)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     int GetClanChatMemberCount(CSteamID groupID)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     CSteamID GetChatMemberByIndex(CSteamID groupID, int iIndex)
     {
-        PrintFunction();
+        Printfunction();
         return CSteamID(Steamconfig::UserID);
     }
     bool SendClanChatMessage(CSteamID groupID, const char *cszMessage)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     int GetClanChatMessage(CSteamID groupID, int iChatID, void *pvData, int cubData, uint32_t *peChatEntryType, CSteamID *pSteamIDChatter)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool IsClanChatAdmin(CSteamID groupID, CSteamID userID)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool IsClanChatWindowOpenInSteam(CSteamID groupID)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool OpenClanChatWindowInSteam(CSteamID groupID)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool CloseClanChatWindowInSteam(CSteamID groupID)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool SetListenForFriendsMessages(bool bListen)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool ReplyToFriendMessage(CSteamID friendID, const char *cszMessage)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     int GetFriendMessage(CSteamID friendID, int iChatID, void *pvData, int cubData, uint32_t *peChatEntryType)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     void RequestFriendRichPresence(CSteamID steamIDFriend)
     {
-        PrintFunction();
+        Printfunction();
         return;
     }
     uint64_t GetFollowerCount(CSteamID steamID)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint64_t IsFollowing(CSteamID steamID)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint64_t EnumerateFollowingList(uint32_t unStartIndex)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint64_t SetPersonaName1(const char *pchPersonaName)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     void ActivateGameOverlayToStore1(uint32_t nAppID, uint32_t eFlag)
     {
-        PrintFunction();
+        Printfunction();
         return;
     }
     const char *GetPlayerNickname(CSteamID steamIDPlayer)
     {
-        PrintFunction();
+        Printfunction();
         return "AYA";
     }
     uint64_t SetPersonaName2(const char *pchPersonaName)
     {
-        PrintFunction();
-        strcpy_s(Steamconfig::Username, 16, pchPersonaName);
+        Printfunction();
+        std::strcpy(Steamconfig::Username, pchPersonaName);
         return 0;
     }
     int GetFriendSteamLevel(CSteamID steamIDFriend)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     int16_t GetFriendsGroupCount()
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     int16_t GetFriendsGroupIDByIndex(int32_t)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     const char *GetFriendsGroupName(int16_t)
     {
-        PrintFunction();
+        Printfunction();
         return "";
     }
     int GetFriendsGroupMembersCount(int16_t)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     int GetFriendsGroupMembersList(int16_t, CSteamID *, int32_t)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
 };
@@ -1332,4 +1334,4 @@ struct Steamfriendsloader
         }
     }
 };
-static Steamfriendsloader Interfaceloader;
+static Steamfriendsloader Interfaceloader{};

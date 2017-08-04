@@ -1,13 +1,16 @@
 /*
-    Initial author: Convery
-    Started: 2017-4-3
+    Initial author: Convery (tcn@ayria.se)
+    Started: 03-08-2017
     License: MIT
+    Notes:
+        Steam interfaces usually supplied by the
+        Steamclient.dll or libsteam.so
 */
 
 #pragma once
-#include <cstdint>
+#include "../Stdinclude.h"
 
-// Types.
+// Types of steam interfaces.
 enum eInterfaceType
 {
     STEAM_UGC,

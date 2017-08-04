@@ -1,11 +1,12 @@
 /*
-    Initial author: Convery
-    Started: 2017-4-3
+    Initial author: Convery (tcn@ayria.se)
+    Started: 03-08-2017
     License: MIT
+    Notes:
+        Steam cloudstorage.
 */
 
-#include "All.h"
-#include <algorithm>
+#include "../../Stdinclude.h"
 
 #define Createmethod(Index, Class, Function)    \
 auto Temp ##Function = &Class::Function;        \
@@ -17,9 +18,10 @@ constexpr const char *Storagedir = "./Plugins/Platformwrapper/Steamstorage/";
 class SteamRemotestorage
 {
 public:
-
     bool FileRead0(const char *filename, void *buffer, int size)
     {
+        Printfunction();
+
         std::FILE *Filehandle = std::fopen(va("%s%s", Storagedir, filename).c_str(), "rb");
         if (!Filehandle) return false;
 
@@ -30,6 +32,8 @@ public:
     }
     bool FileExists(const char *filename)
     {
+        Printfunction();
+
         std::FILE *Filehandle = std::fopen(va("%s%s", Storagedir, filename).c_str(), "rb");
         if (!Filehandle) return false;
         std::fclose(Filehandle);
@@ -37,18 +41,26 @@ public:
     }
     bool FileDelete(const char *filename)
     {
+        Printfunction();
+
         return 0 == std::remove(va("%s%s", Storagedir, filename).c_str());
     }
     const char *GetFileNameAndSize(int index, int *size)
     {
+        Printfunction();
+
         return "";
     }
     bool GetQuota(int *current, int *maximum)
     {
+        Printfunction();
+
         return false;
     }
     bool FileWrite(const char *pchFile, const void *pvData, int32_t cubData)
     {
+        Printfunction();
+
         std::FILE *Filehandle = std::fopen(va("%s%s", Storagedir, pchFile).c_str(), "wb");
         if (!Filehandle) return false;
 
@@ -58,6 +70,8 @@ public:
     }
     int32_t GetFileSize(const char *pchFile)
     {
+        Printfunction();
+
         int32_t Result = 0;
         std::FILE *Filehandle = std::fopen(va("%s%s", Storagedir, pchFile).c_str(), "rb");
         if (!Filehandle) return false;
@@ -70,6 +84,8 @@ public:
     }
     int32_t FileRead1(const char *pchFile, void *pvData, int32_t cubDataToRead)
     {
+        Printfunction();
+
         int32_t Maxread = cubDataToRead;
 
         std::FILE *Filehandle = std::fopen(va("%s%s", Storagedir, pchFile).c_str(), "rb");
@@ -83,227 +99,339 @@ public:
     }
     int32_t GetFileCount()
     {
+        Printfunction();
+
         return 0;
     }
     bool FilePersisted(const char *pchFile)
     {
+        Printfunction();
+
         return 0;
     }
     int64_t GetFileTimestamp(const char *pchFile)
     {
+        Printfunction();
+
         return 0;
     }
     bool IsCloudEnabledForAccount()
     {
+        Printfunction();
+
         return true;
     }
     bool IsCloudEnabledThisApp()
     {
+        Printfunction();
+
         return true;
     }
     bool SetCloudEnabledThisApp(bool bEnable)
     {
+        Printfunction();
+
         return true;
     }
     uint64_t UGCDownload0(uint32_t hContent)
     {
+        Printfunction();
+
         return 0;
     }
     bool GetUGCDetails(uint32_t hContent, uint32_t *pnAppID, char **ppchName, int32_t *pnFileSizeInBytes, CSteamID *pSteamIDOwner)
     {
+        Printfunction();
+
         return 0;
     }
     int32_t UGCRead0(uint32_t hContent, void *pvData, int32_t cubDataToRead)
     {
+        Printfunction();
+
         return 0;
     }
     int32_t GetCachedUGCCount()
     {
+        Printfunction();
+
         return 0;
     }
     uint32_t GetCachedUGCHandle(int32_t iCachedContent)
     {
+        Printfunction();
+
         return 0;
     }
     bool SetSyncPlatforms(const char *pchFile, uint32_t eRemoteStoragePlatform)
     {
+        Printfunction();
+
         return true;
     }
     uint32_t GetSyncPlatforms(const char *pchFile)
     {
+        Printfunction();
+
         return 0xFFFFFFFF;
     }
     bool IsCloudEnabledForApp()
     {
+        Printfunction();
+
         return 0;
     }
     void SetCloudEnabledForApp(bool bEnabled)
     {
+        Printfunction();
+
         return;
     }
     uint64_t PublishFile(const char *pchFile, const char *pchPreviewFile, uint32_t nConsumerAppId, const char *pchTitle, const char *pchDescription, uint32_t eVisibility, struct SteamParamStringArray_t *pTags)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t PublishWorkshopFile0(const char *pchFile, const char *pchPreviewFile, uint32_t nConsumerAppId, const char *pchTitle, const char *pchDescription, struct SteamParamStringArray_t *pTags)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t UpdatePublishedFile(uint32_t updatePublishedFileRequest)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t GetPublishedFileDetails0(uint32_t unPublishedFileId)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t DeletePublishedFile(uint32_t unPublishedFileId)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t EnumerateUserPublishedFiles(uint32_t unStartIndex)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t SubscribePublishedFile(uint32_t unPublishedFileId)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t EnumerateUserSubscribedFiles(uint32_t unStartIndex)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t UnsubscribePublishedFile(uint32_t unPublishedFileId)
     {
+        Printfunction();
+
         return 0;
     }
     bool GetUGCDownloadProgress(uint32_t hContent, uint32_t *puDownloadedBytes, uint32_t *puTotalBytes)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t PublishWorkshopFile1(const char *pchFile, const char *pchPreviewFile, uint32_t nConsumerAppId, const char *pchTitle, const char *pchDescription, uint32_t eVisibility, struct SteamParamStringArray_t *pTags, uint32_t eWorkshopFileType)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t CreatePublishedFileUpdateRequest(uint32_t unPublishedFileId)
     {
+        Printfunction();
+
         return 0;
     }
     bool UpdatePublishedFileFile(uint64_t hUpdateRequest, const char *pchFile)
     {
+        Printfunction();
+
         return 0;
     }
     bool UpdatePublishedFilePreviewFile(uint64_t hUpdateRequest, const char *pchPreviewFile)
     {
+        Printfunction();
+
         return 0;
     }
     bool UpdatePublishedFileTitle(uint64_t hUpdateRequest, const char *pchTitle)
     {
+        Printfunction();
+
         return 0;
     }
     bool UpdatePublishedFileDescription(uint64_t hUpdateRequest, const char *pchDescription)
     {
+        Printfunction();
+
         return 0;
     }
     bool UpdatePublishedFileVisibility(uint64_t hUpdateRequest, uint32_t eVisibility)
     {
+        Printfunction();
+
         return 0;
     }
     bool UpdatePublishedFileTags(uint64_t hUpdateRequest, struct SteamParamStringArray_t *pTags)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t CommitPublishedFileUpdate(uint64_t hUpdateRequest)
     {
+        Printfunction();
+
         return 0;
     }
     bool UpdatePublishedFileSetChangeDescription(uint64_t hUpdateRequest, const char *cszDescription)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t GetPublishedItemVoteDetails(uint32_t unPublishedFileId)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t UpdateUserPublishedItemVote(uint32_t unPublishedFileId, bool bVoteUp)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t GetUserPublishedItemVoteDetails(uint32_t unPublishedFileId)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t EnumerateUserSharedWorkshopFiles(uint32_t nAppId, CSteamID creatorSteamID, uint32_t uStartIndex, struct SteamParamStringArray_t * pRequiredTags, struct SteamParamStringArray_t * pExcludedTags)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t PublishVideo0(const char *cszFileName, const char *cszPreviewFileName, uint32_t nConsumerAppId, const char *cszTitle, const char *cszDescription, uint32_t eVisibility, struct SteamParamStringArray_t *pTags)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t SetUserPublishedFileAction(uint32_t unPublishedFileId, uint32_t eAction)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t EnumeratePublishedFilesByUserAction(uint32_t eAction, uint32_t uStartIndex)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t EnumeratePublishedWorkshopFiles(uint32_t eType, uint32_t uStartIndex, uint32_t cDays, uint32_t cCount, struct SteamParamStringArray_t *pTags, struct SteamParamStringArray_t *pUserTags)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t PublishVideo1(uint32_t eVideoProvider, const char *cszVideoAccountName, const char *cszVideoIdentifier, const char *cszFileName, uint32_t nConsumerAppId, const char *cszTitle, const char *cszDescription, uint32_t eVisibility, struct SteamParamStringArray_t *pTags)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t FileWriteStreamOpen(const char *pchFile)
     {
+        Printfunction();
+
         return 0;
     }
     EResult FileWriteStreamWriteChunk(uint64_t hStream, const void *pvData, int32_t cubData)
     {
+        Printfunction();
+
         return EResult::k_EResultOK;
     }
     EResult FileWriteStreamClose(uint64_t hStream)
     {
+        Printfunction();
+
         return EResult::k_EResultOK;
     }
     EResult FileWriteStreamCancel(uint64_t hStream)
     {
+        Printfunction();
+
         return EResult::k_EResultOK;
     }
     int32_t UGCRead1(uint32_t hContent, void *pvData, int32_t cubDataToRead, uint32_t uOffset)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t UGCDownload1(uint32_t hContent, uint32_t uUnk)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t UGCDownloadToLocation(uint32_t hContent, const char *cszLocation, uint32_t uUnk)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t GetPublishedFileDetails1(uint32_t unPublishedFileId, uint32_t)
     {
+        Printfunction();
+
         return 0;
     }
     int32_t UGCRead2(uint32_t hContent, void *pvData, int32_t cubDataToRead, uint32_t uOffset, uint32_t eAction)
     {
+        Printfunction();
+
         return 0;
     }
 
     bool FileForget(const char *pchFile)
     {
+        Printfunction();
+
         return true;
     }
     uint64_t FileShare(const char *pchFile)
     {
+        Printfunction();
+
         return 0;
     }
     uint64_t UGCDownload(uint32_t hContent)
     {
+        Printfunction();
+
         return 0;
     }
 
@@ -803,8 +931,14 @@ struct Steamremotestorageloader
         Interfacemanager::Addinterface(STEAM_REMOTESTORAGE, "SteamRemotestorage010", new SteamRemotestorage010);
         Interfacemanager::Addinterface(STEAM_REMOTESTORAGE, "SteamRemotestorage011", new SteamRemotestorage011);
         Interfacemanager::Addinterface(STEAM_REMOTESTORAGE, "SteamRemotestorage012", new SteamRemotestorage012);
-
-        // TODO(Convery): Create a directory for stats and UGC.
     }
 };
-static Steamremotestorageloader Interfaceloader;
+static Steamremotestorageloader Interfaceloader{};
+
+#if !defined (_WIN32)
+#include <sys/stat.h>
+namespace { struct Createdir { Createdir() { mkdir("./Plugins/Platformwrapper/Steamstorage", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); }; }; static Createdir Created{}; }
+#else
+#include <Windows.h>
+namespace { struct Createdir { Createdir() { _mkdir("./Plugins/Platformwrapper/Steamstorage"); }; }; static Createdir Created{}; }
+#endif

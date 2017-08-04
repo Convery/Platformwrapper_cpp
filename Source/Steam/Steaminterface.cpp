@@ -1,18 +1,22 @@
 /*
-    Initial author: Convery
-    Started: 2017-4-3
+    Initial author: Convery (tcn@ayria.se)
+    Started: 03-08-2017
     License: MIT
+    Notes:
+        Steam interfaces usually supplied by the
+        Steamclient.dll or libsteam.so
 */
 
-#include "Steam.h"
-#include <unordered_map>
-#include "Interfaces/All.h"
-#include "Interfacemanager.h"
+#include "../Stdinclude.h"
 
-constexpr const char *Steamdllname = sizeof(size_t) == sizeof(uint64_t) ? "steam_api64.dll" : "steam_api.dll";
-std::vector<std::pair<eInterfaceType /* Type */, void * /* Interface */>> Interfacestore;
+// Steam_api providers.
+constexpr const char *Steamso = "libsteam_api.so";
+constexpr const char *Steamdll = sizeof(size_t) == sizeof(uint64_t) ? "steam_api64.dll" : "steam_api.dll";
+
+// Steam interface scanning.
+std::vector<std::pair<eInterfaceType /* Type */, void * /* Interface */>> *Interfacestore;
 std::unordered_map<eInterfaceType /* Type */, void * /* Interface */> Interfacemap;
-std::unordered_map<std::string /* Name */, void * /* Interface */> Interfacenames;
+std::unordered_map<std::string /* Name */, void * /* Interface */> *Interfacenames;
 std::unordered_map<const char *, std::pair<const char *, eInterfaceType>> Scandata =
 {
     //        Scanstring                     Interface              Type
@@ -235,14 +239,23 @@ void Interfacemanager::Initialize()
     // Read the configuration from cache.
     if (Readcache()) return;
 
+    // Platform specific name.
+    #if defined(_WIN32)
+        std::string Libraryname = Steamdll;
+    #else
+        std::string Libraryname = Steamso;
+    #endif
+
     // Else we create a new cache.
-    std::string Backupname = std::string(Steamdllname) + ".bak";
+    std::string Backupname = Libraryname + ".bak";
     std::FILE *Filehandle = std::fopen(Backupname.c_str(), "rb");
-    if (!Filehandle) Filehandle = std::fopen(Steamdllname, "rb");
+    if (!Filehandle) Filehandle = std::fopen(Libraryname.c_str(), "rb");
+    if (!Filehandle) Filehandle = std::fopen(("lib/" + Backupname).c_str(), "rb");
+    if (!Filehandle) Filehandle = std::fopen(("lib/" + Libraryname).c_str(), "rb");
     if (!Filehandle)
     {
-        InfoPrint("No interface-information could be loaded, missing steam_api.dll");
-        InfoPrint("The Platformwrapper will use the latest version of interfaces as a hail Mary.");
+        Infoprint("No interface-information could be loaded, missing steam_api.");
+        Infoprint("The Platformwrapper will use the latest version of interfaces as a hail Mary.");
         return;
     }
     Createcache(Filehandle);
@@ -250,30 +263,34 @@ void Interfacemanager::Initialize()
 }
 void *Interfacemanager::Fetchinterface(const char *Name)
 {
-    auto Result = Interfacenames.find(Name);
-    if (Result != Interfacenames.end()) return Result->second;
+    auto Result = Interfacenames->find(Name);
+    if (Result != Interfacenames->end()) return Result->second;
 
-    DebugPrint(va("%s had no interface with the name \"%s\"", __FUNCTION__, Name).c_str());
+    Debugprint(va("%s had no interface with the name \"%s\".", __FUNCTION__, Name));
     return nullptr;
 }
 void *Interfacemanager::Fetchinterface(eInterfaceType Type)
 {
     // Return the interface by name if available.
     auto Result = Interfacemap.find(Type);
-    if (Result != Interfacemap.end()) return Result->second;
+    if (Result != Interfacemap.end())
+        return Result->second;
 
     // Search through the created interfaces to find the latest version as a fallback.
-    for (auto Iterator = Interfacestore.rbegin(); Iterator != Interfacestore.rend(); Iterator++)
+    for (auto Iterator = Interfacestore->rbegin(); Iterator != Interfacestore->rend(); Iterator++)
     {
         if (Iterator->first == Type)
             return Iterator->second;
     }
 
-    DebugPrint(va("%s had no interface for the type %i", __FUNCTION__, Type).c_str());
+    Debugprint(va("%s had no interface for the type %i.", __FUNCTION__, Type));
     return nullptr;
 }
 void Interfacemanager::Addinterface(eInterfaceType Type, const char *Name, void *Interface)
 {
-    Interfacestore.push_back({ Type, Interface });
-    Interfacenames[Name] = Interface;
+    if(!Interfacestore) Interfacestore = new std::vector<std::pair<eInterfaceType, void *>>();
+    if(!Interfacenames) Interfacenames = new std::unordered_map<std::string, void *>();
+
+    Interfacestore->push_back({ Type, Interface });
+    Interfacenames->emplace(Name, Interface);
 }

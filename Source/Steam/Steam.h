@@ -1,15 +1,14 @@
 /*
-    Initial author: Convery
-    Started: 2017-4-3
+    Initial author: Convery (tcn@ayria.se)
+    Started: 03-08-2017
     License: MIT
+    Notes:
+        Steam exports for IAT hooking.
 */
 
 #pragma once
-#include "../StdInclude.h"
-#include "Interfacemanager.h"
-#include "Steamcallbacks.h"
+#include "../Stdinclude.h"
 #include "CSteamID.h"
-#include <cstdint>
 
 // Configuration.
 namespace Steamconfig
@@ -17,7 +16,7 @@ namespace Steamconfig
     // Application info.
     extern char Language[32];
     extern uint32_t ApplicationID;
-    extern int64_t StartupTimestamp;
+    extern int64_t Startuptimestamp;
 
     // Network access.
     extern bool LAN;

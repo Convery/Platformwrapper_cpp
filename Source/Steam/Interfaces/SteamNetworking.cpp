@@ -1,10 +1,12 @@
 /*
-    Initial author: Convery
-    Started: 2017-4-3
+    Initial author: Convery (tcn@ayria.se)
+    Started: 03-08-2017
     License: MIT
+    Notes:
+        Steam networking information.
 */
 
-#include "All.h"
+#include "../../Stdinclude.h"
 
 #define Createmethod(Index, Class, Function)    \
 auto Temp ##Function = &Class::Function;        \
@@ -16,42 +18,42 @@ class SteamNetworking
 public:
     uint32_t CreateListenSocket0(int nVirtualP2PPort, uint32_t nIP, uint16_t nPort)
     {
-        PrintFunction();
-        return NULL;
+        Printfunction();
+        return 0;
     }
     uint32_t CreateP2PConnectionSocket0(CSteamID steamIDTarget, int nVirtualPort, int nTimeoutSec)
     {
-        PrintFunction();
-        return NULL;
+        Printfunction();
+        return 0;
     }
     uint32_t CreateConnectionSocket(uint32_t nIP, uint16_t nPort, int nTimeoutSec)
     {
-        PrintFunction();
-        return NULL;
+        Printfunction();
+        return 0;
     }
     bool DestroySocket(uint32_t hSocket, bool bNotifyRemoteEnd)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool DestroyListenSocket(uint32_t hSocket, bool bNotifyRemoteEnd)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool SendDataOnSocket(uint32_t hSocket, void *pubData, uint32_t cubData, bool bReliable)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool IsDataAvailableOnSocket(uint32_t hSocket, uint32_t *pcubMsgSize)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool RetrieveDataFromSocket(uint32_t hSocket, void *pubDest, uint32_t cubDest, uint32_t *pcubMsgSize)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool IsDataAvailable(uint32_t hListenSocket, uint32_t *pcubMsgSize, uint32_t *phSocket)
@@ -60,52 +62,52 @@ public:
     }
     bool RetrieveData0(uint32_t hListenSocket, void *pubDest, uint32_t cubDest, uint32_t *pcubMsgSize)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool GetSocketInfo0(uint32_t hSocket, CSteamID *pSteamIDRemote, int *peSocketStatus, uint32_t *punIPRemote, uint16_t *punPortRemote)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool GetListenSocketInfo(uint32_t hListenSocket, uint32_t *pnIP, uint16_t *pnPort)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     uint32_t CreateListenSocket1(int nVirtualP2PPort, uint32_t nIP, uint16_t nPort, bool bAllowUseOfPacketRelay)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint32_t CreateP2PConnectionSocket1(CSteamID steamIDTarget, int nVirtualPort, int nTimeoutSec, bool bAllowUseOfPacketRelay)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool RetrieveData1(uint32_t hListenSocket, void *pubDest, uint32_t cubDest, uint32_t *pcubMsgSize, uint32_t *phSocket)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool GetSocketInfo1(uint32_t hSocket, CSteamID *pSteamIDRemote, uint32_t *peSocketStatus, uint32_t *punIPRemote, uint16_t *punPortRemote)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     uint32_t GetSocketConnectionType(uint32_t hSocket)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     int GetMaxPacketSize(uint32_t hSocket)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool SendP2PPacket0(CSteamID steamIDRemote, const void *pubData, uint32_t cubData, uint32_t eP2PSendType)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool IsP2PPacketAvailable0(uint32_t *pcubMsgSize)
@@ -114,27 +116,27 @@ public:
     }
     bool ReadP2PPacket0(void *pubDest, uint32_t cubDest, uint32_t *pcubMsgSize, CSteamID *psteamIDRemote)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool AcceptP2PSessionWithUser(CSteamID steamIDRemote)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool CloseP2PSessionWithUser(CSteamID steamIDRemote)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool GetP2PSessionState(CSteamID steamIDRemote, struct P2PSessionState_t *pConnectionState)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool SendP2PPacket1(CSteamID steamIDRemote, const void *pubData, uint32_t cubData, uint32_t eP2PSendType, int iVirtualPort)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool IsP2PPacketAvailable1(uint32_t *pcubMsgSize, int iVirtualPort)
@@ -143,17 +145,17 @@ public:
     }
     bool ReadP2PPacket1(void *pubDest, uint32_t cubDest, uint32_t *pcubMsgSize, CSteamID *psteamIDRemote, int iVirtualPort)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool CloseP2PChannelWithUser(CSteamID steamIDRemote, int iVirtualPort)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool AllowP2PPacketRelay(bool bAllow)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
 };
@@ -274,4 +276,4 @@ struct Steamnetworkingloader
         Interfacemanager::Addinterface(STEAM_NETWORKING, "SteamNetworking005", new SteamNetworking005);
     }
 };
-static Steamnetworkingloader Interfaceloader;
+static Steamnetworkingloader Interfaceloader{};

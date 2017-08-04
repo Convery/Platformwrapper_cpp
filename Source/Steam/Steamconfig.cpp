@@ -1,10 +1,12 @@
 /*
-    Initial author: Convery
-    Started: 2017-4-3
+    Initial author: Convery (tcn@ayria.se)
+    Started: 03-08-2017
     License: MIT
+    Notes:
+        Steam configuration.
 */
 
-#include "Steam.h"
+#include "../Stdinclude.h"
 
 // Configuration.
 namespace Steamconfig
@@ -12,7 +14,7 @@ namespace Steamconfig
     // Application info.
     char Language[32]{ "english" };
     uint32_t ApplicationID{ 0 };
-    int64_t StartupTimestamp{ std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() };
+    int64_t Startuptimestamp{ std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() };
 
     // Network access.
     bool LAN{ false };

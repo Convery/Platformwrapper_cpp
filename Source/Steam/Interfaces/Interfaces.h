@@ -1,21 +1,24 @@
 /*
-    Initial author: Convery
-    Started: 2017-4-3
+    Initial author: Convery (tcn@ayria.se)
+    Started: 03-08-2017
     License: MIT
+    Notes:
+        Defines the base class and which interfaces
+        have been implemented so far.
 */
 
 #pragma once
-#include "../Steam.h"
+#include "../../Stdinclude.h"
 
 // A structure to mimic an actual class.
-struct __declspec(novtable) Fakeclass
+struct Fakeclass
 {
-    void *Ptr;
+    void *Vtable;
     void *Methods[70];
 
     Fakeclass()
     {
-        Ptr = &Methods;
+        Vtable = &Methods;
     }
 };
 

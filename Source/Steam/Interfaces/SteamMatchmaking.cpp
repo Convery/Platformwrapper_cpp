@@ -1,10 +1,12 @@
 /*
-    Initial author: Convery
-    Started: 2017-4-3
+    Initial author: Convery (tcn@ayria.se)
+    Started: 03-08-2017
     License: MIT
+    Notes:
+        Steam gameplay information.
 */
 
-#include "All.h"
+#include "../../Stdinclude.h"
 
 #define Createmethod(Index, Class, Function)    \
 auto Temp ##Function = &Class::Function;        \
@@ -36,63 +38,63 @@ class SteamMatchmaking
 public:
     int GetFavoriteGameCount()
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool GetFavoriteGame0(int iGame, uint32_t *pnAppID, uint32_t *pnIP, uint16_t *pnConnPort, uint32_t *punFlags, uint32_t *pRTime32LastPlayedOnServer)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     int AddFavoriteGame0(uint32_t nAppID, uint32_t nIP, uint16_t nConnPort, uint32_t unFlags, uint32_t rTime32LastPlayedOnServer)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool RemoveFavoriteGame0(uint32_t nAppID, uint32_t nIP, uint16_t nConnPort, uint32_t unFlags)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool GetFavoriteGame2(int iGame, uint32_t *pnAppID, uint32_t *pnIP, uint16_t *pnConnPort, uint16_t *pnQueryPort, uint32_t *punFlags, uint32_t *pRTime32LastPlayedOnServer)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     int AddFavoriteGame2(uint32_t nAppID, uint32_t nIP, uint16_t nConnPort, uint16_t nQueryPort, uint32_t unFlags, uint32_t rTime32LastPlayedOnServer)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool RemoveFavoriteGame2(uint32_t nAppID, uint32_t nIP, uint16_t nConnPort, uint16_t nQueryPort, uint32_t unFlags)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     void RequestLobbyList0(uint64_t ulGameID, struct MatchMakingKeyValuePair_t *pFilters, uint32_t nFilters)
     {
-        PrintFunction();
+        Printfunction();
     }
     CSteamID GetLobbyByIndex(int iLobby)
     {
-        PrintFunction();
+        Printfunction();
         return CSteamID(Steamconfig::UserID);
     }
     void CreateLobby0(uint64_t ulGameID, bool bPrivate)
     {
-        PrintFunction();
+        Printfunction();
     }
     void JoinLobby0(CSteamID steamIDLobby)
     {
-        PrintFunction();
+        Printfunction();
     }
     void LeaveLobby(CSteamID steamIDLobby)
     {
-        PrintFunction();
+        Printfunction();
     }
     bool InviteUserToLobby(CSteamID steamIDLobby, CSteamID steamIDInvitee)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     int GetNumLobbyMembers(CSteamID steamIDLobby)
@@ -105,143 +107,143 @@ public:
     }
     const char *GetLobbyData(CSteamID SteamIDLobby, const char *pchKey)
     {
-        PrintFunction();
+        Printfunction();
         return "";
     }
     void SetLobbyData0(CSteamID steamIDLobby, const char *pchKey, const char *pchValue)
     {
-        DebugPrint(va("%s - Key: \"%s\" - Value: \"%s\"", __FUNCTION__, pchKey, pchValue).c_str());
+        Debugprint(va("%s - Key: \"%s\" - Value: \"%s\"", __FUNCTION__, pchKey, pchValue));
     }
     const char *GetLobbyMemberData(CSteamID steamIDLobby, CSteamID steamIDUser, const char *pchKey)
     {
-        PrintFunction();
+        Printfunction();
         return "";
     }
     void SetLobbyMemberData(CSteamID steamIDLobby, const char *pchKey, const char *pchValue)
     {
-        DebugPrint(va("%s - Key: \"%s\" - Value: \"%s\"", __FUNCTION__, pchKey, pchValue).c_str());
+        Debugprint(va("%s - Key: \"%s\" - Value: \"%s\"", __FUNCTION__, pchKey, pchValue));
     }
     void ChangeLobbyAdmin(CSteamID steamIDLobby, CSteamID steamIDNewAdmin)
     {
-        PrintFunction();
+        Printfunction();
     }
     bool SendLobbyChatMsg(CSteamID steamIDLobby, const void *pvMsgBody, int cubMsgBody)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     int GetLobbyChatEntry(CSteamID steamIDLobby, int iChatID, CSteamID *pSteamIDUser, void *pvData, int cubData, uint32_t  *peChatEntryType)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool RequestLobbyData(CSteamID steamIDLobby)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool GetFavoriteGame1(int iGame, uint32_t *pnAppID, uint32_t *pnIP, uint16_t *pnConnPort, uint16_t *pnQueryPort, uint32_t *punFlags, uint32_t *pRTime32LastPlayedOnServer)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     int AddFavoriteGame1(uint32_t nAppID, uint32_t nIP, uint16_t nConnPort, uint16_t nQueryPort, uint32_t unFlags, uint32_t rTime32LastPlayedOnServer)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool RemoveFavoriteGame1(uint32_t nAppID, uint32_t nIP, uint16_t nConnPort, uint16_t nQueryPort, uint32_t unFlags)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     void RequestLobbyList1()
     {
-        PrintFunction();
+        Printfunction();
     }
     void CreateLobby1(bool bPrivate)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetLobbyGameServer(CSteamID steamIDLobby, uint32_t unGameServerIP, uint16_t unGameServerPort, CSteamID steamIDGameServer)
     {
-        PrintFunction();
+        Printfunction();
     }
     uint64_t RequestLobbyList2()
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     void AddRequestLobbyListFilter(const char *pchKeyToMatch, const char *pchValueToMatch)
     {
-        PrintFunction();
+        Printfunction();
     }
     void AddRequestLobbyListNumericalFilter0(const char *pchKeyToMatch, int nValueToMatch, int nComparisonType)
     {
-        PrintFunction();
+        Printfunction();
     }
     void AddRequestLobbyListSlotsAvailableFilter()
     {
-        PrintFunction();
+        Printfunction();
     }
     bool SetLobbyData1(CSteamID steamIDLobby, const char *pchKey, const char *pchValue)
     {
-        DebugPrint(va("%s - Key: \"%s\" - Value: \"%s\"", __FUNCTION__, pchKey, pchValue).c_str());
+        Debugprint(va("%s - Key: \"%s\" - Value: \"%s\"", __FUNCTION__, pchKey, pchValue));
         return true;
     }
     bool GetLobbyGameServer(CSteamID steamIDLobby, uint32_t *punGameServerIP, uint16_t *punGameServerPort, CSteamID *psteamIDGameServer)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool SetLobbyMemberLimit(CSteamID steamIDLobby, int cMaxMembers)
     {
-        PrintFunction();
+        Printfunction();
         return true;
     }
     int GetLobbyMemberLimit(CSteamID steamIDLobby)
     {
-        PrintFunction();
+        Printfunction();
         return 1;
     }
     void SetLobbyVoiceEnabled(CSteamID steamIDLobby, bool bEnabled)
     {
-        PrintFunction();
+        Printfunction();
     }
     bool RequestFriendsLobbies()
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     void AddRequestLobbyListNearValueFilter(const char *pchKeyToMatch, int nValueToBeCloseTo)
     {
-        PrintFunction();
+        Printfunction();
     }
     uint64_t CreateLobby2(uint32_t eLobbyType)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint64_t JoinLobby1(CSteamID steamIDLobby)
     {
-        PrintFunction();
+        Printfunction();
         uint64_t callID;
         LobbyEnter_t *Response;
 
         callID = SteamCallback::RegisterCall();
-        Response = static_cast<LobbyEnter_t*>(malloc(sizeof(LobbyEnter_t)));
+        Response = static_cast<LobbyEnter_t*>(std::malloc(sizeof(LobbyEnter_t)));
 
         Response->m_bLocked = false;
         Response->m_EChatRoomEnterResponse = 1;
+        Response->m_ulSteamIDLobby = steamIDLobby;
         Response->m_rgfChatPermissions = (uint32_t)0xFFFFFFFF;
-        Response->m_ulSteamIDLobby = steamIDLobby.ConvertToUint64();
 
         SteamCallback::ReturnCall(Response, sizeof(LobbyEnter_t), Response->k_iCallback, callID);
         return callID;
     }
     bool SetLobbyType(CSteamID steamIDLobby, uint32_t eLobbyType)
     {
-        PrintFunction();
+        Printfunction();
         return true;
     }
     CSteamID GetLobbyOwner(CSteamID steamIDLobby)
@@ -250,24 +252,24 @@ public:
     }
     double GetLobbyDistance(CSteamID steamIDLobby)
     {
-        PrintFunction();
+        Printfunction();
         return 0.0;
     }
     void AddRequestLobbyListStringFilter(const char *pchKeyToMatch, const char *pchValueToMatch, uint32_t eComparisonType)
     {
-        PrintFunction();
+        Printfunction();
     }
     void AddRequestLobbyListNumericalFilter1(const char *pchKeyToMatch, int nValueToMatch, uint32_t eComparisonType)
     {
-        PrintFunction();
+        Printfunction();
     }
     void AddRequestLobbyListFilterSlotsAvailable(int nSlotsAvailable)
     {
-        PrintFunction();
+        Printfunction();
     }
     uint64_t CreateLobby3(uint32_t eLobbyType, int cMaxMembers)
     {
-        PrintFunction();
+        Printfunction();
         uint64_t callID;
         LobbyCreated_t *Response;
         CSteamID ID = CSteamID(1337132, 0x40000, 1, k_EAccountTypeChat);
@@ -283,44 +285,44 @@ public:
     }
     int GetLobbyDataCount(CSteamID steamIDLobby)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool GetLobbyDataByIndex(CSteamID steamIDLobby, int iLobbyData, char *pchKey, int cchKeyBufferSize, char *pchValue, int cchValueBufferSize)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool DeleteLobbyData(CSteamID steamIDLobby, const char *pchKey)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool SetLobbyJoinable(CSteamID steamIDLobby, bool bLobbyJoinable)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool SetLobbyOwner(CSteamID steamIDLobby, CSteamID steamIDNewOwner)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     void AddRequestLobbyListDistanceFilter(uint32_t eLobbyDistanceFilter)
     {
-        PrintFunction();
+        Printfunction();
     }
     void AddRequestLobbyListResultCountFilter(int cMaxResults)
     {
-        PrintFunction();
+        Printfunction();
     }
     void AddRequestLobbyListCompatibleMembersFilter(CSteamID steamID)
     {
-        PrintFunction();
+        Printfunction();
     }
     bool SetLinkedLobby(CSteamID steamIDLobby, CSteamID steamIDLobby2)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
 };
@@ -633,4 +635,4 @@ struct Steammatchmakingloader
         Interfacemanager::Addinterface(STEAM_MATCHMAKING, "SteamMatchmaking009", new SteamMatchmaking009);
     }
 };
-static Steammatchmakingloader Interfaceloader;
+static Steammatchmakingloader Interfaceloader{};

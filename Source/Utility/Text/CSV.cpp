@@ -1,14 +1,15 @@
 /*
-    Initial author: Convery
-    Started: 2017-4-3
+    Initial author: Convery (tcn@ayria.se)
+    Started: 03-08-2017
     License: MIT
+    Notes:
+        Basic CSV IO.
 */
 
-#include "CSV.h"
-#include "Variadicstring.h"
+#include "../../Stdinclude.h"
 
 // Reimplementation of standard functionality.
-#ifdef _WIN32
+#if defined (_WIN32)
 char *strsep(char **String, const char *Delimiter)
 {
     char *Start = *String;
@@ -41,10 +42,10 @@ bool CSV::Readfile(const char *Filepath)
     if (!Filehandle) return false;
 
     // Clear the old buffer.
-    EntryBuffer.clear();
+    Entrybuffer.clear();
 
     // For each string in the file.
-    while (fgets(InputString, 1024, Filehandle))
+    while (std::fgets(InputString, 1024, Filehandle))
     {
         // If the line is empty, skip.
         if (strlen(InputString) < 2)
@@ -55,7 +56,7 @@ bool CSV::Readfile(const char *Filepath)
             continue;
 
         // Create a new row in the buffer.
-        EntryBuffer.push_back(std::vector<std::string>());
+        Entrybuffer.push_back(std::vector<std::string>());
         Linecount++;
 
         // Split the string into tokens.
@@ -72,7 +73,7 @@ bool CSV::Readfile(const char *Filepath)
                     Tempstring++;
 
                 // Append the token and a null string if it's the end of the line.
-                EntryBuffer[Linecount - 1].push_back(Tempstring);
+                Entrybuffer[Linecount - 1].push_back(Tempstring);
             }
             else
                 break;
@@ -80,11 +81,11 @@ bool CSV::Readfile(const char *Filepath)
 
         // Clear the buffer.
         InputString = Backupstring;
-        memset(InputString, 0, 1024);
+        std::memset(InputString, 0, 1024);
     }
 
     delete[] InputString;
-    fclose(Filehandle);
+    std::fclose(Filehandle);
     return true;
 }
 bool CSV::Writefile(const char *Filepath)
@@ -92,7 +93,7 @@ bool CSV::Writefile(const char *Filepath)
     FILE *Filehandle{ nullptr };
 
     // Check that we have anything to write.
-    if (EntryBuffer.size() == 0)
+    if (Entrybuffer.size() == 0)
         return false;
 
     // Create the file.
@@ -100,36 +101,36 @@ bool CSV::Writefile(const char *Filepath)
     if (!Filehandle) return false;
 
     // Create the header.
-    fputs("# This file is generated via Ayrias CSV utility.\n", Filehandle);
-    fputs("# Layout:", Filehandle);
-    for (size_t i = 0; i < EntryBuffer[0].size(); ++i)
-        fputs(va(" %c,", 0x41 + i).c_str(), Filehandle);
-    fputs("\n\n", Filehandle);
+    std::fputs("# This file is generated via Ayrias CSV utility.\n", Filehandle);
+    std::fputs("# Layout:", Filehandle);
+    for (size_t i = 0; i < Entrybuffer[0].size(); ++i)
+        std::fputs(va(" %c,", 0x41 + i).c_str(), Filehandle);
+    std::fputs("\n\n", Filehandle);
 
     // For each row.
-    for (auto Iterator = EntryBuffer.begin(); Iterator != EntryBuffer.end(); ++Iterator)
+    for (auto Iterator = Entrybuffer.begin(); Iterator != Entrybuffer.end(); ++Iterator)
     {
         for (auto Iterator2 = Iterator->begin(); Iterator2 != Iterator->end(); ++Iterator2)
-            fputs(va(" %s,", Iterator2->c_str()).c_str(), Filehandle);
-        fputs("\n", Filehandle);
+            std::fputs(va(" %s,", Iterator2->c_str()).c_str(), Filehandle);
+        std::fputs("\n", Filehandle);
     }
 
-    fclose(Filehandle);
+    std::fclose(Filehandle);
     return true;
 }
 std::string CSV::Getvalue(size_t Row, size_t Col)
 {
     // Check rowcount.
-    if (Row > EntryBuffer.size() - 1)
+    if (Row > Entrybuffer.size() - 1)
         return "";
 
     // Check colcount.
-    if (Col > EntryBuffer[Row].size() - 1)
+    if (Col > Entrybuffer[Row].size() - 1)
         return "";
 
-    return EntryBuffer[Row][Col];
+    return Entrybuffer[Row][Col];
 }
 void CSV::Addrow(std::vector<std::string> Values)
 {
-    EntryBuffer.push_back(Values);
+    Entrybuffer.push_back(Values);
 }

@@ -299,7 +299,7 @@ public:
     // Purpose: Converts steam ID to its 64-bit representation
     // Output : 64-bit representation of a Steam ID
     //-----------------------------------------------------------------------------
-    uint64_t ConvertToUint64() const
+    long long unsigned int ConvertToUint64() const
     {
         return m_steamid.m_unAll64Bits;
     }

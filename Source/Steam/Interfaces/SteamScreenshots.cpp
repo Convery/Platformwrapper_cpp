@@ -1,10 +1,12 @@
 /*
-    Initial author: Convery
-    Started: 2017-4-3
+    Initial author: Convery (tcn@ayria.se)
+    Started: 03-08-2017
     License: MIT
+    Notes:
+        Steam platform specific screenshots.
 */
 
-#include "All.h"
+#include "../../Stdinclude.h"
 
 #define Createmethod(Index, Class, Function)    \
 auto Temp ##Function = &Class::Function;        \
@@ -16,35 +18,35 @@ class SteamScreenshots
 public:
     uint32_t WriteScreenshot(void *pubRGB, uint32_t cubRGB, int nWidth, int nHeight)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint32_t AddScreenshotToLibrary(const char *pchJpegOrTGAFilename, const char *pchJpegOrTGAThumbFilename, int nWidth, int nHeight)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     void TriggerScreenshot()
     {
-        PrintFunction();
+        Printfunction();
     }
     void HookScreenshots(bool bHook)
     {
-        PrintFunction();
+        Printfunction();
     }
     bool SetLocation(uint32_t hScreenshot, const char *pchLocation)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool TagUser(uint32_t hScreenshot, CSteamID steamID)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool TagPublishedFile(uint32_t hScreenshot, uint64_t unPublishedFileId)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
 };
@@ -78,4 +80,4 @@ struct Steamscreenshotsloader
         Interfacemanager::Addinterface(STEAM_SCREENSHOTS, "SteamScreenshots002", new SteamScreenshots002);
     }
 };
-static Steamscreenshotsloader Interfaceloader;
+static Steamscreenshotsloader Interfaceloader{};

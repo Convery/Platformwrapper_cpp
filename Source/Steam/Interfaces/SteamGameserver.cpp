@@ -1,10 +1,12 @@
 /*
-    Initial author: Convery
-    Started: 2017-4-3
+    Initial author: Convery (tcn@ayria.se)
+    Started: 03-08-2017
     License: MIT
+    Notes:
+        Steam game hosting.
 */
 
-#include "All.h"
+#include "../../Stdinclude.h"
 
 #define Createmethod(Index, Class, Function)    \
 auto Temp ##Function = &Class::Function;        \
@@ -16,321 +18,321 @@ class SteamGameserver
 public:
     void LogOn0()
     {
-        PrintFunction();
+        Printfunction();
     }
     void LogOff()
     {
-        PrintFunction();
+        Printfunction();
     }
     bool BLoggedOn()
     {
-        PrintFunction();
+        Printfunction();
         return true;
     }
     void SetSpawnCount(uint32_t ucSpawn)
     {
-        PrintFunction();
+        Printfunction();
     }
     bool GetSteam2GetEncryptionKeyToSendToNewClient(void *pvEncryptionKey, uint32_t *pcbEncryptionKey, uint32_t cbMaxEncryptionKey)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool SendSteam2UserConnect(uint32_t unUserID, const void *pvRawKey, uint32_t unKeyLen, uint32_t unIPPublic, uint16_t usPort, const void *pvCookie, uint32_t cubCookie)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool SendSteam3UserConnect(CSteamID steamID, uint32_t unIPPublic, const void *pvCookie, uint32_t cubCookie)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool RemoveUserConnect(uint32_t unUserID)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool SendUserDisconnect0(CSteamID steamID, uint32_t unUserID)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool SendUserStatusResponse(CSteamID steamID, int nSecondsConnected, int nSecondsSinceLast)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool Obsolete_GSSetStatus(int32_t nAppIdServed, uint32_t unServerFlags, int cPlayers, int cPlayersMax, int cBotPlayers, int unGamePort, const char *pchServerName, const char *pchGameDir, const char *pchMapName, const char *pchVersion)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool UpdateStatus0(int cPlayers, int cPlayersMax, int cBotPlayers, const char *pchServerName, const char *pchMapName)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool BSecure()
     {
-        PrintFunction();
+        Printfunction();
         return true;
     }
     CSteamID GetSteamID()
     {
-        PrintFunction();
+        Printfunction();
         return CSteamID(Steamconfig::UserID);
     }
     bool SetServerType0(int32_t nGameAppId, uint32_t unServerFlags, uint32_t unGameIP, uint32_t unGamePort, const char *pchGameDir, const char *pchVersion)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool SetServerType1(int32_t nGameAppId, uint32_t unServerFlags, uint32_t unGameIP, uint16_t unGamePort, uint16_t usSpectatorPort, uint16_t usQueryPort, const char *pchGameDir, const char *pchVersion, bool bLANMode)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool UpdateStatus1(int cPlayers, int cPlayersMax, int cBotPlayers, const char *pchServerName, const char *pSpectatorServerName, const char *pchMapName)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool CreateUnauthenticatedUser(CSteamID *pSteamID)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool SetUserData(CSteamID steamIDUser, const char *pchPlayerName, uint32_t uScore)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     void UpdateSpectatorPort(uint16_t unSpectatorPort)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetGameType(const char *pchGameType)
     {
-        PrintFunction();
+        Printfunction();
     }
     bool SendUserConnect(uint32_t, uint32_t, uint16_t, const void *, uint32_t)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool GetUserAchievementStatus(CSteamID steamID, const char *pchAchievementName)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool SendUserConnectAndAuthenticate0(CSteamID steamIDUser, uint32_t, void *, uint32_t)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     CSteamID CreateUnauthenticatedUserConnection()
     {
-        PrintFunction();
+        Printfunction();
         return CSteamID(Steamconfig::UserID);
     }
     void SendUserDisconnect1(CSteamID steamIDUser)
     {
-        PrintFunction();
+        Printfunction();
     }
     bool BUpdateUserData(CSteamID steamIDUser, const char *pchPlayerName, uint32_t uScore)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool BSetServerType0(int32_t nGameAppId, uint32_t unServerFlags, uint32_t unGameIP, uint16_t unGamePort, uint16_t usSpectatorPort, uint16_t usQueryPort, const char *pchGameDir, const char *pchVersion, bool bLANMode)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool BGetUserAchievementStatus(CSteamID steamID, const char *pchAchievementName)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool SendUserConnectAndAuthenticate1(uint32_t unIPClient, const void *pvAuthBlob, uint32_t cubAuthBlobSize, CSteamID *pSteamIDUser)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool BSetServerType1(uint32_t unServerFlags, uint32_t unGameIP, uint16_t unGamePort, uint16_t unSpectatorPort, uint16_t usQueryPort, const char *pchGameDir, const char *pchVersion, bool bLANMode)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     void UpdateServerStatus(int cPlayers, int cPlayersMax, int cBotPlayers, const char *pchServerName, const char *pSpectatorServerName, const char *pchMapName)
     {
-        PrintFunction();
+        Printfunction();
     }
     void GetGameplayStats()
     {
-        PrintFunction();
+        Printfunction();
     }
     bool RequestUserGroupStatus(CSteamID steamIDUser, CSteamID steamIDGroup)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     uint32_t GetPublicIP()
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint32_t UserHasLicenseForApp(CSteamID steamID, uint32_t appID)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     void SetGameTags(const char *pchGameTags)
     {
-        PrintFunction();
+        Printfunction();
     }
     uint64_t GetServerReputation()
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint32_t GetAuthSessionTicket(void *pTicket, int cbMaxTicket, uint32_t *pcbTicket)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint32_t BeginAuthSession(const void *pAuthTicket, int cbAuthTicket, CSteamID steamID)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     void EndAuthSession(CSteamID steamID)
     {
-        PrintFunction();
+        Printfunction();
     }
     void CancelAuthTicket(uint32_t hAuthTicket)
     {
-        PrintFunction();
+        Printfunction();
     }
     bool InitGameServer(uint32_t unGameIP, uint16_t unGamePort, uint16_t usQueryPort, uint32_t unServerFlags, uint32_t nAppID, const char *pchVersion)
     {
-        PrintFunction();
+        Printfunction();
         return true;
     }
     void SetProduct(const char *pchProductName)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetGameDescription(const char *pchGameDescription)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetModDir(const char *pchModDir)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetDedicatedServer(bool bDedicatedServer)
     {
-        PrintFunction();
+        Printfunction();
     }
     void LogOn1(const char *pszAccountName, const char *pszPassword)
     {
-        PrintFunction();
+        Printfunction();
     }
     void LogOnAnonymous()
     {
-        PrintFunction();
+        Printfunction();
     }
     bool WasRestartRequested()
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     void SetMaxPlayerCount(int cPlayersMax)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetBotPlayerCount(int cBotPlayers)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetServerName(const char *pszServerName)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetMapName(const char *pszMapName)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetPasswordProtected(bool bPasswordProtected)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetSpectatorPort(uint16_t unSpectatorPort)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetSpectatorServerName(const char *pszSpectatorServerName)
     {
-        PrintFunction();
+        Printfunction();
     }
     void ClearAllKeyValues()
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetKeyValue(const char *pKey, const char *pValue)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetGameData(const char *pchGameData)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetRegion(const char *pchRegionName)
     {
-        PrintFunction();
+        Printfunction();
     }
     int SendUserConnectAndAuthenticate2(uint32_t unIPClient, const void *pvAuthBlob, uint32_t cubAuthBlobSize, CSteamID *pSteamIDUser)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool HandleIncomingPacket(const void *pData, int cbData, uint32_t srcIP, uint16_t srcPort)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     int GetNextOutgoingPacket(void *pOut, int cbMaxOut, uint32_t *pNetAdr, uint16_t *pPort)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     void EnableHeartbeats(bool bActive)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetHeartbeatInterval(int iHeartbeatInterval)
     {
-        PrintFunction();
+        Printfunction();
     }
     void ForceHeartbeat()
     {
-        PrintFunction();
+        Printfunction();
     }
     uint64_t AssociateWithClan(CSteamID clanID)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint64_t ComputeNewPlayerCompatibility(CSteamID steamID)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     void LogOn2(const char *pszUnk)
     {
-        PrintFunction();
+        Printfunction();
     }
 };
 #pragma endregion
@@ -663,4 +665,4 @@ struct Steamgameserverloader
         Interfacemanager::Addinterface(STEAM_GAMESERVER, "SteamGameserver012", new SteamGameserver012);
     }
 };
-static Steamgameserverloader Interfaceloader;
+static Steamgameserverloader Interfaceloader{};

@@ -1,10 +1,12 @@
 /*
-    Initial author: Convery
-    Started: 2017-4-3
+    Initial author: Convery (tcn@ayria.se)
+    Started: 03-08-2017
     License: MIT
+    Notes:
+        Steam application information.
 */
 
-#include "All.h"
+#include "../../Stdinclude.h"
 
 #define Createmethod(Index, Class, Function)    \
 auto Temp ##Function = &Class::Function;        \
@@ -16,7 +18,7 @@ class SteamApps
 public:
     int GetAppData(uint32_t nAppID, const char *pchKey, char *pchValue, int cchValueMax)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool BIsSubscribed()
@@ -25,12 +27,12 @@ public:
     }
     bool BIsLowViolence()
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool BIsCybercafe()
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool BIsVACBanned()
@@ -39,12 +41,12 @@ public:
     }
     const char *GetCurrentGameLanguage()
     {
-        PrintFunction();
+        Printfunction();
         return Steamconfig::Language;
     }
     const char *GetAvailableGameLanguages()
     {
-        PrintFunction();
+        Printfunction();
         return Steamconfig::Language;
     }
     bool BIsSubscribedApp(uint32_t nAppID)
@@ -67,17 +69,17 @@ public:
     }
     uint32_t GetEarliestPurchaseUnixTime(uint32_t nAppID)
     {
-        PrintFunction();
-        return uint32_t(Steamconfig::StartupTimestamp - 600);
+        Printfunction();
+        return uint32_t(Steamconfig::Startuptimestamp - 600);
     }
     bool BIsSubscribedFromFreeWeekend()
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     int GetDLCCount()
     {
-        PrintFunction();
+        Printfunction();
 
         /*
             TODO(Convery):
@@ -88,42 +90,42 @@ public:
     }
     bool BGetDLCDataByIndex(int iDLC, uint32_t *pAppID, bool *pbAvailable, char *pchName, int cchNameBufferSize)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     void InstallDLC(uint32_t nAppID)
     {
-        PrintFunction();
+        Printfunction();
         return;
     }
     void UninstallDLC(uint32_t nAppID)
     {
-        PrintFunction();
+        Printfunction();
         return;
     }
     void RequestAppProofOfPurchaseKey(uint32_t nAppID)
     {
-        PrintFunction();
+        Printfunction();
         return;
     }
     bool GetCurrentBetaName(char *pchName, int cchNameBufferSize)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool MarkContentCorrupt(bool bMissingFilesOnly)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     uint32_t GetInstalledDepots0(uint32_t *pvecDepots, uint32_t cMaxDepots)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint32_t GetAppInstallDir(uint32_t appID, char *pchFolder, uint32_t cchFolderBufferSize)
     {
-        PrintFunction();
+        Printfunction();
 
         /*
             TODO(Convery):
@@ -143,32 +145,32 @@ public:
     }
     uint32_t GetInstalledDepots1(uint32_t appID, uint32_t *pvecDepots, uint32_t cMaxDepots)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     CSteamID GetAppOwner()
     {
-        PrintFunction();
+        Printfunction();
         return CSteamID(Steamconfig::UserID);
     }
     const char *GetLaunchQueryParam(const char *pchKey)
     {
-        PrintFunction();
+        Printfunction();
         return "";
     }
     bool GetDlcDownloadProgress(uint32_t nAppID, uint64_t *punBytesDownloaded, uint64_t *punBytesTotal)
     {
-        PrintFunction();
+        Printfunction();
         return true;
     }
     int GetAppBuildId()
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint64_t RegisterActivationCode(const char *pchActivationCode)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
 };
@@ -306,4 +308,4 @@ struct Steamappsloader
         Interfacemanager::Addinterface(STEAM_APPS, "SteamApps007", new SteamApps007);
     }
 };
-static Steamappsloader Interfaceloader;
+static Steamappsloader Interfaceloader{};

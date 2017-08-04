@@ -1,11 +1,12 @@
 /*
-    Initial author: Convery
-    Started: 2017-4-3
+    Initial author: Convery (tcn@ayria.se)
+    Started: 03-08-2017
     License: MIT
+    Notes:
+        Steam async calls.
 */
 
-#include "Steam.h"
-#include "Steamcallbacks.h"
+#include "../Stdinclude.h"
 
 std::unordered_map<uint64_t, bool> SteamCallback::_Calls;
 std::unordered_map<uint64_t, CallbackBase *> SteamCallback::_ResultHandlers;
@@ -16,7 +17,7 @@ std::mutex Threadsafe;
 
 void SteamCallback::RegisterCallback(CallbackBase *handler, int32_t callback)
 {
-    DebugPrint(va("%s <%s>", __FUNCTION__, GetCallbackName(callback)).c_str());
+    Debugprint(va("%s <%s>", __FUNCTION__, GetCallbackName(callback)));
 
     Threadsafe.lock();
     {
@@ -27,7 +28,7 @@ void SteamCallback::RegisterCallback(CallbackBase *handler, int32_t callback)
 }
 void SteamCallback::RegisterCallResult(uint64_t call, CallbackBase *result)
 {
-    DebugPrint(va("%s <%s> (%lli)", __FUNCTION__, GetCallbackName(result->GetICallback()), call).c_str());
+    Debugprint(va("%s <%s> (%lli)", __FUNCTION__, GetCallbackName(result->GetICallback()), call));
 
     Threadsafe.lock();
     {
@@ -37,11 +38,11 @@ void SteamCallback::RegisterCallResult(uint64_t call, CallbackBase *result)
 }
 void SteamCallback::UnregisterCallback(CallbackBase *handler, int32_t callback)
 {
-    DebugPrint(va("%s <%s>", __FUNCTION__, GetCallbackName(handler->GetICallback())).c_str());
+    Debugprint(va("%s <%s>", __FUNCTION__, GetCallbackName(handler->GetICallback())));
 }
 void SteamCallback::UnregisterCallResult(uint64_t call, CallbackBase *result)
 {
-    DebugPrint(va("%s <%lli>", __FUNCTION__, call).c_str());
+    Debugprint(va("%s <%lli>", __FUNCTION__, call));
 
     Threadsafe.lock();
     {
@@ -55,7 +56,7 @@ uint64_t SteamCallback::RegisterCall()
     Threadsafe.lock();
     {
         _Calls[++_CallID] = false;
-        DebugPrint(va("%s <%i>", __FUNCTION__, _CallID).c_str());
+        Debugprint(va("%s <%i>", __FUNCTION__, _CallID));
     }
     Threadsafe.unlock();
     return _CallID;
@@ -72,7 +73,7 @@ void SteamCallback::ReturnCall(void* data, int32_t size, int32_t type, uint64_t 
         result.Size = size;
         result.Type = type;
 
-        DebugPrint(va("%s <%lli, %s>", __FUNCTION__, call, GetCallbackName(type)).c_str());
+        Debugprint(va("%s <%lli, %s>", __FUNCTION__, call, GetCallbackName(type)));
         _Results.push_back(result);
     }
     Threadsafe.unlock();
@@ -130,7 +131,7 @@ const char *SteamCallback::GetCallbackName(int32_t ID)
     if (!Initialized) BuildCallbackMap();
     Initialized = true;
 
-#ifndef STEAM_PRINTCALLBACKS
+#if !defined (STEAM_PRINTCALLBACKS)
     ID = 0;
 #endif
 
@@ -140,7 +141,7 @@ void BuildCallbackMap()
 {
     CallbackNames[0] = "";
 
-#ifdef STEAM_PRINTCALLBACKS
+#if defined (STEAM_PRINTCALLBACKS)
 
     CallbackNames[101] = "SteamServersConnected";
     CallbackNames[102] = "SteamServerConnectFailure";
@@ -253,7 +254,7 @@ void BuildCallbackMap()
         Add the billions of callbacks.
         I do not think this is a great use of our time.
         As such, we request that developers add the ones used
-        by the game they are developing for and open a pull.
+        by the game they are developing for and open a pull request.
     */
 #endif
 }

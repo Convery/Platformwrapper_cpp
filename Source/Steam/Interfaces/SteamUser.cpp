@@ -1,11 +1,12 @@
 /*
-    Initial author: Convery
-    Started: 2017-4-3
+    Initial author: Convery (tcn@ayria.se)
+    Started: 03-08-2017
     License: MIT
+    Notes:
+        Steam profile information.
 */
 
-#include "All.h"
-#include <algorithm>
+#include "../../Stdinclude.h"
 
 #define Createmethod(Index, Class, Function)    \
 auto Temp ##Function = &Class::Function;        \
@@ -27,17 +28,17 @@ class SteamUser
 public:
     uint32_t GetHSteamUser()
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     void LogOn(CSteamID steamID)
     {
-        PrintFunction();
+        Printfunction();
         return;
     }
     void LogOff()
     {
-        PrintFunction();
+        Printfunction();
         return;
     }
     bool BLoggedOn()
@@ -46,12 +47,12 @@ public:
     }
     uint32_t GetLogonState()
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool BConnected()
     {
-        PrintFunction();
+        Printfunction();
         return true;
     }
     CSteamID GetSteamID()
@@ -61,276 +62,276 @@ public:
     }
     bool IsVACBanned(uint32_t eVACBan)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool RequireShowVACBannedMessage(uint32_t eVACBan)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     void AcknowledgeVACBanning(uint32_t eVACBan)
     {
-        PrintFunction();
+        Printfunction();
     }
     int NClientGameIDAdd(int nGameID)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     void RemoveClientGame(int nClientGameID)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetClientGameServer(int nClientGameID, uint32_t unIPServer, uint16_t usPortServer)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetSteam2Ticket(uint8_t *pubTicket, int cubTicket)
     {
-        PrintFunction();
+        Printfunction();
     }
     void AddServerNetAddress(uint32_t unIP, uint16_t unPort)
     {
-        PrintFunction();
+        Printfunction();
     }
     bool SetEmail(const char *pchEmail)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     int GetSteamGameConnectToken(void *pBlob, int cbMaxBlob)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool SetRegistryString(uint32_t eRegistrySubTree, const char *pchKey, const char *pchValue)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool GetRegistryString(uint32_t eRegistrySubTree, const char *pchKey, char *pchValue, int cbValue)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool SetRegistryInt(uint32_t eRegistrySubTree, const char *pchKey, int iValue)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool GetRegistryInt(uint32_t eRegistrySubTree, const char *pchKey, int *piValue)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     int InitiateGameConnection0(void *pBlob, int cbMaxBlob, CSteamID steamID, int nGameAppID, uint32_t unIPServer, uint16_t usPortServer, bool bSecure)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     void TerminateGameConnection(uint32_t unIPServer, uint16_t usPortServer)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetSelfAsPrimaryChatDestination()
     {
-        PrintFunction();
+        Printfunction();
     }
     bool IsPrimaryChatDestination()
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     void RequestLegacyCDKey(uint32_t iAppID)
     {
-        PrintFunction();
+        Printfunction();
     }
     int InitiateGameConnection1(void *pBlob, int cbMaxBlob, CSteamID steamID, CGameID nGameAppID, uint32_t unIPServer, uint16_t usPortServer, bool bSecure)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool SendGuestPassByEmail(const char *pchEmailAccount, uint64_t gidGuestPassID, bool bResending)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool SendGuestPassByAccountID(uint32_t uAccountID, uint64_t gidGuestPassID, bool bResending)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool AckGuestPass(const char *pchGuestPassCode)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool RedeemGuestPass(const char *pchGuestPassCode)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     uint32_t GetGuestPassToGiveCount()
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint32_t GetGuestPassToRedeemCount()
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint32_t GetGuestPassLastUpdateTime()
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool GetGuestPassToGiveInfo(uint32_t nPassIndex, uint64_t *pgidGuestPassID, int* pnPackageID, uint32_t* pRTime32Created, uint32_t* pRTime32Expiration, uint32_t* pRTime32Sent, uint32_t* pRTime32Redeemed, char * pchRecipientAddress, int cRecipientAddressSize)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool GetGuestPassToRedeemInfo(uint32_t nPassIndex, uint64_t *pgidGuestPassID, int* pnPackageID, uint32_t* pRTime32Created, uint32_t* pRTime32Expiration, uint32_t* pRTime32Sent, uint32_t* pRTime32Redeemed)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool GetGuestPassToRedeemSenderAddress(uint32_t nPassIndex, char* pchSenderAddress, int cSenderAddressSize)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     bool GetGuestPassToRedeemSenderName(uint32_t nPassIndex, char* pchSenderName, int cSenderNameSize)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     void AcknowledgeMessageByGID(const char *pchMessageGID)
     {
-        PrintFunction();
+        Printfunction();
     }
     bool SetLanguage(const char *pchLanguage)
     {
-        PrintFunction();
-        return !strcpy_s(Steamconfig::Language, 31, pchLanguage);
+        Printfunction();
+        return !!std::strcpy(Steamconfig::Language, pchLanguage);
     }
     void TrackAppUsageEvent0(CGameID gameID, uint32_t eAppUsageEvent, const char *pchExtraInfo = "")
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetAccountName(const char* pchAccountName)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetPassword(const char* pchPassword)
     {
-        PrintFunction();
+        Printfunction();
     }
     void SetAccountCreationTime(uint32_t rtime32Time)
     {
-        PrintFunction();
+        Printfunction();
     }
     int InitiateGameConnection2(void *pBlob, int cbMaxBlob, CSteamID steamID, CGameID nGameAppID, uint32_t unIPServer, uint16_t usPortServer, bool bSecure, void *pvSteam2GetEncryptionKey, int cbSteam2GetEncryptionKey)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     void RefreshSteam2Login()
     {
-        PrintFunction();
+        Printfunction();
     }
     int InitiateGameConnection3(void *pBlob, int cbMaxBlob, CSteamID steamID, CGameID gameID, uint32_t unIPServer, uint16_t usPortServer, bool bSecure, void *pvSteam2GetEncryptionKey, int cbSteam2GetEncryptionKey)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     int InitiateGameConnection4(void *pBlob, int cbMaxBlob, CSteamID steamID, CGameID gameID, uint32_t unIPServer, uint16_t usPortServer, bool bSecure)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     int InitiateGameConnection5(void *pBlob, int cbMaxBlob, CSteamID steamID, uint32_t unIPServer, uint16_t usPortServer, bool bSecure)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     int InitiateGameConnection6(void *pAuthBlob, int cbMaxAuthBlob, CSteamID steamIDGameServer, uint32_t unIPServer, uint16_t usPortServer, bool bSecure)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool GetUserDataFolder(char *pchBuffer, int cubBuffer)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     void StartVoiceRecording()
     {
-        PrintFunction();
+        Printfunction();
     }
     void StopVoiceRecording()
     {
-        PrintFunction();
+        Printfunction();
     }
     uint32_t GetCompressedVoice(void *pDestBuffer, uint32_t cbDestBufferSize, uint32_t *nBytesWritten)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint32_t DecompressVoice0(void *pCompressed, uint32_t cbCompressed, void *pDestBuffer, uint32_t cbDestBufferSize, uint32_t *nBytesWritten)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint32_t GetAuthSessionTicket(void *pTicket, int cbMaxTicket, uint32_t *pcbTicket)
     {
-        PrintFunction();
+        Printfunction();
 
         // k_HAuthTicketInvalid
         return 0;
     }
     uint32_t BeginAuthSession(const void *pAuthTicket, int cbAuthTicket, CSteamID steamID)
     {
-        DebugPrint(va("%s for 0x%llx", __func__, steamID.ConvertToUint64()).c_str());
+        Debugprint(va("%s for 0x%llx", __func__, steamID.ConvertToUint64()));
 
         return 0;
     }
     void EndAuthSession(CSteamID steamID)
     {
-        PrintFunction();
+        Printfunction();
     }
     void CancelAuthTicket(uint32_t hAuthTicket)
     {
-        PrintFunction();
+        Printfunction();
     }
     uint32_t UserHasLicenseForApp(CSteamID steamID, uint32_t appID)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint32_t GetAvailableVoice0(uint32_t *pcbCompressed, uint32_t *pcbUncompressed)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint32_t GetVoice0(bool bWantCompressed, void *pDestBuffer, uint32_t cbDestBufferSize, uint32_t *nBytesWritten, bool bWantUncompressed, void *pUncompressedDestBuffer, uint32_t cbUncompressedDestBufferSize, uint32_t *nUncompressBytesWritten)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool BIsBehindNAT()
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     void AdvertiseGame(CSteamID steamIDGameServer, uint32_t unIPServer, uint16_t usPortServer)
     {
-        PrintFunction();
+        Printfunction();
     }
     uint64_t RequestEncryptedAppTicket(void *pDataToInclude, unsigned int cbDataToInclude)
     {
-        PrintFunction();
+        Printfunction();
         uint64_t AsyncCall;
         EncryptedAppTicketResponse_t *Response;
         unsigned int Ticketsize = sizeof(Ticketdata);
@@ -357,24 +358,24 @@ public:
     }
     bool GetEncryptedAppTicket(void *pTicket, unsigned int cbMaxTicket, uint32_t *pcbTicket)
     {
-        PrintFunction();
+        Printfunction();
         memcpy(pTicket, Ticketdata, std::min(cbMaxTicket, (unsigned int)sizeof(Ticketdata)));
         *pcbTicket = sizeof(Ticketdata);
         return true;
     }
     uint32_t DecompressVoice1(void *pCompressed, uint32_t cbCompressed, void *pDestBuffer, uint32_t cbDestBufferSize, uint32_t *nBytesWritten, uint32_t nSamplesPerSec)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint32_t GetVoiceOptimalSampleRate()
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint32_t GetAvailableVoice1(uint32_t *pcbCompressed, uint32_t *pcbUncompressed, uint32_t nUncompressedVoiceDesiredSampleRate)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     uint32_t GetVoice1(bool bWantCompressed, void *pDestBuffer, uint32_t cbDestBufferSize, uint32_t *nBytesWritten, bool bWantUncompressed, void *pUncompressedDestBuffer, uint32_t cbUncompressedDestBufferSize, uint32_t *nUncompressBytesWritten, uint32_t nUncompressedVoiceDesiredSampleRate)
@@ -384,26 +385,26 @@ public:
     }
     uint32_t DecompressVoice2(const void *pCompressed, uint32_t cbCompressed, void *pDestBuffer, uint32_t cbDestBufferSize, uint32_t *nBytesWritten, uint32_t nDesiredSampleRate)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     int GetGameBadgeLevel(int nSeries, bool bFoil)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     int GetPlayerSteamLevel()
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     void TrackAppUsageEvent1(CGameID gameID, int eAppUsageEvent, const char *pchExtraInfo = "")
     {
-        PrintFunction();
+        Printfunction();
     }
     uint64_t RequestStoreAuthURL(const char *pchRedirectURL)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
 };
@@ -760,4 +761,4 @@ struct Steamuserloader
         Interfacemanager::Addinterface(STEAM_USER, "SteamUser018", new SteamUser018);
     }
 };
-static Steamuserloader Interfaceloader;
+static Steamuserloader Interfaceloader{};

@@ -1,16 +1,18 @@
 /*
-    Initial author: Convery
-    Started: 2017-4-3
+    Initial author: Convery (tcn@ayria.se)
+    Started: 03-08-2017
     License: MIT
+    Notes:
+        Platform specific utilities for steam.
 */
 
-#include "All.h"
+#include "../../Stdinclude.h"
 
-#ifdef _WIN32
+#if defined (_WIN32)
 #include <Windows.h>
-#endif
 
 constexpr const char *Gameoverlay = sizeof(void *) == 8 ? "gameoverlayrenderer64.dll" : "gameoverlayrenderer.dll";
+#endif
 
 #define Createmethod(Index, Class, Function)    \
 auto Temp ##Function = &Class::Function;        \
@@ -22,61 +24,61 @@ class SteamUtils
 public:
     uint32_t GetSecondsSinceAppActive()
     {
-        PrintFunction();
-        return uint32_t(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() - Steamconfig::StartupTimestamp);
+        Printfunction();
+        return uint32_t(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() - Steamconfig::Startuptimestamp);
     }
     uint32_t GetSecondsSinceComputerActive()
     {
-        PrintFunction();
-        return uint32_t(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() - Steamconfig::StartupTimestamp + 600);
+        Printfunction();
+        return uint32_t(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() - Steamconfig::Startuptimestamp + 600);
     }
     uint32_t GetConnectedUniverse()
     {
-        PrintFunction();
+        Printfunction();
 
         // k_EUniversePublic
         return 1;
     }
     uint32_t GetServerRealTime()
     {
-        PrintFunction();
+        Printfunction();
         return uint32_t(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count());
     }
 
     const char *GetIPCountry()
     {
-        PrintFunction();
+        Printfunction();
         /*
-        TODO(Convery):
-        Connect to the client dll and ask.
+            TODO(Convery):
+            Connect to the client dll and ask.
         */
 
         return "SE";
     }
     bool GetImageSize(int iImage, uint32_t *pnWidth, uint32_t *pnHeight)
     {
-        PrintFunction();
+        Printfunction();
 
         // We do not handle any image requests.
         return false;
     }
     bool GetImageRGBA(int iImage, uint8_t *pubDest, int nDestBufferSize)
     {
-        PrintFunction();
+        Printfunction();
 
         // We do not handle any image requests.
         return false;
     }
     bool GetCSERIPPort(uint32_t *unIP, uint16_t *usPort)
     {
-        PrintFunction();
+        Printfunction();
 
         // As we don't connect to steam directly, this is not needed.
         return false;
     }
     uint8_t GetCurrentBatteryPower()
     {
-        PrintFunction();
+        Printfunction();
 
         // We are always on AC power.
         return 255;
@@ -84,12 +86,12 @@ public:
 
     uint32_t GetAppID()
     {
-        PrintFunction();
+        Printfunction();
         return Steamconfig::ApplicationID;
     }
     void SetOverlayNotificationPosition(uint32_t eNotificationPosition)
     {
-#ifdef _WIN32
+        #if defined (_WIN32)
         HMODULE Library = GetModuleHandleA(Gameoverlay);
         if (Library)
         {
@@ -100,7 +102,7 @@ public:
                 ((void(*)(int32_t))_SetNotificationPosition)(eNotificationPosition);
             }
         }
-#endif
+        #endif
     }
     bool IsAPICallCompleted(uint64_t hSteamAPICall, bool *pbFailed)
     {
@@ -112,7 +114,7 @@ public:
     }
     bool GetAPICallResult(uint64_t hSteamAPICall, void *pCallback, int cubCallback, int iCallbackExpected, bool *pbFailed)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     void RunFrame()
@@ -121,19 +123,19 @@ public:
     }
     uint32_t GetIPCCallCount()
     {
-        PrintFunction();
+        Printfunction();
 
         // Debug information.
         return 100;
     }
     void SetWarningMessageHook(size_t pFunction)
     {
-        PrintFunction();
+        Printfunction();
     }
 
     bool IsOverlayEnabled()
     {
-#ifdef _WIN32
+        #if defined (_WIN32)
         HMODULE Library = GetModuleHandleA(Gameoverlay);
         if (Library)
         {
@@ -144,13 +146,13 @@ public:
                 return ((bool(*)())_IsOverlayEnabled)();
             }
         }
-#endif
+        #endif
         return false;
     }
 
     bool BOverlayNeedsPresent()
     {
-#ifdef _WIN32
+        #if defined (_WIN32)
         HMODULE Library = GetModuleHandleA(Gameoverlay);
         if (Library)
         {
@@ -161,38 +163,38 @@ public:
                 return ((bool(*)())_BOverlayNeedsPresent)();
             }
         }
-#endif
+        #endif
         return false;
     }
     uint64_t CheckFileSignature(const char *szFileName)
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool ShowGamepadTextInput(uint32_t eInputMode, uint32_t eInputLineMode, const char *szText, uint32_t uMaxLength)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
     uint32_t GetEnteredGamepadTextLength()
     {
-        PrintFunction();
+        Printfunction();
         return 0;
     }
     bool GetEnteredGamepadTextInput(char *pchValue, uint32_t cchValueMax)
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
 
     const char *GetSteamUILanguage()
     {
-        PrintFunction();
+        Printfunction();
         return Steamconfig::Language;
     }
     bool IsSteamRunningInVR()
     {
-        PrintFunction();
+        Printfunction();
         return false;
     }
 };
@@ -354,4 +356,4 @@ struct Steamutilitiesloader
         Interfacemanager::Addinterface(STEAM_UTILS, "SteamUtilities007", new SteamUtilities007);
     }
 };
-static Steamutilitiesloader Interfaceloader;
+static Steamutilitiesloader Interfaceloader{};

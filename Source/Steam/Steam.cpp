@@ -1,19 +1,21 @@
 /*
-    Initial author: Convery
-    Started: 2017-4-3
+    Initial author: Convery (tcn@ayria.se)
+    Started: 03-08-2017
     License: MIT
+    Notes:
+        Steam exports implementation.
 */
 
-#include "Steam.h"
+#include "../Stdinclude.h"
 
 // Registry and environment.
-#ifdef _WIN32
+#if defined(_WIN32)
 #include <Windows.h>
-#endif
 
 // Steam components.
 constexpr const char *Gameoverlay = sizeof(void *) == 8 ? "gameoverlayrenderer64.dll" : "gameoverlayrenderer.dll";
 constexpr const char *Steamregistry = sizeof(void *) == 8 ? "Software\\Wow6432Node\\Valve\\Steam" : "Software\\Valve\\Steam";
+#endif
 
 extern "C"
 {
@@ -138,38 +140,50 @@ extern "C"
     // Initialization and shutdown.
     EXPORT_ATTR bool SteamAPI_Init()
     {
-        PrintFunction();
+        Printfunction();
 
         // Check if we are forcing offline mode.
-        for (int i = 0; i < __argc && !Steamconfig::Offline; ++i)
-            Steamconfig::Offline = nullptr != std::strstr(__argv[i], "-AYRIA_OFFLINE");
+        #if defined (_WIN32)
+        auto Commandline = GetCommandLineA();
+        Steamconfig::Offline = nullptr != std::strstr(Commandline, "-AYRIA_OFFLINE");
+        #else
+        {
+            std::FILE *Filehandle = std::fopen("/proc/self/cmdline", "r");
+            if(Filehandle)
+            {
+                char Buffer[1024]{};
+                std::fgets(Buffer, 1024, Filehandle);
+
+                Steamconfig::Offline = nullptr != std::strstr(Buffer, "-AYRIA_OFFLINE");
+                std::fclose(Filehandle);
+            }
+        }
+        #endif
 
         // Read the application ID from a file if the host
         // is too old to use RestartApp or a dev build.
         if (Steamconfig::ApplicationID == 0)
         {
-            FILE *Filehandle;
-
             // Open the configuration file.
-            Filehandle = fopen("steam_appid.txt", "r");
-            if (!Filehandle) Filehandle = fopen("ayria_appid.txt", "r");
+            std::FILE *Filehandle = std::fopen("steam_appid.txt", "r");
+            if (!Filehandle) Filehandle = std::fopen("ayria_appid.txt", "r");
 
             // Read the uint32.
             if (Filehandle)
             {
-                fscanf_s(Filehandle, "%u", &Steamconfig::ApplicationID);
-                fclose(Filehandle);
+                std::fscanf(Filehandle, "%u", &Steamconfig::ApplicationID);
+                std::fclose(Filehandle);
             }
         }
 
         // If no application ID is provided, we can't do much.
         if (Steamconfig::ApplicationID == 0)
         {
-            InfoPrint("No application ID has been provided to the wrapper.");
-            InfoPrint("This will probably cause errors. Contact the developer.");
+            Infoprint("No application ID has been provided to the wrapper.");
+            Infoprint("This will probably cause errors. Contact the developer.");
         }
 
-#ifdef _WIN32
+#if defined(_WIN32)
         // Set the environment variable for games that use it.
         SetEnvironmentVariableA("SteamAppId", va("%lu", Steamconfig::ApplicationID).c_str());
         SetEnvironmentVariableA("SteamGameId", va("%llu", Steamconfig::ApplicationID & 0xFFFFFF).c_str());
@@ -215,7 +229,16 @@ extern "C"
         // Load the overlay.
         SetDllDirectoryA(Steamconfig::Path);
         LoadLibraryA(va("%s\\%s", Steamconfig::Path, Gameoverlay).c_str());
-#endif
+
+        #else
+
+        /*
+            TODO(Convery):
+            Investigate and set any environment variables and
+            gameoverlay thing the *nix client uses.
+        */
+
+        #endif
 
         // Initialize the interface manager.
         Interfacemanager::Initialize();
@@ -242,7 +265,7 @@ extern "C"
         Steamconfig::ApplicationID = unOwnAppID;
 
         // Usage information.
-        InfoPrint(va("Starting steamapp %i", Steamconfig::ApplicationID).c_str());
+        Infoprint(va("Starting steamapp %i.", Steamconfig::ApplicationID));
         return false;
     }
 
@@ -294,10 +317,10 @@ extern "C"
         Steamconfig::Server = true;
 
         // Debug information about the servermode.
-        DebugPrint("Server startup:");
-        DebugPrint(va("IP: %u.%u.%u.%u", ((uint8_t *)&unIP)[0], ((uint8_t *)&unIP)[1], ((uint8_t *)&unIP)[2], ((uint8_t *)&unIP)[3]).c_str());
-        DebugPrint(va("Query port: %u", usQueryPort).c_str());
-        DebugPrint(va("Game port: %u", usGamePort).c_str());
+        Debugprint("Server startup:");
+        Debugprint(va("IP: %u.%u.%u.%u", ((uint8_t *)&unIP)[0], ((uint8_t *)&unIP)[1], ((uint8_t *)&unIP)[2], ((uint8_t *)&unIP)[3]));
+        Debugprint(va("Query port: %u", usQueryPort));
+        Debugprint(va("Game port: %u", usGamePort));
 
         return true;
     }
