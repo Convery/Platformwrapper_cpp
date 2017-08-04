@@ -9,11 +9,10 @@
 #pragma once
 #include "../../Stdinclude.h"
 
-class CSV
+struct CSV
 {
-    std::vector<std::vector<std::string>> EntryBuffer;
+    std::vector<std::vector<std::string>> Entrybuffer;
 
-public:
     bool Readfile(const char *Filepath);
     bool Writefile(const char *Filepath);
     std::string Getvalue(size_t Row, size_t Col);

@@ -58,23 +58,111 @@ public:
     }
     bool GetStat1(CGameID nGameID, const char *pchName, int32_t *pData)
     {
-        Printfunction();
+        Infoprint(va("Get stat \"%s\"..", pchName));
+
+        CSV CSVManager;
+        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_userstats.csv"))
+        {
+            for(size_t i = 0; ; ++i)
+            {
+                auto Name = CSVManager.Getvalue(i, 0);
+
+                // Length check.
+                if(0 == Name.size()) break;
+
+                // Read the value.
+                if(0 == std::strcmp(Name.c_str(), pchName))
+                {
+                    *pData = std::atoi(CSVManager.Getvalue(i, 1).c_str());
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
     bool GetStat2(CGameID nGameID, const char *pchName, float *pData)
     {
-        Printfunction();
+        Infoprint(va("Get stat \"%s\"..", pchName));
+
+        CSV CSVManager;
+        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_userstats.csv"))
+        {
+            for(size_t i = 0; ; ++i)
+            {
+                auto Name = CSVManager.Getvalue(i, 0);
+
+                // Length check.
+                if(0 == Name.size()) break;
+
+                // Read the value.
+                if(0 == std::strcmp(Name.c_str(), pchName))
+                {
+                    *pData = std::atof(CSVManager.Getvalue(i, 1).c_str());
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
     bool SetStat1(CGameID nGameID, const char *pchName, int32_t nData)
     {
-        Printfunction();
-        return false;
+        Infoprint(va("Set stat \"%s\" = %d", pchName, nData));
+
+        CSV CSVManager;
+        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_userstats.csv"))
+        {
+            for(size_t i = 0; ; ++i)
+            {
+                auto Name = CSVManager.Getvalue(i, 0);
+
+                // Length check.
+                if(0 == Name.size()) break;
+
+                // Overwrite the entry.
+                if(0 == std::strcmp(Name.c_str(), pchName))
+                {
+                    CSVManager.Entrybuffer[i].clear();
+                    CSVManager.Entrybuffer[i].push_back(pchName);
+                    CSVManager.Entrybuffer[i].push_back(va("%d", nData));
+                    return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_userstats.csv");
+                }
+            }
+        }
+
+        // Add a new entry.
+        CSVManager.Addrow({pchName, va("%d", nData)});
+        return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_userstats.csv");
     }
     bool SetStat2(CGameID nGameID, const char *pchName, float fData)
     {
-        Printfunction();
-        return false;
+        Infoprint(va("Set stat \"%s\" = %f", pchName, fData));
+
+        CSV CSVManager;
+        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_userstats.csv"))
+        {
+            for(size_t i = 0; ; ++i)
+            {
+                auto Name = CSVManager.Getvalue(i, 0);
+
+                // Length check.
+                if(0 == Name.size()) break;
+
+                // Overwrite the entry.
+                if(0 == std::strcmp(Name.c_str(), pchName))
+                {
+                    CSVManager.Entrybuffer[i].clear();
+                    CSVManager.Entrybuffer[i].push_back(pchName);
+                    CSVManager.Entrybuffer[i].push_back(va("%f", fData));
+                    return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_userstats.csv");
+                }
+            }
+        }
+
+        // Add a new entry.
+        CSVManager.Addrow({pchName, va("%f", fData)});
+        return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_userstats.csv");
     }
     bool UpdateAvgRateStat0(CGameID nGameID, const char *pchName, float, double dSessionLength)
     {
@@ -141,25 +229,113 @@ public:
         Printfunction();
         return true;
     }
-    bool GetStat(const char *pchName, int32_t *pData)
+    bool GetStat3(const char *pchName, int32_t *pData)
     {
-        Printfunction();
+        Infoprint(va("Get stat \"%s\"..", pchName));
+
+        CSV CSVManager;
+        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_userstats.csv"))
+        {
+            for(size_t i = 0; ; ++i)
+            {
+                auto Name = CSVManager.Getvalue(i, 0);
+
+                // Length check.
+                if(0 == Name.size()) break;
+
+                // Read the value.
+                if(0 == std::strcmp(Name.c_str(), pchName))
+                {
+                    *pData = std::atoi(CSVManager.Getvalue(i, 1).c_str());
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
-    bool GetStat(const char *pchName, float *pData)
+    bool GetStat4(const char *pchName, float *pData)
     {
-        Printfunction();
+        Infoprint(va("Get stat \"%s\"..", pchName));
+
+        CSV CSVManager;
+        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_userstats.csv"))
+        {
+            for(size_t i = 0; ; ++i)
+            {
+                auto Name = CSVManager.Getvalue(i, 0);
+
+                // Length check.
+                if(0 == Name.size()) break;
+
+                // Read the value.
+                if(0 == std::strcmp(Name.c_str(), pchName))
+                {
+                    *pData = std::atof(CSVManager.Getvalue(i, 1).c_str());
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
-    bool SetStat(const char *pchName, int32_t nData)
+    bool SetStat3(const char *pchName, int32_t nData)
     {
-        Printfunction();
-        return false;
+        Infoprint(va("Set stat \"%s\" = %d", pchName, nData));
+
+        CSV CSVManager;
+        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_userstats.csv"))
+        {
+            for(size_t i = 0; ; ++i)
+            {
+                auto Name = CSVManager.Getvalue(i, 0);
+
+                // Length check.
+                if(0 == Name.size()) break;
+
+                // Overwrite the entry.
+                if(0 == std::strcmp(Name.c_str(), pchName))
+                {
+                    CSVManager.Entrybuffer[i].clear();
+                    CSVManager.Entrybuffer[i].push_back(pchName);
+                    CSVManager.Entrybuffer[i].push_back(va("%d", nData));
+                    return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_userstats.csv");
+                }
+            }
+        }
+
+        // Add a new entry.
+        CSVManager.Addrow({pchName, va("%d", nData)});
+        return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_userstats.csv");
     }
-    bool SetStat(const char *pchName, float fData)
+    bool SetStat4(const char *pchName, float fData)
     {
-        Printfunction();
-        return false;
+        Infoprint(va("Set stat \"%s\" = %f", pchName, fData));
+
+        CSV CSVManager;
+        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_userstats.csv"))
+        {
+            for(size_t i = 0; ; ++i)
+            {
+                auto Name = CSVManager.Getvalue(i, 0);
+
+                // Length check.
+                if(0 == Name.size()) break;
+
+                // Overwrite the entry.
+                if(0 == std::strcmp(Name.c_str(), pchName))
+                {
+                    CSVManager.Entrybuffer[i].clear();
+                    CSVManager.Entrybuffer[i].push_back(pchName);
+                    CSVManager.Entrybuffer[i].push_back(va("%f", fData));
+                    return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_userstats.csv");
+                }
+            }
+        }
+
+        // Add a new entry.
+        CSVManager.Addrow({pchName, va("%f", fData)});
+        return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_userstats.csv");
     }
     bool UpdateAvgRateStat2(const char *pchName, float, double dSessionLength)
     {
@@ -168,13 +344,59 @@ public:
     }
     bool GetAchievement1(const char *pchName, bool *pbAchieved)
     {
-        Printfunction();
+        Infoprint(va("Get achievement \"%s\"..", pchName));
+
+        CSV CSVManager;
+        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_achievements.csv"))
+        {
+            for(size_t i = 0; ; ++i)
+            {
+                auto Name = CSVManager.Getvalue(i, 0);
+
+                // Length check.
+                if(0 == Name.size()) break;
+
+                // Set progrss to max.
+                if(0 == std::strcmp(Name.c_str(), pchName))
+                {
+                    *pbAchieved = 0 == std::strcmp(CSVManager.Getvalue(i, 1).c_str(), CSVManager.Getvalue(i, 2).c_str());
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
     bool SetAchievement1(const char *pchName)
     {
-        Printfunction();
-        return false;
+        Infoprint(va("Got achievement \"%s\"!", pchName));
+
+        CSV CSVManager;
+        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_achievements.csv"))
+        {
+            for(size_t i = 0; ; ++i)
+            {
+                auto Name = CSVManager.Getvalue(i, 0);
+
+                // Length check.
+                if(0 == Name.size()) break;
+
+                // Set progrss to max.
+                if(0 == std::strcmp(Name.c_str(), pchName))
+                {
+                    CSVManager.Entrybuffer[i].clear();
+                    CSVManager.Entrybuffer[i].push_back(pchName);
+                    CSVManager.Entrybuffer[i].push_back("100");
+                    CSVManager.Entrybuffer[i].push_back("100");
+
+                    return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_achievements.csv");
+                }
+            }
+        }
+
+        // Add a new row.
+        CSVManager.Addrow({pchName, "100", "100"});
+        return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_achievements.csv");
     }
     bool ClearAchievement1(const char *pchName)
     {
@@ -198,8 +420,40 @@ public:
     }
     bool IndicateAchievementProgress1(const char *pchName, uint32_t nCurProgress, uint32_t nMaxProgress)
     {
-        Printfunction();
-        return false;
+        /*
+            TODO(Convery):
+            Trigger a steam-like toaster popup if
+            we have an overlay active.
+        */
+
+        Infoprint(va("Achievement progress on \"%s\": %f%%", pchName, float(nCurProgress / nMaxProgress)));
+
+        CSV CSVManager;
+        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_achievements.csv"))
+        {
+            for(size_t i = 0; ; ++i)
+            {
+                auto Name = CSVManager.Getvalue(i, 0);
+
+                // Length check.
+                if(0 == Name.size()) break;
+
+                // Overwrite the entry.
+                if(0 == std::strcmp(Name.c_str(), pchName))
+                {
+                    CSVManager.Entrybuffer[i].clear();
+                    CSVManager.Entrybuffer[i].push_back(pchName);
+                    CSVManager.Entrybuffer[i].push_back(va("%d", nCurProgress));
+                    CSVManager.Entrybuffer[i].push_back(va("%d", nMaxProgress));
+
+                    return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_achievements.csv");
+                }
+            }
+        }
+
+        // Add a new row.
+        CSVManager.Addrow({pchName, va("%d", nCurProgress), va("%d", nMaxProgress)});
+        return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_achievements.csv");
     }
     static uint64_t RequestUserStats(CSteamID steamIDUser)
     {
@@ -403,10 +657,10 @@ SteamUserstats002::SteamUserstats002()
 SteamUserstats003::SteamUserstats003()
 {
     Createmethod(0, SteamUserstats, RequestCurrentStats1);
-    Createmethod(1, SteamUserstats, GetStat1);
-    Createmethod(2, SteamUserstats, GetStat2);
-    Createmethod(3, SteamUserstats, SetStat1);
-    Createmethod(4, SteamUserstats, SetStat2);
+    Createmethod(1, SteamUserstats, GetStat3);
+    Createmethod(2, SteamUserstats, GetStat4);
+    Createmethod(3, SteamUserstats, SetStat3);
+    Createmethod(4, SteamUserstats, SetStat4);
     Createmethod(5, SteamUserstats, UpdateAvgRateStat2);
     Createmethod(6, SteamUserstats, GetAchievement0);
     Createmethod(7, SteamUserstats, SetAchievement0);
@@ -419,10 +673,10 @@ SteamUserstats003::SteamUserstats003()
 SteamUserstats004::SteamUserstats004()
 {
     Createmethod(0, SteamUserstats, RequestCurrentStats1);
-    Createmethod(1, SteamUserstats, GetStat1);
-    Createmethod(2, SteamUserstats, GetStat2);
-    Createmethod(3, SteamUserstats, SetStat1);
-    Createmethod(4, SteamUserstats, SetStat2);
+    Createmethod(1, SteamUserstats, GetStat3);
+    Createmethod(2, SteamUserstats, GetStat4);
+    Createmethod(3, SteamUserstats, SetStat3);
+    Createmethod(4, SteamUserstats, SetStat4);
     Createmethod(5, SteamUserstats, UpdateAvgRateStat2);
     Createmethod(6, SteamUserstats, GetAchievement1);
     Createmethod(7, SteamUserstats, SetAchievement1);
@@ -440,10 +694,10 @@ SteamUserstats004::SteamUserstats004()
 SteamUserstats005::SteamUserstats005()
 {
     Createmethod(0, SteamUserstats, RequestCurrentStats1);
-    Createmethod(1, SteamUserstats, GetStat1);
-    Createmethod(2, SteamUserstats, GetStat2);
-    Createmethod(3, SteamUserstats, SetStat1);
-    Createmethod(4, SteamUserstats, SetStat2);
+    Createmethod(1, SteamUserstats, GetStat3);
+    Createmethod(2, SteamUserstats, GetStat4);
+    Createmethod(3, SteamUserstats, SetStat3);
+    Createmethod(4, SteamUserstats, SetStat4);
     Createmethod(5, SteamUserstats, UpdateAvgRateStat2);
     Createmethod(6, SteamUserstats, GetAchievement1);
     Createmethod(7, SteamUserstats, SetAchievement1);
@@ -470,10 +724,10 @@ SteamUserstats005::SteamUserstats005()
 SteamUserstats006::SteamUserstats006()
 {
     Createmethod(0, SteamUserstats, RequestCurrentStats1);
-    Createmethod(1, SteamUserstats, GetStat1);
-    Createmethod(2, SteamUserstats, GetStat2);
-    Createmethod(3, SteamUserstats, SetStat1);
-    Createmethod(4, SteamUserstats, SetStat2);
+    Createmethod(1, SteamUserstats, GetStat3);
+    Createmethod(2, SteamUserstats, GetStat4);
+    Createmethod(3, SteamUserstats, SetStat3);
+    Createmethod(4, SteamUserstats, SetStat4);
     Createmethod(5, SteamUserstats, UpdateAvgRateStat2);
     Createmethod(6, SteamUserstats, GetAchievement1);
     Createmethod(7, SteamUserstats, SetAchievement1);
@@ -501,10 +755,10 @@ SteamUserstats006::SteamUserstats006()
 SteamUserstats007::SteamUserstats007()
 {
     Createmethod(0, SteamUserstats, RequestCurrentStats1);
-    Createmethod(1, SteamUserstats, GetStat1);
-    Createmethod(2, SteamUserstats, GetStat2);
-    Createmethod(3, SteamUserstats, SetStat1);
-    Createmethod(4, SteamUserstats, SetStat2);
+    Createmethod(1, SteamUserstats, GetStat3);
+    Createmethod(2, SteamUserstats, GetStat4);
+    Createmethod(3, SteamUserstats, SetStat3);
+    Createmethod(4, SteamUserstats, SetStat4);
     Createmethod(5, SteamUserstats, UpdateAvgRateStat2);
     Createmethod(6, SteamUserstats, GetAchievement1);
     Createmethod(7, SteamUserstats, SetAchievement1);
@@ -534,10 +788,10 @@ SteamUserstats007::SteamUserstats007()
 SteamUserstats008::SteamUserstats008()
 {
     Createmethod(0, SteamUserstats, RequestCurrentStats1);
-    Createmethod(1, SteamUserstats, GetStat1);
-    Createmethod(2, SteamUserstats, GetStat2);
-    Createmethod(3, SteamUserstats, SetStat1);
-    Createmethod(4, SteamUserstats, SetStat2);
+    Createmethod(1, SteamUserstats, GetStat3);
+    Createmethod(2, SteamUserstats, GetStat4);
+    Createmethod(3, SteamUserstats, SetStat3);
+    Createmethod(4, SteamUserstats, SetStat4);
     Createmethod(5, SteamUserstats, UpdateAvgRateStat2);
     Createmethod(6, SteamUserstats, GetAchievement1);
     Createmethod(7, SteamUserstats, SetAchievement1);
@@ -569,10 +823,10 @@ SteamUserstats008::SteamUserstats008()
 SteamUserstats009::SteamUserstats009()
 {
     Createmethod(0, SteamUserstats, RequestCurrentStats1);
-    Createmethod(1, SteamUserstats, GetStat1);
-    Createmethod(2, SteamUserstats, GetStat2);
-    Createmethod(3, SteamUserstats, SetStat1);
-    Createmethod(4, SteamUserstats, SetStat2);
+    Createmethod(1, SteamUserstats, GetStat3);
+    Createmethod(2, SteamUserstats, GetStat4);
+    Createmethod(3, SteamUserstats, SetStat3);
+    Createmethod(4, SteamUserstats, SetStat4);
     Createmethod(5, SteamUserstats, UpdateAvgRateStat2);
     Createmethod(6, SteamUserstats, GetAchievement1);
     Createmethod(7, SteamUserstats, SetAchievement1);
@@ -604,10 +858,10 @@ SteamUserstats009::SteamUserstats009()
 SteamUserstats010::SteamUserstats010()
 {
     Createmethod(0, SteamUserstats, RequestCurrentStats1);
-    Createmethod(1, SteamUserstats, GetStat1);
-    Createmethod(2, SteamUserstats, GetStat2);
-    Createmethod(3, SteamUserstats, SetStat1);
-    Createmethod(4, SteamUserstats, SetStat2);
+    Createmethod(1, SteamUserstats, GetStat3);
+    Createmethod(2, SteamUserstats, GetStat4);
+    Createmethod(3, SteamUserstats, SetStat3);
+    Createmethod(4, SteamUserstats, SetStat4);
     Createmethod(5, SteamUserstats, UpdateAvgRateStat2);
     Createmethod(6, SteamUserstats, GetAchievement1);
     Createmethod(7, SteamUserstats, SetAchievement1);
@@ -648,10 +902,10 @@ SteamUserstats010::SteamUserstats010()
 SteamUserstats011::SteamUserstats011()
 {
     Createmethod(0, SteamUserstats, RequestCurrentStats1);
-    Createmethod(1, SteamUserstats, GetStat1);
-    Createmethod(2, SteamUserstats, GetStat2);
-    Createmethod(3, SteamUserstats, SetStat1);
-    Createmethod(4, SteamUserstats, SetStat2);
+    Createmethod(1, SteamUserstats, GetStat3);
+    Createmethod(2, SteamUserstats, GetStat4);
+    Createmethod(3, SteamUserstats, SetStat3);
+    Createmethod(4, SteamUserstats, SetStat4);
     Createmethod(5, SteamUserstats, UpdateAvgRateStat2);
     Createmethod(6, SteamUserstats, GetAchievement1);
     Createmethod(7, SteamUserstats, SetAchievement1);
