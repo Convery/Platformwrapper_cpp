@@ -25,7 +25,7 @@
 #include <ctime>
 
 // Includes for thirdparty libraries.
-/* ... */
+#include <sqlite3.h>
 
 // Includes for our utilities.
 #include "Utility/Cryptography/FNV1Hash.h"
@@ -35,6 +35,7 @@
 #include "Utility/Data/Bytebuffer.h"
 #include "Utility/Binary/Hooking.h"
 #include "Utility/Text/Logfile.h"
+#include "Utility/Data/Database.h"
 #include "Utility/Data/Base64.h"
 #include "Utility/Text/CSV.h"
 

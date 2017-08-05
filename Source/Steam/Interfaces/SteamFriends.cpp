@@ -24,7 +24,7 @@ void Loadfriendcache()
 {
     CSV CSVReader;
 
-    if (CSVReader.Readfile("./Plugins/Platformwrapper/SteamFriendcache.csv"))
+    if (CSVReader.Readfile("./Plugins/" MODULENAME "/SteamFriendcache.csv"))
     {
         for (size_t Row = 0; ; ++Row)
         {
@@ -50,7 +50,7 @@ void Savefriendcahce()
     }
 
     if (Friendcache.size())
-        CSVWriter.Writefile("./Plugins/Platformwrapper/SteamFriendcache.csv");
+        CSVWriter.Writefile("./Plugins/" MODULENAME "/SteamFriendcache.csv");
 }
 void Updatefriendcache()
 {
