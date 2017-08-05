@@ -13,6 +13,7 @@
 
 // Includes for standard libraries.
 #include <unordered_map>
+#include <algorithm>
 #include <cstdint>
 #include <cstdlib>
 #include <cstdarg>

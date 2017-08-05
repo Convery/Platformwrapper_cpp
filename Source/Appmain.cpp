@@ -16,7 +16,7 @@ namespace { struct Deletelog { Deletelog() { Clearlog(); } }; static Deletelog D
 #include <sys/stat.h>
 namespace { struct Createdir { Createdir() { mkdir("./Plugins/" MODULENAME, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); }; }; static Createdir Created{}; }
 #else
-#include <Windows.h>
+#include <direct.h>
 namespace { struct Createdir { Createdir() { _mkdir("./Plugins/" MODULENAME); }; }; static Createdir Created{}; }
 #endif
 

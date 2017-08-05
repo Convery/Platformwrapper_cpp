@@ -171,7 +171,7 @@ void Createcache(std::FILE *Filehandle)
 
     // Write to the cache.
     {
-        const char *Cachename = "./Plugins/" MODULENAME "/Steam_Interfacecache";
+        const char *Cachename = "./Plugins/" MODULENAME "/Steaminterfacecache";
         std::FILE *Filehandle = std::fopen(Cachename, "wt");
         if (Filehandle)
         {
@@ -187,7 +187,7 @@ void Createcache(std::FILE *Filehandle)
 }
 bool Readcache()
 {
-    const char *Cachename = "./Plugins/" MODULENAME "/Steam_Interfacecache";
+    const char *Cachename = "./Plugins/" MODULENAME "/Steaminterfacecache";
     std::FILE *Filehandle = std::fopen(Cachename, "rt");
     if (!Filehandle) return false;
 

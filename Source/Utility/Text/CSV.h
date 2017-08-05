@@ -30,7 +30,7 @@ namespace CSV
 
     // Reimplementation of standard functionality.
     #if defined (_WIN32)
-    char *strsep(char **String, const char *Delimiter)
+    inline char *strsep(char **String, const char *Delimiter)
     {
         char *Start = *String;
         char *Part;
