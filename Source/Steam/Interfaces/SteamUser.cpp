@@ -332,7 +332,7 @@ public:
     uint64_t RequestEncryptedAppTicket(void *pDataToInclude, unsigned int cbDataToInclude)
     {
         Printfunction();
-        uint64_t AsyncCall;
+        uint64_t Asynccall;
         EncryptedAppTicketResponse_t *Response;
         unsigned int Ticketsize = sizeof(Ticketdata);
 
@@ -350,11 +350,11 @@ public:
         memcpy(&Ticketdata[32], pDataToInclude, std::min(cbDataToInclude, Ticketsize - 32));
 
         // Create the call and return it instantly.
-        AsyncCall = SteamCallback::RegisterCall();
+        Asynccall = SteamCallback::RegisterCall();
         Response = new EncryptedAppTicketResponse_t();
         Response->m_eResult = k_EResultOK;
-        SteamCallback::ReturnCall(Response, sizeof(EncryptedAppTicketResponse_t), Response->k_iCallback, AsyncCall);
-        return AsyncCall;
+        SteamCallback::ReturnCall(Response, sizeof(EncryptedAppTicketResponse_t), Response->k_iCallback, Asynccall);
+        return Asynccall;
     }
     bool GetEncryptedAppTicket(void *pTicket, unsigned int cbMaxTicket, uint32_t *pcbTicket)
     {

@@ -28,7 +28,7 @@ void SteamCallback::RegisterCallback(CallbackBase *handler, int32_t callback)
 }
 void SteamCallback::RegisterCallResult(uint64_t call, CallbackBase *result)
 {
-    Debugprint(va("%s <%s> (%lli)", __FUNCTION__, GetCallbackName(result->GetICallback()), call));
+    Debugprint(va("%s <%s> (%llx)", __FUNCTION__, GetCallbackName(result->GetICallback()), call));
 
     Threadsafe.lock();
     {
@@ -42,7 +42,7 @@ void SteamCallback::UnregisterCallback(CallbackBase *handler, int32_t callback)
 }
 void SteamCallback::UnregisterCallResult(uint64_t call, CallbackBase *result)
 {
-    Debugprint(va("%s <%lli>", __FUNCTION__, call));
+    Debugprint(va("%s <%llx>", __FUNCTION__, call));
 
     Threadsafe.lock();
     {
@@ -73,7 +73,7 @@ void SteamCallback::ReturnCall(void* data, int32_t size, int32_t type, uint64_t 
         result.Size = size;
         result.Type = type;
 
-        Debugprint(va("%s <%lli, %s>", __FUNCTION__, call, GetCallbackName(type)));
+        Debugprint(va("%s <%llx, %s>", __FUNCTION__, call, GetCallbackName(type)));
         _Results.push_back(result);
     }
     Threadsafe.unlock();

@@ -12,6 +12,19 @@
 auto Temp ##Function = &Class::Function;        \
 Methods[Index] = *(void **)&Temp ##Function;
 
+struct LeaderboardFindResult_t
+{
+    enum { k_iCallback = 1104 };
+
+    uint64_t m_hSteamLeaderboard;
+    uint8_t m_bLeaderboardFound;
+};
+
+// Cache of leaderboards.
+void Loadleaderboardcache(){}
+void Saveloaderboardcache(){}
+void Updateleaderboardcache(){}
+
 #pragma region Methods
 class SteamUserstats
 {
@@ -370,7 +383,7 @@ public:
             we have an overlay active.
         */
 
-        Infoprint(va("Set achievement \"%s\" progress: %f%%", pchName, float(nCurProgress / nMaxProgress)));
+        Infoprint(va("Set achievement \"%s\" progress: %d of %d", pchName, nCurProgress, nMaxProgress));
         auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamachievements.csv");
 
         for(size_t Row = 0; ; ++Row)
@@ -424,8 +437,21 @@ public:
     }
     uint64_t FindLeaderboard(const char *pchLeaderboardName)
     {
-        Printfunction();
-        return 0;
+        uint64_t Asynccall;
+        LeaderboardFindResult_t *Response;
+
+        // Update the leaderboards if we are online.
+        if(!Steamconfig::Offline) Updateleaderboardcache();
+
+        // Create the call and return it instantly.
+        Asynccall = SteamCallback::RegisterCall();
+        Response = new LeaderboardFindResult_t();
+        Response->m_bLeaderboardFound = 1;
+        Response->m_hSteamLeaderboard = Hash::FNV1_64(pchLeaderboardName);
+
+        SteamCallback::ReturnCall(Response, sizeof(LeaderboardFindResult_t), Response->k_iCallback, Asynccall);
+        Infoprint(va("Find leaderboard \"%s\" returning 0x%llx", pchLeaderboardName, Hash::FNV1_64(pchLeaderboardName)));
+        return Asynccall;
     }
     const char *GetLeaderboardName(uint64_t hSteamLeaderboard)
     {
