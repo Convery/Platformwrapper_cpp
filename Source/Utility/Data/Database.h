@@ -131,4 +131,14 @@ namespace Database
         sqlite3_close(Databasehandle);
         return false;
     }
+    inline void Execute(std::string Querystring)
+    {
+        // Connect to the database.
+        sqlite3 *Databasehandle;
+        if( SQLITE_OK != sqlite3_open_v2("./Plugins/" MODULENAME "/" DATABASENAME, &Databasehandle, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL))
+            return Infoprint("Could not connect to database.");
+
+        sqlite3_exec(Databasehandle, Querystring.c_str(), NULL, NULL, NULL);
+        sqlite3_close(Databasehandle);
+    }
 }
