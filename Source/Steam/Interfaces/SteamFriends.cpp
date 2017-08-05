@@ -31,22 +31,19 @@ void Loadfriendcache()
 
         // Create a new friend.
         Steamfriend Friend{};
-        Friend.XUID = strtoull(CSV::Getvalue(Row, 0).c_str(), nullptr, 16);
-        Friend.Name = CSV::Getvalue(Row, 1);
+        Friend.XUID = strtoull(CSV::Getvalue(Row, 0, Collection).c_str(), nullptr, 16);
+        Friend.Name = CSV::Getvalue(Row, 1, Collection);
         Friendcache.push_back(Friend);
     }
 }
 void Savefriendcahce()
 {
-    CSV CSVWriter;
+    CSV::Collection_t Collection;
 
-    for (auto &Friend : Friendcache)
-    {
-        CSVWriter.Addrow({ va("%llx", Friend.XUID), Friend.Name });
-    }
+    for(auto &Item : Friendcache)
+        CSV::Addrow({va("%llx", Item.XUID), Item.Name}, Collection);
 
-    if (Friendcache.size())
-        CSVWriter.Writefile("./Plugins/" MODULENAME "/SteamFriendcache.csv");
+    CSV::Writefile("./Plugins/" MODULENAME "/Steamfriends.csv", Collection);
 }
 void Updatefriendcache()
 {
