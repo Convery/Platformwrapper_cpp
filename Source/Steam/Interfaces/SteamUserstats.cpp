@@ -20,6 +20,15 @@ struct LeaderboardFindResult_t
     uint8_t m_bLeaderboardFound;
 };
 
+struct Leaderboardentry
+{
+	CSteamID m_steamIDUser;
+	int32_t m_nGlobalRank;
+	int32_t m_nScore;
+	int32_t m_cDetails;
+	uint32_t m_hUGC;
+};
+
 // Cache of leaderboards.
 void Loadleaderboardcache(){}
 void Saveloaderboardcache(){}
@@ -475,6 +484,9 @@ public:
     }
     uint64_t DownloadLeaderboardEntries(uint64_t hSteamLeaderboard, uint32_t eLeaderboardDataRequest, int nRangeStart, int nRangeEnd)
     {
+
+
+
         Printfunction();
         return 0;
     }
