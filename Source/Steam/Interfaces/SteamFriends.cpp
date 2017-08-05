@@ -22,35 +22,28 @@ struct Steamfriend
 std::vector<Steamfriend> Friendcache;
 void Loadfriendcache()
 {
-    CSV CSVReader;
+    auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamfriends.csv");
 
-    if (CSVReader.Readfile("./Plugins/Platformwrapper/SteamFriendcache.csv"))
+    for(size_t Row = 0; ; ++Row)
     {
-        for (size_t Row = 0; ; ++Row)
-        {
-            // End of buffer check.
-            if (CSVReader.Getvalue(Row, 0).size() == 0)
-                break;
+        // End of collection check.
+        if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
 
-            // Create a new object from the data.
-            Steamfriend *Local = new Steamfriend();
-            Local->XUID = strtoull(CSVReader.Getvalue(Row, 0).c_str(), nullptr, 16);
-            Local->Name = CSVReader.Getvalue(Row, 1);
-            Friendcache.push_back(*Local);
-        }
+        // Create a new friend.
+        Steamfriend Friend{};
+        Friend.XUID = strtoull(CSV::Getvalue(Row, 0, Collection).c_str(), nullptr, 16);
+        Friend.Name = CSV::Getvalue(Row, 1, Collection);
+        Friendcache.push_back(Friend);
     }
 }
 void Savefriendcahce()
 {
-    CSV CSVWriter;
+    CSV::Collection_t Collection;
 
-    for (auto &Friend : Friendcache)
-    {
-        CSVWriter.Addrow({ va("%llx", Friend.XUID), Friend.Name });
-    }
+    for(auto &Item : Friendcache)
+        CSV::Addrow({va("%llx", Item.XUID), Item.Name}, Collection);
 
-    if (Friendcache.size())
-        CSVWriter.Writefile("./Plugins/Platformwrapper/SteamFriendcache.csv");
+    CSV::Writefile("./Plugins/" MODULENAME "/Steamfriends.csv", Collection);
 }
 void Updatefriendcache()
 {

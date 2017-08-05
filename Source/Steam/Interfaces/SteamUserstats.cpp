@@ -58,24 +58,19 @@ public:
     }
     bool GetStat1(CGameID nGameID, const char *pchName, int32_t *pData)
     {
+        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamuserstats.csv");
         Infoprint(va("Get stat \"%s\"..", pchName));
 
-        CSV CSVManager;
-        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_userstats.csv"))
+        for(size_t Row = 0; ; ++Row)
         {
-            for(size_t i = 0; ; ++i)
+            // End of collection check.
+            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
+
+            // Find the name.
+            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
             {
-                auto Name = CSVManager.Getvalue(i, 0);
-
-                // Length check.
-                if(0 == Name.size()) break;
-
-                // Read the value.
-                if(0 == std::strcmp(Name.c_str(), pchName))
-                {
-                    *pData = std::atoi(CSVManager.Getvalue(i, 1).c_str());
-                    return true;
-                }
+                *pData = std::atoi(CSV::Getvalue(Row, 1, Collection).c_str());
+                return true;
             }
         }
 
@@ -83,24 +78,19 @@ public:
     }
     bool GetStat2(CGameID nGameID, const char *pchName, float *pData)
     {
+        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamuserstats.csv");
         Infoprint(va("Get stat \"%s\"..", pchName));
 
-        CSV CSVManager;
-        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_userstats.csv"))
+        for(size_t Row = 0; ; ++Row)
         {
-            for(size_t i = 0; ; ++i)
+            // End of collection check.
+            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
+
+            // Find the name.
+            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
             {
-                auto Name = CSVManager.Getvalue(i, 0);
-
-                // Length check.
-                if(0 == Name.size()) break;
-
-                // Read the value.
-                if(0 == std::strcmp(Name.c_str(), pchName))
-                {
-                    *pData = std::atof(CSVManager.Getvalue(i, 1).c_str());
-                    return true;
-                }
+                *pData = std::atof(CSV::Getvalue(Row, 1, Collection).c_str());
+                return true;
             }
         }
 
@@ -109,60 +99,48 @@ public:
     bool SetStat1(CGameID nGameID, const char *pchName, int32_t nData)
     {
         Infoprint(va("Set stat \"%s\" = %d", pchName, nData));
+        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamuserstats.csv");
 
-        CSV CSVManager;
-        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_userstats.csv"))
+        for(size_t Row = 0; ; ++Row)
         {
-            for(size_t i = 0; ; ++i)
+            // End of collection check.
+            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
+
+            // Find the name.
+            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
             {
-                auto Name = CSVManager.Getvalue(i, 0);
-
-                // Length check.
-                if(0 == Name.size()) break;
-
-                // Overwrite the entry.
-                if(0 == std::strcmp(Name.c_str(), pchName))
-                {
-                    CSVManager.Entrybuffer[i].clear();
-                    CSVManager.Entrybuffer[i].push_back(pchName);
-                    CSVManager.Entrybuffer[i].push_back(va("%d", nData));
-                    return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_userstats.csv");
-                }
+                Collection[Row].clear();
+                Collection[Row].push_back(pchName);
+                Collection[Row].push_back(va("%d", nData));
+                return CSV::Writefile("./Plugins/" MODULENAME "/Steamuserstats.csv", Collection);
             }
         }
 
-        // Add a new entry.
-        CSVManager.Addrow({pchName, va("%d", nData)});
-        return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_userstats.csv");
+        CSV::Addrow({pchName, va("%d", nData)}, Collection);
+        return CSV::Writefile("./Plugins/" MODULENAME "/Steamuserstats.csv", Collection);
     }
     bool SetStat2(CGameID nGameID, const char *pchName, float fData)
     {
         Infoprint(va("Set stat \"%s\" = %f", pchName, fData));
+        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamuserstats.csv");
 
-        CSV CSVManager;
-        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_userstats.csv"))
+        for(size_t Row = 0; ; ++Row)
         {
-            for(size_t i = 0; ; ++i)
+            // End of collection check.
+            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
+
+            // Find the name.
+            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
             {
-                auto Name = CSVManager.Getvalue(i, 0);
-
-                // Length check.
-                if(0 == Name.size()) break;
-
-                // Overwrite the entry.
-                if(0 == std::strcmp(Name.c_str(), pchName))
-                {
-                    CSVManager.Entrybuffer[i].clear();
-                    CSVManager.Entrybuffer[i].push_back(pchName);
-                    CSVManager.Entrybuffer[i].push_back(va("%f", fData));
-                    return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_userstats.csv");
-                }
+                Collection[Row].clear();
+                Collection[Row].push_back(pchName);
+                Collection[Row].push_back(va("%f", fData));
+                return CSV::Writefile("./Plugins/" MODULENAME "/Steamuserstats.csv", Collection);
             }
         }
 
-        // Add a new entry.
-        CSVManager.Addrow({pchName, va("%f", fData)});
-        return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_userstats.csv");
+        CSV::Addrow({pchName, va("%f", fData)}, Collection);
+        return CSV::Writefile("./Plugins/" MODULENAME "/Steamuserstats.csv", Collection);
     }
     bool UpdateAvgRateStat0(CGameID nGameID, const char *pchName, float, double dSessionLength)
     {
@@ -231,24 +209,19 @@ public:
     }
     bool GetStat3(const char *pchName, int32_t *pData)
     {
+        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamuserstats.csv");
         Infoprint(va("Get stat \"%s\"..", pchName));
 
-        CSV CSVManager;
-        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_userstats.csv"))
+        for(size_t Row = 0; ; ++Row)
         {
-            for(size_t i = 0; ; ++i)
+            // End of collection check.
+            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
+
+            // Find the name.
+            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
             {
-                auto Name = CSVManager.Getvalue(i, 0);
-
-                // Length check.
-                if(0 == Name.size()) break;
-
-                // Read the value.
-                if(0 == std::strcmp(Name.c_str(), pchName))
-                {
-                    *pData = std::atoi(CSVManager.Getvalue(i, 1).c_str());
-                    return true;
-                }
+                *pData = std::atoi(CSV::Getvalue(Row, 1, Collection).c_str());
+                return true;
             }
         }
 
@@ -256,24 +229,19 @@ public:
     }
     bool GetStat4(const char *pchName, float *pData)
     {
+        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamuserstats.csv");
         Infoprint(va("Get stat \"%s\"..", pchName));
 
-        CSV CSVManager;
-        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_userstats.csv"))
+        for(size_t Row = 0; ; ++Row)
         {
-            for(size_t i = 0; ; ++i)
+            // End of collection check.
+            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
+
+            // Find the name.
+            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
             {
-                auto Name = CSVManager.Getvalue(i, 0);
-
-                // Length check.
-                if(0 == Name.size()) break;
-
-                // Read the value.
-                if(0 == std::strcmp(Name.c_str(), pchName))
-                {
-                    *pData = std::atof(CSVManager.Getvalue(i, 1).c_str());
-                    return true;
-                }
+                *pData = std::atof(CSV::Getvalue(Row, 1, Collection).c_str());
+                return true;
             }
         }
 
@@ -282,60 +250,48 @@ public:
     bool SetStat3(const char *pchName, int32_t nData)
     {
         Infoprint(va("Set stat \"%s\" = %d", pchName, nData));
+        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamuserstats.csv");
 
-        CSV CSVManager;
-        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_userstats.csv"))
+        for(size_t Row = 0; ; ++Row)
         {
-            for(size_t i = 0; ; ++i)
+            // End of collection check.
+            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
+
+            // Find the name.
+            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
             {
-                auto Name = CSVManager.Getvalue(i, 0);
-
-                // Length check.
-                if(0 == Name.size()) break;
-
-                // Overwrite the entry.
-                if(0 == std::strcmp(Name.c_str(), pchName))
-                {
-                    CSVManager.Entrybuffer[i].clear();
-                    CSVManager.Entrybuffer[i].push_back(pchName);
-                    CSVManager.Entrybuffer[i].push_back(va("%d", nData));
-                    return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_userstats.csv");
-                }
+                Collection[Row].clear();
+                Collection[Row].push_back(pchName);
+                Collection[Row].push_back(va("%d", nData));
+                return CSV::Writefile("./Plugins/" MODULENAME "/Steamuserstats.csv", Collection);
             }
         }
 
-        // Add a new entry.
-        CSVManager.Addrow({pchName, va("%d", nData)});
-        return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_userstats.csv");
+        CSV::Addrow({pchName, va("%d", nData)}, Collection);
+        return CSV::Writefile("./Plugins/" MODULENAME "/Steamuserstats.csv", Collection);
     }
     bool SetStat4(const char *pchName, float fData)
     {
         Infoprint(va("Set stat \"%s\" = %f", pchName, fData));
+        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamuserstats.csv");
 
-        CSV CSVManager;
-        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_userstats.csv"))
+        for(size_t Row = 0; ; ++Row)
         {
-            for(size_t i = 0; ; ++i)
+            // End of collection check.
+            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
+
+            // Find the name.
+            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
             {
-                auto Name = CSVManager.Getvalue(i, 0);
-
-                // Length check.
-                if(0 == Name.size()) break;
-
-                // Overwrite the entry.
-                if(0 == std::strcmp(Name.c_str(), pchName))
-                {
-                    CSVManager.Entrybuffer[i].clear();
-                    CSVManager.Entrybuffer[i].push_back(pchName);
-                    CSVManager.Entrybuffer[i].push_back(va("%f", fData));
-                    return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_userstats.csv");
-                }
+                Collection[Row].clear();
+                Collection[Row].push_back(pchName);
+                Collection[Row].push_back(va("%f", fData));
+                return CSV::Writefile("./Plugins/" MODULENAME "/Steamuserstats.csv", Collection);
             }
         }
 
-        // Add a new entry.
-        CSVManager.Addrow({pchName, va("%f", fData)});
-        return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_userstats.csv");
+        CSV::Addrow({pchName, va("%f", fData)}, Collection);
+        return CSV::Writefile("./Plugins/" MODULENAME "/Steamuserstats.csv", Collection);
     }
     bool UpdateAvgRateStat2(const char *pchName, float, double dSessionLength)
     {
@@ -344,24 +300,19 @@ public:
     }
     bool GetAchievement1(const char *pchName, bool *pbAchieved)
     {
+        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamachievements.csv");
         Infoprint(va("Get achievement \"%s\"..", pchName));
 
-        CSV CSVManager;
-        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_achievements.csv"))
+        for(size_t Row = 0; ; ++Row)
         {
-            for(size_t i = 0; ; ++i)
+            // End of collection check.
+            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
+
+            // Find the name.
+            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
             {
-                auto Name = CSVManager.Getvalue(i, 0);
-
-                // Length check.
-                if(0 == Name.size()) break;
-
-                // Set progrss to max.
-                if(0 == std::strcmp(Name.c_str(), pchName))
-                {
-                    *pbAchieved = 0 == std::strcmp(CSVManager.Getvalue(i, 1).c_str(), CSVManager.Getvalue(i, 2).c_str());
-                    return true;
-                }
+                *pbAchieved = std::strcmp(CSV::Getvalue(Row, 1, Collection).c_str(), CSV::Getvalue(Row, 2, Collection).c_str());
+                return true;
             }
         }
 
@@ -369,34 +320,27 @@ public:
     }
     bool SetAchievement1(const char *pchName)
     {
-        Infoprint(va("Got achievement \"%s\"!", pchName));
+        Infoprint(va("Set achievement \"%s\" completed.", pchName));
+        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamachievements.csv");
 
-        CSV CSVManager;
-        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_achievements.csv"))
+        for(size_t Row = 0; ; ++Row)
         {
-            for(size_t i = 0; ; ++i)
+            // End of collection check.
+            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
+
+            // Find the name.
+            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
             {
-                auto Name = CSVManager.Getvalue(i, 0);
-
-                // Length check.
-                if(0 == Name.size()) break;
-
-                // Set progrss to max.
-                if(0 == std::strcmp(Name.c_str(), pchName))
-                {
-                    CSVManager.Entrybuffer[i].clear();
-                    CSVManager.Entrybuffer[i].push_back(pchName);
-                    CSVManager.Entrybuffer[i].push_back("100");
-                    CSVManager.Entrybuffer[i].push_back("100");
-
-                    return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_achievements.csv");
-                }
+                Collection[Row].clear();
+                Collection[Row].push_back(pchName);
+                Collection[Row].push_back("100");
+                Collection[Row].push_back("100");
+                return CSV::Writefile("./Plugins/" MODULENAME "/Steamachievements.csv", Collection);
             }
         }
 
-        // Add a new row.
-        CSVManager.Addrow({pchName, "100", "100"});
-        return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_achievements.csv");
+        CSV::Addrow({pchName, "100", "100"}, Collection);
+        return CSV::Writefile("./Plugins/" MODULENAME "/Steamachievements.csv", Collection);
     }
     bool ClearAchievement1(const char *pchName)
     {
@@ -426,34 +370,27 @@ public:
             we have an overlay active.
         */
 
-        Infoprint(va("Achievement progress on \"%s\": %f%%", pchName, float(nCurProgress / nMaxProgress)));
+        Infoprint(va("Set achievement \"%s\" progress: %f%%", pchName, float(nCurProgress / nMaxProgress)));
+        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamachievements.csv");
 
-        CSV CSVManager;
-        if(CSVManager.Readfile("./Plugins/Platformwrapper/Steam_achievements.csv"))
+        for(size_t Row = 0; ; ++Row)
         {
-            for(size_t i = 0; ; ++i)
+            // End of collection check.
+            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
+
+            // Find the name.
+            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
             {
-                auto Name = CSVManager.Getvalue(i, 0);
-
-                // Length check.
-                if(0 == Name.size()) break;
-
-                // Overwrite the entry.
-                if(0 == std::strcmp(Name.c_str(), pchName))
-                {
-                    CSVManager.Entrybuffer[i].clear();
-                    CSVManager.Entrybuffer[i].push_back(pchName);
-                    CSVManager.Entrybuffer[i].push_back(va("%d", nCurProgress));
-                    CSVManager.Entrybuffer[i].push_back(va("%d", nMaxProgress));
-
-                    return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_achievements.csv");
-                }
+                Collection[Row].clear();
+                Collection[Row].push_back(pchName);
+                Collection[Row].push_back(va("%d", nCurProgress));
+                Collection[Row].push_back(va("%d", nMaxProgress));
+                return CSV::Writefile("./Plugins/" MODULENAME "/Steamachievements.csv", Collection);
             }
         }
 
-        // Add a new row.
-        CSVManager.Addrow({pchName, va("%d", nCurProgress), va("%d", nMaxProgress)});
-        return CSVManager.Writefile("./Plugins/Platformwrapper/Steam_achievements.csv");
+        CSV::Addrow({pchName, va("%d", nCurProgress), va("%d", nMaxProgress)}, Collection);
+        return CSV::Writefile("./Plugins/" MODULENAME "/Steamachievements.csv", Collection);
     }
     static uint64_t RequestUserStats(CSteamID steamIDUser)
     {

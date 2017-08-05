@@ -36,7 +36,7 @@
 #define LOGFILEDIR "./Plugins/Logs/"
 
 // The name that will be used in default functions.
-#define MODULENAME "Platformwrapper_cpp"
+#define MODULENAME "Platformwrapper"
 
 // Disable windows annoyance.
 #if defined (_WIN32)
@@ -45,3 +45,6 @@
 
 // Print the steam async calls to the log.
 #define STEAM_PRINTCALLBACKS
+
+// Database name for the utility.
+#define DATABASENAME "Platformwrapper"

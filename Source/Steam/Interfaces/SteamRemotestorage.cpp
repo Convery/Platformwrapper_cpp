@@ -12,7 +12,7 @@
 auto Temp ##Function = &Class::Function;        \
 Methods[Index] = *(void **)&Temp ##Function;
 
-constexpr const char *Storagedir = "./Plugins/Platformwrapper/Steamstorage/";
+constexpr const char *Storagedir = "./Plugins/" MODULENAME "/Steamstorage/";
 
 #pragma region Methods
 class SteamRemotestorage
@@ -937,8 +937,8 @@ static Steamremotestorageloader Interfaceloader{};
 
 #if !defined (_WIN32)
 #include <sys/stat.h>
-namespace { struct Createdir { Createdir() { mkdir("./Plugins/Platformwrapper/Steamstorage", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); }; }; static Createdir Created{}; }
+namespace { struct Createdir { Createdir() { mkdir(Storagedir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); }; }; static Createdir Created{}; }
 #else
 #include <Windows.h>
-namespace { struct Createdir { Createdir() { _mkdir("./Plugins/Platformwrapper/Steamstorage"); }; }; static Createdir Created{}; }
+namespace { struct Createdir { Createdir() { _mkdir(Storagedir); }; }; static Createdir Created{}; }
 #endif
