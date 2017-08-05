@@ -22,8 +22,9 @@ namespace CSV
     }
     inline Column_t Getvalue(size_t Row, size_t Column, Collection_t &Data)
     {
-        if(Row - 1 > Data.size()) return "";
-        if(Column - 1 > Data[Row].size()) return "";
+        if(0 == Data.size()) return "";
+        if(Row > Data.size() - 1) return "";
+        if(Column > Data[Row].size() - 1) return "";
         return Data[Row][Column];
     }
 
@@ -58,33 +59,33 @@ namespace CSV
         if (!Filehandle) return Result;
 
         // Grab each line from the file.
-        char Line[1024]{};
-        while(std::fgets(Line, 1024, Filehandle))
+        auto Linebuffer = std::make_unique<char[]>(1024);
+        while(std::fgets(Linebuffer.get(), 1024, Filehandle))
         {
             // Check if the line is 'empty'.
-            if(std::strlen(Line) < 3) continue;
+            if(std::strlen(Linebuffer.get()) < 3) continue;
 
             // Check if the line is a comment.
-            if(*Line == '#') continue;
+            if(*Linebuffer.get() == '#') continue;
 
-            // Build the row.
-            char *pLine = Line;
-            Row_t Row;
-            while(true)
+            // Build the row from the linedata.
+            auto Line = &*Linebuffer.get();
+            Row_t Localrow;
+            while (true)
             {
                 // Get a token.
-                auto Token = strsep(&pLine, ",\n\0");
-                if(!Token) break;
+                auto Token = strsep(&Line, ",\n\0");
+                if(!Token || *Token == '\0') break;
 
                 // Skip whitespace.
                 while(*Token == ' ') Token++;
 
                 // Add the value to the row.
-                Row.push_back(Token);
+                Localrow.push_back(Token);
             }
 
             // Add the row to the collection.
-            Addrow(Row, Result);
+            Addrow(Localrow, Result);
         }
 
         std::fclose(Filehandle);
