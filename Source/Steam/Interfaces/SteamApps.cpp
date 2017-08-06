@@ -12,6 +12,49 @@
 auto Temp ##Function = &Class::Function;        \
 Methods[Index] = *(void **)&Temp ##Function;
 
+// If both DLC-ID and app-ID are set, app-ID is the owner of the DLC.
+using Steamitem_t = struct { uint32_t DLCID; uint32_t ApplicationID; std::string Installpath; };
+std::vector<Steamitem_t> Purchaseditems;
+void Updatepurchases()
+{
+    #if defined(_WIN32)
+    std::FILE *Pipe = _popen("ayria://steamgames", "rt");
+    #else
+    std::FILE *Pipe = popen("ayria://steamgames", "rt");
+    #endif
+
+    if (!Pipe) return;
+
+    // The output is split into chucks of 10 games..
+    auto Buffer = std::make_unique<char[]>(8192);
+    while (std::fgets(Buffer.get(), 8192, Pipe))
+    {
+        try
+        {
+            auto Parsed = nlohmann::json::parse(Buffer.get());
+
+            for (auto &Item : Parsed["Steamgames"])
+            {
+                uint32_t ApplicationID;
+                std::string Installpath;
+
+                if (Item["ApplicationID"].is_null()) continue;
+                if (Item["Installpath"].is_null()) continue;
+                if (Item["DLCID"].is_null()) continue;
+
+                Purchaseditems.push_back({ Item["DLCID"], Item["ApplicationID"], Item["Installpath"] });
+            }
+        }
+        catch (...) {};
+    }
+
+    #if defined(_WIN32)
+    _pclose(Pipe);
+    #else
+    pclose(Pipe);
+    #endif
+}
+
 #pragma region Methods
 class SteamApps
 {
@@ -51,21 +94,31 @@ public:
     }
     bool BIsSubscribedApp(uint32_t nAppID)
     {
-        /*
-            TODO(Convery):
-            Query the database to see if the user owns this game.
-        */
+        // Get the purchased items.
+        if (0 == Purchaseditems.size()) Updatepurchases();
 
-        return true;
+        // If we could not fetch any info, assume ownership.
+        if (0 == Purchaseditems.size()) return true;
+
+        for (auto &Item : Purchaseditems)
+            if (Item.ApplicationID == nAppID)
+                return true;
+
+        return false;
     }
     bool BIsDlcInstalled(uint32_t nAppID)
     {
-        /*
-            TODO(Convery):
-            Query the database to see if the user owns this DLC.
-        */
+        // Get the purchased items.
+        if (0 == Purchaseditems.size()) Updatepurchases();
 
-        return true;
+        // If we could not fetch any info, assume ownership.
+        if (0 == Purchaseditems.size()) return true;
+
+        for (auto &Item : Purchaseditems)
+            if (Item.ApplicationID == nAppID && Item.DLCID)
+                return true;
+
+        return false;
     }
     uint32_t GetEarliestPurchaseUnixTime(uint32_t nAppID)
     {
@@ -80,13 +133,14 @@ public:
     int GetDLCCount()
     {
         Printfunction();
+        int Count = 0;
 
-        /*
-            TODO(Convery):
-            Query the database to see how many DLC we should handle.
-        */
+        for (auto &Item : Purchaseditems)
+            if (Item.ApplicationID == Steamconfig::ApplicationID)
+                if (Item.DLCID)
+                    Count++;
 
-        return 0;
+        return Count;
     }
     bool BGetDLCDataByIndex(int iDLC, uint32_t *pAppID, bool *pbAvailable, char *pchName, int cchNameBufferSize)
     {
@@ -127,19 +181,41 @@ public:
     {
         Printfunction();
 
-        /*
-            TODO(Convery):
-            Implement a portable GetWorkingDirectory().
-        */
+        // Get the purchased items.
+        if (0 == Purchaseditems.size()) Updatepurchases();
+
+        for (auto &Item : Purchaseditems)
+        {
+            if (Item.ApplicationID == appID)
+            {
+                if (Item.Installpath.size() <= cchFolderBufferSize)
+                {
+                    std::strcpy(pchFolder, Item.Installpath.c_str());
+                    return Item.Installpath.size();
+                }
+            }
+        }
 
         return 0;
     }
     bool BIsAppInstalled(uint32_t appID)
     {
-        /*
-            TODO(Convery):
-            Query the database to see if the user owns this DLC.
-        */
+        // Get the purchased items.
+        if (0 == Purchaseditems.size()) Updatepurchases();
+
+        // If we could not fetch any info, assume ownership.
+        if (0 == Purchaseditems.size()) return true;
+
+        for (auto &Item : Purchaseditems)
+        {
+            if (Item.ApplicationID == appID || Item.DLCID == appID)
+            {
+                std::FILE *Filehandle = std::fopen(Item.Installpath.c_str(), "rb");
+                if (!Filehandle) return false;
+                std::fclose(Filehandle);
+                return true;
+            }
+        }
 
         return false;
     }
@@ -161,7 +237,7 @@ public:
     bool GetDlcDownloadProgress(uint32_t nAppID, uint64_t *punBytesDownloaded, uint64_t *punBytesTotal)
     {
         Printfunction();
-        return true;
+        return false;
     }
     int GetAppBuildId()
     {

@@ -27,6 +27,7 @@
 #include <ctime>
 
 // Includes for thirdparty libraries.
+#include <nlohmann/json.hpp>
 #include <sqlite3.h>
 
 // Includes for our utilities.
