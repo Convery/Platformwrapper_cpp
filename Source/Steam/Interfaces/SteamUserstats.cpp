@@ -19,6 +19,14 @@ struct LeaderboardFindResult_t
     uint64_t m_hSteamLeaderboard;
     uint8_t m_bLeaderboardFound;
 };
+struct LeaderboardScoresDownloaded_t
+{
+	enum { k_iCallback = 1105 };
+
+    uint64_t m_hSteamLeaderboard;
+	uint64_t m_hSteamLeaderboardEntries;
+	int m_cEntryCount;
+};
 
 struct Leaderboardentry
 {
@@ -28,9 +36,13 @@ struct Leaderboardentry
 	int32_t m_cDetails;
 	uint32_t m_hUGC;
 };
+std::unordered_map<uint64_t /* Hash of the name */, std::vector<Leaderboardentry>> Leaderboardcache;
 
 // Cache of leaderboards.
-void Loadleaderboardcache(){}
+void Loadleaderboardcache()
+{
+
+}
 void Saveloaderboardcache(){}
 void Updateleaderboardcache(){}
 
@@ -111,7 +123,7 @@ public:
             // Find the name.
             if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
             {
-                *pData = std::atof(CSV::Getvalue(Row, 1, Collection).c_str());
+                *pData = std::strtof(CSV::Getvalue(Row, 1, Collection).c_str(), nullptr);
                 return true;
             }
         }
@@ -262,7 +274,7 @@ public:
             // Find the name.
             if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
             {
-                *pData = std::atof(CSV::Getvalue(Row, 1, Collection).c_str());
+                *pData = std::strtof(CSV::Getvalue(Row, 1, Collection).c_str(), nullptr);
                 return true;
             }
         }
@@ -446,21 +458,18 @@ public:
     }
     uint64_t FindLeaderboard(const char *pchLeaderboardName)
     {
-        uint64_t Asynccall;
-        LeaderboardFindResult_t *Response;
-
         // Update the leaderboards if we are online.
         if(!Steamconfig::Offline) Updateleaderboardcache();
 
-        // Create the call and return it instantly.
-        Asynccall = SteamCallback::RegisterCall();
-        Response = new LeaderboardFindResult_t();
+        auto RequestID = Steamcallback::Createrequest();
+        auto Response = new LeaderboardFindResult_t();
+
         Response->m_bLeaderboardFound = 1;
         Response->m_hSteamLeaderboard = Hash::FNV1_64(pchLeaderboardName);
-
-        SteamCallback::ReturnCall(Response, sizeof(LeaderboardFindResult_t), Response->k_iCallback, Asynccall);
+        Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
         Infoprint(va("Find leaderboard \"%s\" returning 0x%llx", pchLeaderboardName, Hash::FNV1_64(pchLeaderboardName)));
-        return Asynccall;
+
+        return RequestID;
     }
     const char *GetLeaderboardName(uint64_t hSteamLeaderboard)
     {
@@ -484,11 +493,19 @@ public:
     }
     uint64_t DownloadLeaderboardEntries(uint64_t hSteamLeaderboard, uint32_t eLeaderboardDataRequest, int nRangeStart, int nRangeEnd)
     {
+        // Update the leaderboards if we are online.
+        if(!Steamconfig::Offline) Updateleaderboardcache();
 
+        auto RequestID = Steamcallback::Createrequest();
+        auto Response = new LeaderboardScoresDownloaded_t();
+        Infoprint(va("Download leaderboard 0x%llx", hSteamLeaderboard));
 
+        Response->m_hSteamLeaderboard = hSteamLeaderboard;
+        Response->m_hSteamLeaderboardEntries = hSteamLeaderboard;
+        Response->m_cEntryCount = Leaderboardcache[hSteamLeaderboard].size();
+        Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
 
-        Printfunction();
-        return 0;
+        return RequestID;
     }
     uint64_t UploadLeaderboardScore0(uint64_t hSteamLeaderboard, int32_t nScore, int32_t *pScoreDetails, int cScoreDetailsCount)
     {

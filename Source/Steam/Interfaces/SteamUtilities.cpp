@@ -106,7 +106,7 @@ public:
     }
     bool IsAPICallCompleted(uint64_t hSteamAPICall, bool *pbFailed)
     {
-        return SteamCallback::CallComplete(hSteamAPICall);
+        return Steamcallback::isRequestcomplete(hSteamAPICall);
     }
     uint32_t GetAPICallFailureReason(uint64_t hSteamAPICall)
     {
@@ -119,7 +119,7 @@ public:
     }
     void RunFrame()
     {
-        SteamCallback::RunCallbacks();
+        Steamcallback::Runcallbacks();
     }
     uint32_t GetIPCCallCount()
     {

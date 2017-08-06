@@ -78,7 +78,7 @@ extern "C"
     EXPORT_ATTR void SteamAPI_RegisterCallResult(void *pCallback, uint64_t hAPICall);
     EXPORT_ATTR void SteamAPI_UnregisterCallResult(void *pCallback, uint64_t hAPICall);
 
-    // Dedicated server mode.    
+    // Dedicated server mode.
     EXPORT_ATTR bool SteamGameServer_BSecure();
     EXPORT_ATTR void SteamGameServer_Shutdown();
     EXPORT_ATTR void SteamGameServer_RunCallbacks();

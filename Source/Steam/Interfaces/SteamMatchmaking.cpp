@@ -226,20 +226,17 @@ public:
     }
     uint64_t JoinLobby1(CSteamID steamIDLobby)
     {
-        Printfunction();
-        uint64_t callID;
-        LobbyEnter_t *Response;
+        Infoprint(va("Joining lobby 0c%llx.", steamIDLobby));
 
-        callID = SteamCallback::RegisterCall();
-        Response = static_cast<LobbyEnter_t*>(std::malloc(sizeof(LobbyEnter_t)));
-
-        Response->m_bLocked = false;
-        Response->m_EChatRoomEnterResponse = 1;
+        auto RequestID = Steamcallback::Createrequest();
+        LobbyEnter_t *Response = new LobbyEnter_t();
         Response->m_ulSteamIDLobby = steamIDLobby;
-        Response->m_rgfChatPermissions = (uint32_t)0xFFFFFFFF;
+        Response->m_EChatRoomEnterResponse = 1;
+        Response->m_rgfChatPermissions = -1;
+        Response->m_bLocked = false;
 
-        SteamCallback::ReturnCall(Response, sizeof(LobbyEnter_t), Response->k_iCallback, callID);
-        return callID;
+        Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
+        return RequestID;
     }
     bool SetLobbyType(CSteamID steamIDLobby, uint32_t eLobbyType)
     {
@@ -269,19 +266,16 @@ public:
     }
     uint64_t CreateLobby3(uint32_t eLobbyType, int cMaxMembers)
     {
-        Printfunction();
-        uint64_t callID;
-        LobbyCreated_t *Response;
-        CSteamID ID = CSteamID(1337132, 0x40000, 1, k_EAccountTypeChat);
-
-        callID = SteamCallback::RegisterCall();
-        Response = static_cast<LobbyCreated_t*>(malloc(sizeof(LobbyCreated_t)));
+        auto LobbyID = CSteamID(1337, 0x40000, 1, k_EAccountTypeChat);
+        auto RequestID = Steamcallback::Createrequest();
+        auto Response = new LobbyCreated_t();
 
         Response->m_eResult = k_EResultOK;
-        Response->m_ulSteamIDLobby = ID.ConvertToUint64();
+        Response->m_ulSteamIDLobby = LobbyID.ConvertToUint64();
+        Infoprint(va("Creating a lobby of type %d for %d players.", eLobbyType, cMaxMembers));
+        Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
 
-        SteamCallback::ReturnCall(Response, sizeof(LobbyCreated_t), Response->k_iCallback, callID);
-        return callID;
+        return RequestID;
     }
     int GetLobbyDataCount(CSteamID steamIDLobby)
     {

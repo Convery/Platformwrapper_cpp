@@ -12,8 +12,12 @@
 auto Temp ##Function = &Class::Function;        \
 Methods[Index] = *(void **)&Temp ##Function;
 
-// A ticket that is encrypted with Ayrias key.
-// This ensures that no one can mess with it.
+/*
+    NOTE(Convery):
+    Steam creates a ticket and encrypts it with their publickey.
+    Then the games backend/middleware can ask steam to decrypt it.
+    We may want to offer a similar service, but for now it's plaintext.
+*/
 static unsigned char Ticketdata[128];
 struct EncryptedAppTicketResponse_t
 {
@@ -331,30 +335,18 @@ public:
     }
     uint64_t RequestEncryptedAppTicket(void *pDataToInclude, unsigned int cbDataToInclude)
     {
-        Printfunction();
-        uint64_t Asynccall;
-        EncryptedAppTicketResponse_t *Response;
-        unsigned int Ticketsize = sizeof(Ticketdata);
+        // Clear the ticketbuffer and append the games data.
+        std::memset(Ticketdata, 0, sizeof(Ticketdata));
+        std::memcpy(&Ticketdata[32], pDataToInclude, std::min(cbDataToInclude, sizeof(Ticketdata) - 32));
 
-        // Fetch a ticket from the client when online.
-        if (!Steamconfig::Offline)
-        {
-            // TODO(Convery): Interact with the pipe to the desktop client.
-        }
-        else
-        {
-            memset(Ticketdata, 0, Ticketsize);
-        }
+        auto RequestID = Steamcallback::Createrequest();
+        auto Response = new EncryptedAppTicketResponse_t();
 
-        // Include the additional data at the end of the ticket.
-        memcpy(&Ticketdata[32], pDataToInclude, std::min(cbDataToInclude, Ticketsize - 32));
-
-        // Create the call and return it instantly.
-        Asynccall = SteamCallback::RegisterCall();
-        Response = new EncryptedAppTicketResponse_t();
         Response->m_eResult = k_EResultOK;
-        SteamCallback::ReturnCall(Response, sizeof(EncryptedAppTicketResponse_t), Response->k_iCallback, Asynccall);
-        return Asynccall;
+        Infoprint(va("Creating an \"encrypted\" ticket with %d bytes of gamedata.", cbDataToInclude));
+        Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
+
+        return RequestID;
     }
     bool GetEncryptedAppTicket(void *pTicket, unsigned int cbMaxTicket, uint32_t *pcbTicket)
     {

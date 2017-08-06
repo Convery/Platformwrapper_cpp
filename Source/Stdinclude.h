@@ -22,6 +22,7 @@
 #include <vector>
 #include <memory>
 #include <chrono>
+#include <atomic>
 #include <mutex>
 #include <ctime>
 

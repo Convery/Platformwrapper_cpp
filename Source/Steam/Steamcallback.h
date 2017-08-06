@@ -1,72 +1,55 @@
 /*
     Initial author: Convery (tcn@ayria.se)
-    Started: 03-08-2017
+    Started: 06-08-2017
     License: MIT
     Notes:
-        Steam async calls.
+        Implements steams async requests.
+        We generally return directly though.
 */
 
 #pragma once
 #include "../Stdinclude.h"
 
-typedef struct
+namespace Steamcallback
 {
-    void *Data;
-    int32_t Size;
-    int32_t Type;
-    uint64_t Call;
-} SteamAPIResult_t;
+    // Result of the async request.
+    using Result_t = struct { void *Databuffer; int32_t Buffersize; int32_t Requesttype; uint64_t RequestID; };
 
-class CallbackBase
-{
-public:
-    CallbackBase() { m_nCallbackFlags = 0; m_iCallback = 0; }
-    virtual void Run(void *pvParam) = 0;
-    virtual void Run(void *pvParam, bool bIOFailure, uint64_t hSteamAPICall) = 0;
-    int GetICallback() { return m_iCallback; }
-    void SetICallback(int i) { m_iCallback = i; }
-    virtual int GetCallbackSizeBytes() = 0;
+    // The callback the games expect.
+    class Valvecallback
+    {
+    public:
+        Valvecallback() { m_nCallbackFlags = 0; m_iCallback = 0; }
+        virtual void Run(void *pvParam) = 0;
+        virtual void Run(void *pvParam, bool bIOFailure, uint64_t hSteamAPICall) = 0;
+        int GetICallback() { return m_iCallback; }
+        void SetICallback(int i) { m_iCallback = i; }
+        virtual int GetCallbackSizeBytes() = 0;
 
-protected:
-    enum { k_ECallbackFlagsRegistered = 0x01, k_ECallbackFlagsGameServer = 0x02 };
-    uint8_t m_nCallbackFlags;
-    int m_iCallback;
-    friend class CCallbackMgr;
-};
+    protected:
+        enum { k_ECallbackFlagsRegistered = 0x01, k_ECallbackFlagsGameServer = 0x02 };
+        uint8_t m_nCallbackFlags;
+        int m_iCallback;
+    };
 
-class SteamCallback
-{
-    static std::unordered_map<uint64_t, bool> _Calls;
-    static std::unordered_map<uint64_t, CallbackBase *> _ResultHandlers;
-    static std::vector<SteamAPIResult_t> _Results;
-    static std::vector<CallbackBase*> _Callbacks;
-    static int32_t _CallID;
+    // Add a games callback and result to the internal mapping.
+    void Registercallback(Valvecallback *Callbackhandler, int32_t CallbackID);
+    void Registerresult(Valvecallback *Callbackhandler, uint64_t RequestID);
 
-public:
-    // Does what one would expect.
-    static void RunCallbacks();
+    // Remove a games callback and result from the internal mapping.
+    void Removecallback(Valvecallback *Callbackhandler, int32_t CallbackID);
+    void Removeresult(Valvecallback *Callbackhandler, uint64_t RequestID);
 
-    // Register a global callback.
-    static void RegisterCallback(CallbackBase* handler, int32_t callback);
+    // Create and complete the requests.
+    void Completerequest(Result_t Result);
+    uint64_t Createrequest();
 
-    // Register a call result.
-    static void RegisterCallResult(uint64_t call, CallbackBase* result);
+    // Call all callbacks, usually every frame.
+    void Runcallbacks();
 
-    // Unregister a global callback.
-    static void UnregisterCallback(CallbackBase* handler, int32_t callback);
+    // Check the status of a request.
+    bool isRequestcomplete(uint64_t RequestID);
 
-    // Unregister a call result.
-    static void UnregisterCallResult(uint64_t call, CallbackBase* result);
-
-    // Register a callback.
-    static uint64_t RegisterCall();
-
-    // Return a callback.
-    static void ReturnCall(void* data, int32_t size, int32_t type, uint64_t call);
-
-    // Get the name for debugging.
-    static const char *GetCallbackName(int32_t ID);
-
-    // Check if processing.
-    static bool CallComplete(uint64_t call);
-};
+    // Debug information.
+    std::string Callbackname(int32_t CallbackID);
+}

@@ -1,260 +1,238 @@
 /*
     Initial author: Convery (tcn@ayria.se)
-    Started: 03-08-2017
+    Started: 06-08-2017
     License: MIT
     Notes:
-        Steam async calls.
+        Implements steams async requests.
+        We generally return directly though.
 */
 
 #include "../Stdinclude.h"
 
-std::unordered_map<uint64_t, bool> SteamCallback::_Calls;
-std::unordered_map<uint64_t, CallbackBase *> SteamCallback::_ResultHandlers;
-std::vector<SteamAPIResult_t> SteamCallback::_Results;
-std::vector<CallbackBase*> SteamCallback::_Callbacks;
-int32_t SteamCallback::_CallID;
-std::mutex Threadsafe;
-
-void SteamCallback::RegisterCallback(CallbackBase *handler, int32_t callback)
+namespace Steamcallback
 {
-    Debugprint(va("%s <%s>", __FUNCTION__, GetCallbackName(callback)));
+    std::unordered_map<uint64_t /* RequestID */, Valvecallback *> Activerequests;
+    std::unordered_map<uint64_t /* RequestID */, bool> Requeststatus;
+    std::list<Valvecallback *> Callbackhandlers;
+    std::atomic<uint64_t> GlobalrequestID;
+    std::list<Result_t> Requestresults;
 
-    Threadsafe.lock();
+    // Add a games callback and result to the internal mapping.
+    void Registercallback(Valvecallback *Callbackhandler, int32_t CallbackID)
     {
-        handler->SetICallback(callback);
-        _Callbacks.push_back(handler);
+        Debugprint(va("Registering callback \"%s\".", Callbackname(CallbackID).c_str()));
+
+        Callbackhandler->SetICallback(CallbackID);
+        Callbackhandlers.push_back(Callbackhandler);
     }
-    Threadsafe.unlock();
-}
-void SteamCallback::RegisterCallResult(uint64_t call, CallbackBase *result)
-{
-    Debugprint(va("%s <%s> (%llx)", __FUNCTION__, GetCallbackName(result->GetICallback()), call));
-
-    Threadsafe.lock();
+    void Registerresult(Valvecallback *Callbackhandler, uint64_t RequestID)
     {
-        _ResultHandlers[call] = result;
+        Debugprint(va("Registering result for RequestID 0x%llx (\"%s\").", RequestID, Callbackname(Callbackhandler->GetICallback()).c_str()));
+        Activerequests[RequestID] = Callbackhandler;
     }
-    Threadsafe.unlock();
-}
-void SteamCallback::UnregisterCallback(CallbackBase *handler, int32_t callback)
-{
-    Debugprint(va("%s <%s>", __FUNCTION__, GetCallbackName(handler->GetICallback())));
-}
-void SteamCallback::UnregisterCallResult(uint64_t call, CallbackBase *result)
-{
-    Debugprint(va("%s <%llx>", __FUNCTION__, call));
 
-    Threadsafe.lock();
+    // Remove a games callback and result from the internal mapping.
+    void Removecallback(Valvecallback *Callbackhandler, int32_t CallbackID)
     {
-        _ResultHandlers.erase(call);
-    }
-    Threadsafe.unlock();
-}
+        Debugprint(va("Removing callback \"%s\".", Callbackname(CallbackID).c_str()));
 
-uint64_t SteamCallback::RegisterCall()
-{
-    Threadsafe.lock();
-    {
-        _Calls[++_CallID] = false;
-        Debugprint(va("%s <%i>", __FUNCTION__, _CallID));
-    }
-    Threadsafe.unlock();
-    return _CallID;
-}
-void SteamCallback::ReturnCall(void* data, int32_t size, int32_t type, uint64_t call)
-{
-    SteamAPIResult_t result;
-
-    Threadsafe.lock();
-    {
-        _Calls[call] = true;
-        result.Call = call;
-        result.Data = data;
-        result.Size = size;
-        result.Type = type;
-
-        Debugprint(va("%s <%llx, %s>", __FUNCTION__, call, GetCallbackName(type)));
-        _Results.push_back(result);
-    }
-    Threadsafe.unlock();
-}
-void SteamCallback::RunCallbacks()
-{
-    std::vector<SteamAPIResult_t>::iterator iter;
-
-    Threadsafe.lock();
-    {
-        for (iter = _Results.begin(); iter != _Results.end(); ++iter)
+        for (auto Iterator = Callbackhandlers.begin(); Iterator != Callbackhandlers.end(); ++Iterator)
         {
-            if (_ResultHandlers.find(iter->Call) != _ResultHandlers.end())
+            if (*Iterator == Callbackhandler)
             {
-                _ResultHandlers[iter->Call]->Run(iter->Data, false, iter->Call);
-            }
-
-            std::vector<CallbackBase*>::iterator cbiter;
-
-            for (cbiter = _Callbacks.begin(); cbiter < _Callbacks.end(); ++cbiter)
-            {
-                CallbackBase* cb = *cbiter;
-
-                if (cb && cb->GetICallback() == iter->Type)
-                {
-                    cb->Run(iter->Data, false, 0);
-                }
+                Callbackhandlers.erase(Iterator);
+                break;
             }
         }
-
-        _Results.clear();
     }
-    Threadsafe.unlock();
-}
-
-bool SteamCallback::CallComplete(uint64_t call)
-{
-    bool Result = false;
-
-    Threadsafe.lock();
+    void Removeresult(Valvecallback *Callbackhandler, uint64_t RequestID)
     {
-        if (_Calls.find(call) != _Calls.end())
-            Result = _Calls.find(call)->second;
+        Debugprint(va("Removing result for RequestID 0x%llx (\"%s\").", RequestID, Callbackname(Callbackhandler->GetICallback()).c_str()));
+        Activerequests.erase(RequestID);
     }
-    Threadsafe.unlock();
 
-    return Result;
-}
+    // Create and complete the requests.
+    void Completerequest(Result_t Result)
+    {
+        Debugprint(va("Request with ID 0x%llx completed.", Result.RequestID));
+        Requeststatus[Result.RequestID] = true;
+        Requestresults.push_back(Result);
+    }
+    uint64_t Createrequest()
+    {
+        // We start off at 1 since 0 gets treated as an error by some games.
+        auto ID = ++GlobalrequestID;
 
-static std::unordered_map<uint32_t, std::string> CallbackNames;
-void BuildCallbackMap();
-const char *SteamCallback::GetCallbackName(int32_t ID)
-{
-    static bool Initialized = false;
-    if (!Initialized) BuildCallbackMap();
-    Initialized = true;
+        Debugprint(va("Request with ID 0x%llx created.", ID));
+        Requeststatus[ID] = false;
+        return ID;
+    }
 
-#if !defined (STEAM_PRINTCALLBACKS)
-    ID = 0;
-#endif
+    // Call all callbacks, usually every frame.
+    void Runcallbacks()
+    {
+        // For all our results.
+        LABEL_RESTART:
+        for (auto Resultiterator = Requestresults.begin(); Resultiterator != Requestresults.end(); ++Resultiterator)
+        {
+            // Delay the result if the request is not synchronized yet.
+            if (!Requeststatus[Resultiterator->RequestID]) continue;
 
-    return CallbackNames[ID].c_str();
-}
-void BuildCallbackMap()
-{
-    CallbackNames[0] = "";
+            // Get the games callback if available.
+            auto Callback = Activerequests.find(Resultiterator->RequestID);
+            if (Callback == Activerequests.end()) continue;
 
-#if defined (STEAM_PRINTCALLBACKS)
+            // Pass the result to the game.
+            Callback->second->Run(Resultiterator->Databuffer, false, Resultiterator->RequestID);
 
-    CallbackNames[101] = "SteamServersConnected";
-    CallbackNames[102] = "SteamServerConnectFailure";
-    CallbackNames[103] = "SteamServersDisconnected";
-    CallbackNames[104] = "BeginLogonRetry";
-    CallbackNames[113] = "ClientGameServerDeny";
-    CallbackNames[114] = "PrimaryChatDestinationSetOld";
-    CallbackNames[115] = "GSPolicyResponse";
-    CallbackNames[117] = "IPCFailure";
-    CallbackNames[125] = "LicensesUpdated";
-    CallbackNames[130] = "AppLifetimeNotice";
-    CallbackNames[141] = "DRMSDKFileTransferResult";
-    CallbackNames[143] = "ValidateAuthTicketResponse";
-    CallbackNames[152] = "MicroTxnAuthorizationResponse";
-    CallbackNames[154] = "EncryptedAppTicketResponse";
-    CallbackNames[163] = "GetAuthSessionTicketResponse";
-    CallbackNames[164] = "GameWebCallback";
+            // Remove the result from the list.
+            Requestresults.erase(Resultiterator);
+            goto LABEL_RESTART;
+        }
+    }
 
-    CallbackNames[201] = "GSClientApprove";
-    CallbackNames[202] = "GSClientDeny";
-    CallbackNames[203] = "GSClientKick";
-    CallbackNames[204] = "GSClientSteam2Deny";
-    CallbackNames[205] = "GSClientSteam2Accept";
-    CallbackNames[206] = "GSClientAchievementStatus";
-    CallbackNames[207] = "GSGameplayStats";
-    CallbackNames[208] = "GSClientGroupStatus";
-    CallbackNames[209] = "GSReputation";
-    CallbackNames[210] = "AssociateWithClanResult";
-    CallbackNames[211] = "ComputeNewPlayerCompatibilityResult";
+    // Check the status of a request.
+    bool isRequestcomplete(uint64_t RequestID)
+    {
+        auto Status = Requeststatus.find(RequestID);
+        if (Status == Requeststatus.end()) return false;
+        return Status->second;
+    }
 
-    CallbackNames[304] = "PersonaStateChange";
-    CallbackNames[331] = "GameOverlayActivated";
-    CallbackNames[332] = "GameServerChangeRequested";
-    CallbackNames[333] = "GameLobbyJoinRequested";
-    CallbackNames[334] = "AvatarImageLoaded";
-    CallbackNames[335] = "ClanOfficerListResponse";
-    CallbackNames[336] = "FriendRichPresenceUpdate";
-    CallbackNames[337] = "GameRichPresenceJoinRequested";
-    CallbackNames[338] = "GameConnectedClanChatMsg";
-    CallbackNames[339] = "GameConnectedChatJoin";
-    CallbackNames[340] = "GameConnectedChatLeave";
-    CallbackNames[341] = "DownloadClanActivityCountsResult";
-    CallbackNames[342] = "JoinClanChatRoomCompletionResult";
-    CallbackNames[343] = "GameConnectedFriendChatMsg";
-    CallbackNames[344] = "FriendsGetFollowerCount";
-    CallbackNames[345] = "FriendsIsFollowing";
-    CallbackNames[346] = "FriendsEnumerateFollowingList";
-    CallbackNames[347] = "SetPersonaNameResponse";
+    // Debug information.
+    void Buildnamemap();
+    std::unordered_map<int32_t, std::string> Callbacknames;
+    std::string Callbackname(int32_t CallbackID)
+    {
+        static bool Initialized = false;
+        if(!Initialized) Buildnamemap();
+        Initialized = true;
 
-    CallbackNames[501] = "FavoritesListChangedOld";
-    CallbackNames[502] = "FavoritesListChanged";
-    CallbackNames[503] = "LobbyInvite";
-    CallbackNames[504] = "LobbyEnter";
-    CallbackNames[505] = "LobbyDataUpdate";
-    CallbackNames[506] = "LobbyChatUpdate";
-    CallbackNames[507] = "LobbyChatMsg";
-    CallbackNames[508] = "LobbyAdminChange";
-    CallbackNames[509] = "LobbyGameCreated";
-    CallbackNames[510] = "LobbyMatchList";
-    CallbackNames[511] = "LobbyClosing";
-    CallbackNames[512] = "LobbyKicked";
-    CallbackNames[513] = "LobbyCreated";
-    CallbackNames[514] = "RequestFriendsLobbiesResponse";
+        #if defined (STEAM_PRINTCALLBACKS)
+        return Callbacknames[CallbackID];
+        #else
+        return va("%d", CallbackID);
+        #endif
+    }
 
-    CallbackNames[701] = "IPCountry";
-    CallbackNames[702] = "LowBatteryPower";
-    CallbackNames[703] = "SteamAPICallCompleted";
-    CallbackNames[704] = "SteamShutdown";
-    CallbackNames[705] = "CheckFileSignature";
-    CallbackNames[706] = "NetStartDialogFinished";
-    CallbackNames[707] = "NetStartDialogUnloaded";
-    CallbackNames[708] = "PS3SystemMenuClosed";
-    CallbackNames[709] = "PS3NPMessageSelected";
-    CallbackNames[710] = "PS3KeyboardDialogFinished";
-    CallbackNames[711] = "SteamConfigStoreChanged";
-    CallbackNames[712] = "PS3PSNStatusChange";
-    CallbackNames[713] = "SteamUtils_Reserved";
-    CallbackNames[714] = "GamepadTextInputDismissed";
-    CallbackNames[715] = "SteamUtils_Reserved";
+    void Buildnamemap()
+    {
+        // Set the first entry for legacy functionality.
+        Callbacknames[0] = "";
 
-    CallbackNames[805] = "FriendChatMsg";
-    CallbackNames[810] = "ChatRoomMsg";
-    CallbackNames[811] = "ChatRoomDlgClose";
-    CallbackNames[812] = "ChatRoomClosing";
-    CallbackNames[819] = "ClanInfoChanged";
-    CallbackNames[836] = "FriendsMenuChange";
+        #if defined (STEAM_PRINTCALLBACKS)
+        Callbacknames[101] = "SteamServersConnected";
+        Callbacknames[102] = "SteamServerConnectFailure";
+        Callbacknames[103] = "SteamServersDisconnected";
+        Callbacknames[104] = "BeginLogonRetry";
+        Callbacknames[113] = "ClientGameServerDeny";
+        Callbacknames[114] = "PrimaryChatDestinationSetOld";
+        Callbacknames[115] = "GSPolicyResponse";
+        Callbacknames[117] = "IPCFailure";
+        Callbacknames[125] = "LicensesUpdated";
+        Callbacknames[130] = "AppLifetimeNotice";
+        Callbacknames[141] = "DRMSDKFileTransferResult";
+        Callbacknames[143] = "ValidateAuthTicketResponse";
+        Callbacknames[152] = "MicroTxnAuthorizationResponse";
+        Callbacknames[154] = "EncryptedAppTicketResponse";
+        Callbacknames[163] = "GetAuthSessionTicketResponse";
+        Callbacknames[164] = "GameWebCallback";
 
-    CallbackNames[903] = "PrimaryChatDestinationSet";
-    CallbackNames[963] = "FriendMessageHistoryChatLog";
+        Callbacknames[201] = "GSClientApprove";
+        Callbacknames[202] = "GSClientDeny";
+        Callbacknames[203] = "GSClientKick";
+        Callbacknames[204] = "GSClientSteam2Deny";
+        Callbacknames[205] = "GSClientSteam2Accept";
+        Callbacknames[206] = "GSClientAchievementStatus";
+        Callbacknames[207] = "GSGameplayStats";
+        Callbacknames[208] = "GSClientGroupStatus";
+        Callbacknames[209] = "GSReputation";
+        Callbacknames[210] = "AssociateWithClanResult";
+        Callbacknames[211] = "ComputeNewPlayerCompatibilityResult";
 
-    CallbackNames[1001] = "AppDataChanged";
-    CallbackNames[1002] = "RequestAppCallbacksComplete";
-    CallbackNames[1003] = "AppInfoUpdateComplete";
-    CallbackNames[1004] = "AppEventTriggered";
-    CallbackNames[1005] = "DlcInstalled";
-    CallbackNames[1006] = "AppEventStateChange";
+        Callbacknames[304] = "PersonaStateChange";
+        Callbacknames[331] = "GameOverlayActivated";
+        Callbacknames[332] = "GameServerChangeRequested";
+        Callbacknames[333] = "GameLobbyJoinRequested";
+        Callbacknames[334] = "AvatarImageLoaded";
+        Callbacknames[335] = "ClanOfficerListResponse";
+        Callbacknames[336] = "FriendRichPresenceUpdate";
+        Callbacknames[337] = "GameRichPresenceJoinRequested";
+        Callbacknames[338] = "GameConnectedClanChatMsg";
+        Callbacknames[339] = "GameConnectedChatJoin";
+        Callbacknames[340] = "GameConnectedChatLeave";
+        Callbacknames[341] = "DownloadClanActivityCountsResult";
+        Callbacknames[342] = "JoinClanChatRoomCompletionResult";
+        Callbacknames[343] = "GameConnectedFriendChatMsg";
+        Callbacknames[344] = "FriendsGetFollowerCount";
+        Callbacknames[345] = "FriendsIsFollowing";
+        Callbacknames[346] = "FriendsEnumerateFollowingList";
+        Callbacknames[347] = "SetPersonaNameResponse";
 
-    CallbackNames[1101] = "UserStatsReceived";
-    CallbackNames[1102] = "UserStatsStored";
-    CallbackNames[1103] = "UserAchievementStored";
+        Callbacknames[501] = "FavoritesListChangedOld";
+        Callbacknames[502] = "FavoritesListChanged";
+        Callbacknames[503] = "LobbyInvite";
+        Callbacknames[504] = "LobbyEnter";
+        Callbacknames[505] = "LobbyDataUpdate";
+        Callbacknames[506] = "LobbyChatUpdate";
+        Callbacknames[507] = "LobbyChatMsg";
+        Callbacknames[508] = "LobbyAdminChange";
+        Callbacknames[509] = "LobbyGameCreated";
+        Callbacknames[510] = "LobbyMatchList";
+        Callbacknames[511] = "LobbyClosing";
+        Callbacknames[512] = "LobbyKicked";
+        Callbacknames[513] = "LobbyCreated";
+        Callbacknames[514] = "RequestFriendsLobbiesResponse";
 
-    CallbackNames[1201] = "SocketStatusChanged";
-    CallbackNames[1202] = "P2PSessionRequest";
-    CallbackNames[1203] = "P2PSessionConnectFail";
+        Callbacknames[701] = "IPCountry";
+        Callbacknames[702] = "LowBatteryPower";
+        Callbacknames[703] = "SteamAPICallCompleted";
+        Callbacknames[704] = "SteamShutdown";
+        Callbacknames[705] = "CheckFileSignature";
+        Callbacknames[706] = "NetStartDialogFinished";
+        Callbacknames[707] = "NetStartDialogUnloaded";
+        Callbacknames[708] = "PS3SystemMenuClosed";
+        Callbacknames[709] = "PS3NPMessageSelected";
+        Callbacknames[710] = "PS3KeyboardDialogFinished";
+        Callbacknames[711] = "SteamConfigStoreChanged";
+        Callbacknames[712] = "PS3PSNStatusChange";
+        Callbacknames[713] = "SteamUtils_Reserved";
+        Callbacknames[714] = "GamepadTextInputDismissed";
+        Callbacknames[715] = "SteamUtils_Reserved";
 
-    CallbackNames[1603] = "CellIDChanged";
+        Callbacknames[805] = "FriendChatMsg";
+        Callbacknames[810] = "ChatRoomMsg";
+        Callbacknames[811] = "ChatRoomDlgClose";
+        Callbacknames[812] = "ChatRoomClosing";
+        Callbacknames[819] = "ClanInfoChanged";
+        Callbacknames[836] = "FriendsMenuChange";
 
-    /*
-        TODO(Convery):
-        Add the billions of callbacks.
-        I do not think this is a great use of our time.
-        As such, we request that developers add the ones used
-        by the game they are developing for and open a pull request.
-    */
-#endif
+        Callbacknames[903] = "PrimaryChatDestinationSet";
+        Callbacknames[963] = "FriendMessageHistoryChatLog";
+
+        Callbacknames[1001] = "AppDataChanged";
+        Callbacknames[1002] = "RequestAppCallbacksComplete";
+        Callbacknames[1003] = "AppInfoUpdateComplete";
+        Callbacknames[1004] = "AppEventTriggered";
+        Callbacknames[1005] = "DlcInstalled";
+        Callbacknames[1006] = "AppEventStateChange";
+
+        Callbacknames[1101] = "UserStatsReceived";
+        Callbacknames[1102] = "UserStatsStored";
+        Callbacknames[1103] = "UserAchievementStored";
+
+        Callbacknames[1201] = "SocketStatusChanged";
+        Callbacknames[1202] = "P2PSessionRequest";
+        Callbacknames[1203] = "P2PSessionConnectFail";
+
+        Callbacknames[1603] = "CellIDChanged";
+        #endif
+
+        /*
+            TODO(Convery):
+            There is about a million names for the callbacks.
+            I do not think it's a good use of my time to add them.
+            Please add the ones your game uses and open a pull request.
+        */
+    }
 }

@@ -272,27 +272,35 @@ extern "C"
     // Callback management.
     EXPORT_ATTR void SteamAPI_RunCallbacks()
     {
-        SteamCallback::RunCallbacks();
+        Steamcallback::Runcallbacks();
     }
     EXPORT_ATTR void SteamAPI_RegisterCallback(void *pCallback, int iCallback)
     {
         if (pCallback)
-            SteamCallback::RegisterCallback(static_cast<CallbackBase *>(pCallback), iCallback);
+        {
+            Steamcallback::Registercallback((Steamcallback::Valvecallback *)pCallback, iCallback);
+        }
     }
     EXPORT_ATTR void SteamAPI_UnregisterCallback(void *pCallback, int iCallback)
     {
         if (pCallback)
-            SteamCallback::UnregisterCallback(static_cast<CallbackBase *>(pCallback), iCallback);
+        {
+            Steamcallback::Removecallback((Steamcallback::Valvecallback *)pCallback, iCallback);
+        }
     }
     EXPORT_ATTR void SteamAPI_RegisterCallResult(void *pCallback, uint64_t hAPICall)
     {
         if (pCallback)
-            SteamCallback::RegisterCallResult(hAPICall, static_cast<CallbackBase *>(pCallback));
+        {
+            Steamcallback::Registerresult((Steamcallback::Valvecallback *)pCallback, hAPICall);
+        }
     }
     EXPORT_ATTR void SteamAPI_UnregisterCallResult(void *pCallback, uint64_t hAPICall)
     {
         if (pCallback)
-            SteamCallback::UnregisterCallResult(hAPICall, static_cast<CallbackBase *>(pCallback));
+        {
+            Steamcallback::Removeresult((Steamcallback::Valvecallback *)pCallback, hAPICall);
+        }
     }
 
     // Dedicated server mode.
@@ -306,7 +314,7 @@ extern "C"
     }
     EXPORT_ATTR void SteamGameServer_RunCallbacks()
     {
-        SteamCallback::RunCallbacks();
+        Steamcallback::Runcallbacks();
     }
     EXPORT_ATTR uint64_t SteamGameServer_GetSteamID()
     {
