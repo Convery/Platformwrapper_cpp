@@ -25,6 +25,7 @@
 #include <atomic>
 #include <mutex>
 #include <ctime>
+#include <list>
 
 // Includes for thirdparty libraries.
 #include <nlohmann/json.hpp>

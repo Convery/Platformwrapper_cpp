@@ -13,7 +13,7 @@
 namespace Steamcallback
 {
     // Result of the async request.
-    using Result_t = struct { void *Databuffer; int32_t Buffersize; int32_t Requesttype; uint64_t RequestID; };
+    using Result_t = struct Anontype_t { void *Databuffer; int32_t Buffersize; int32_t Requesttype; uint64_t RequestID; };
 
     // The callback the games expect.
     class Valvecallback
