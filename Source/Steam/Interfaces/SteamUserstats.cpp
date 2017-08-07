@@ -28,23 +28,83 @@ struct LeaderboardScoresDownloaded_t
 	int m_cEntryCount;
 };
 
-struct Leaderboardentry
+// Cached leaderboards.
+struct Leaderboardentry_t
 {
-	CSteamID m_steamIDUser;
-	int32_t m_nGlobalRank;
-	int32_t m_nScore;
-	int32_t m_cDetails;
-	uint32_t m_hUGC;
+	uint64_t UserID;
+	int32_t Rank;
+	int32_t Score;
+	int32_t Details;
+	uint32_t UGCHandle;
 };
-std::unordered_map<uint64_t /* Hash of the name */, std::vector<Leaderboardentry>> Leaderboardcache;
-
-// Cache of leaderboards.
-void Loadleaderboardcache()
+struct Leaderboard_t
 {
+    uint64_t LeaderboardID;
+    std::string Leaderboardname;
+    std::vector<Leaderboardentry_t> Entries;
+};
+std::vector<Leaderboard_t> Leaderboardslist;
 
+// Update the cache as requested.
+void Loadleaderboards()
+{
+    std::string JSONBuffer;
+    Leaderboardslist.clear();
+
+    // Offlinemode reads from disk.
+    if (Steamconfig::Offline)
+    {
+        JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamleaderboards.json");
+    }
+    else
+    {
+        JSONBuffer = Readpipe("ayria://getleaderboards");
+    }
+
+    try
+    {
+        auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
+
+        for (auto &Item : Parsed["Steamleaderboards"])
+        {
+            std::vector<Leaderboardentry_t> Localentries;
+
+            for (auto &Entry : Item["Entries"])
+            {
+                Localentries.push_back({ Entry["UserID"], Entry["Rank"],Entry["Score"],Entry["Details"], Entry["UGCHandle"] });
+            }
+
+
+            Leaderboardslist.push_back({ Item["LeaderboardID"], Item["Leaderboardname"], Localentries });
+        }
+    }
+    catch (...) {};
 }
-void Saveloaderboardcache(){}
-void Updateleaderboardcache(){}
+void Saveleaderboards()
+{
+    nlohmann::json Object;
+
+    for (auto &Item : Leaderboardslist)
+    {
+        nlohmann::json Subobject;
+
+        for (auto &Entry : Item.Entries)
+        {
+            Subobject +=
+            {
+                {"UserID", Entry.UserID},
+                {"Rank", Entry.Rank},
+                {"Score", Entry.Score},
+                {"Details", Entry.Details},
+                {"UGCHandle", Entry.UGCHandle}
+            };
+        }
+
+        Object += { {"LeaderboardID", Item.LeaderboardID}, { "Leaderboardname", Item.Leaderboardname }, { "Entries", Subobject }};
+    }
+
+    Writefile("./Plugins/" MODULENAME "/Steamleaderboards.json", Object.dump(4));
+}
 
 #pragma region Methods
 class SteamUserstats
@@ -53,6 +113,15 @@ public:
     uint32_t GetNumStats(CGameID nGameID)
     {
         Printfunction();
+
+        auto JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamuserstats.csv");
+        try
+        {
+            auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
+            return uint32_t(Parsed.size());
+        }
+        catch (...) {};
+
         return 0;
     }
     const char *GetStatName(CGameID nGameID, uint32_t iStat)
@@ -92,89 +161,67 @@ public:
     }
     bool GetStat1(CGameID nGameID, const char *pchName, int32_t *pData)
     {
-        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamuserstats.csv");
         Infoprint(va("Get stat \"%s\"..", pchName));
 
-        for(size_t Row = 0; ; ++Row)
+        auto JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamuserstats.json");
+        try
         {
-            // End of collection check.
-            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
+            auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
 
-            // Find the name.
-            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
-            {
-                *pData = std::atoi(CSV::Getvalue(Row, 1, Collection).c_str());
-                return true;
-            }
+            if (!Parsed[pchName].is_number()) return false;
+            *pData = Parsed[pchName];
+            return true;
         }
+        catch (...) {};
 
         return false;
     }
     bool GetStat2(CGameID nGameID, const char *pchName, float *pData)
     {
-        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamuserstats.csv");
         Infoprint(va("Get stat \"%s\"..", pchName));
 
-        for(size_t Row = 0; ; ++Row)
+        auto JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamuserstats.json");
+        try
         {
-            // End of collection check.
-            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
+            auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
 
-            // Find the name.
-            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
-            {
-                *pData = std::strtof(CSV::Getvalue(Row, 1, Collection).c_str(), nullptr);
-                return true;
-            }
+            if (!Parsed[pchName].is_number()) return false;
+            *pData = Parsed[pchName];
+            return true;
         }
+        catch (...) {};
 
         return false;
     }
     bool SetStat1(CGameID nGameID, const char *pchName, int32_t nData)
     {
         Infoprint(va("Set stat \"%s\" = %d", pchName, nData));
-        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamuserstats.csv");
-
-        for(size_t Row = 0; ; ++Row)
+        auto JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamuserstats.json");
+        try
         {
-            // End of collection check.
-            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
+            auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
+            Parsed[pchName] = nData;
 
-            // Find the name.
-            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
-            {
-                Collection[Row].clear();
-                Collection[Row].push_back(pchName);
-                Collection[Row].push_back(va("%d", nData));
-                return CSV::Writefile("./Plugins/" MODULENAME "/Steamuserstats.csv", Collection);
-            }
+            return Writefile("./Plugins/" MODULENAME "/Steamuserstats.json", Parsed.dump(4));
         }
+        catch (...) {};
 
-        CSV::Addrow({pchName, va("%d", nData)}, Collection);
-        return CSV::Writefile("./Plugins/" MODULENAME "/Steamuserstats.csv", Collection);
+        return false;
     }
     bool SetStat2(CGameID nGameID, const char *pchName, float fData)
     {
         Infoprint(va("Set stat \"%s\" = %f", pchName, fData));
-        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamuserstats.csv");
-
-        for(size_t Row = 0; ; ++Row)
+        auto JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamuserstats.json");
+        try
         {
-            // End of collection check.
-            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
+            auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
+            Parsed[pchName] = fData;
 
-            // Find the name.
-            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
-            {
-                Collection[Row].clear();
-                Collection[Row].push_back(pchName);
-                Collection[Row].push_back(va("%f", fData));
-                return CSV::Writefile("./Plugins/" MODULENAME "/Steamuserstats.csv", Collection);
-            }
+            return Writefile("./Plugins/" MODULENAME "/Steamuserstats.json", Parsed.dump(4));
         }
+        catch (...) {};
 
-        CSV::Addrow({pchName, va("%f", fData)}, Collection);
-        return CSV::Writefile("./Plugins/" MODULENAME "/Steamuserstats.csv", Collection);
+        return false;
     }
     bool UpdateAvgRateStat0(CGameID nGameID, const char *pchName, float, double dSessionLength)
     {
@@ -183,7 +230,22 @@ public:
     }
     bool GetAchievement0(CGameID nGameID, const char *pchName, bool *pbAchieved)
     {
-        Printfunction();
+        Infoprint(va("Get achievement \"%s\"..", pchName));
+
+        auto JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamachievements.json");
+        try
+        {
+            auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
+
+            if (Parsed[pchName].is_null()) return false;
+            if (Parsed[pchName]["Currentprogress"].get<uint32_t>() == Parsed[pchName]["Maxprogress"].get<uint32_t>())
+            {
+                *pbAchieved = true;
+                return true;
+            }
+        }
+        catch (...) {};
+
         return false;
     }
     bool GetGroupAchievement(CGameID nGameID, const char *pchName, bool *pbAchieved)
@@ -193,7 +255,17 @@ public:
     }
     bool SetAchievement0(CGameID nGameID, const char *pchName)
     {
-        Printfunction();
+        Infoprint(va("Achievement \"%s\" progress: 100%%", pchName));
+
+        auto JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamachievements.json");
+        try
+        {
+            auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
+            Parsed[pchName] = { {"Currentprogress", 100 }, {"Maxprogress", 100} };
+            return Writefile("./Plugins/" MODULENAME "/Steamachievements.json", Parsed.dump(4));
+        }
+        catch (...) {};
+
         return false;
     }
     bool SetGroupAchievement(CGameID nGameID, const char *pchName)
@@ -204,11 +276,21 @@ public:
     bool StoreStats0(CGameID nGameID)
     {
         Printfunction();
-        return false;
+        return true;
     }
     bool ClearAchievement0(CGameID nGameID, const char *pchName)
     {
-        Printfunction();
+        Infoprint(va("Achievement \"%s\" progress: 0%%", pchName));
+
+        auto JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamachievements.json");
+        try
+        {
+            auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
+            Parsed[pchName] = { {"Currentprogress", 0 }, {"Maxprogress", 100} };
+            return Writefile("./Plugins/" MODULENAME "/Steamachievements.json", Parsed.dump(4));
+        }
+        catch (...) {};
+
         return false;
     }
     bool ClearGroupAchievement(CGameID nGameID, const char *pchName)
@@ -233,7 +315,22 @@ public:
     }
     bool IndicateAchievementProgress0(CGameID nGameID, const char *pchName, uint32_t nCurProgress, uint32_t nMaxProgress)
     {
-        Printfunction();
+        Infoprint(va("Achievement \"%s\" progress: %f%%", pchName, float(nCurProgress) / float(nMaxProgress)));
+
+        /*
+            TODO(Convery):
+            Trigger a toaster-popup.
+        */
+
+        auto JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamachievements.json");
+        try
+        {
+            auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
+            Parsed[pchName] = { {"Currentprogress", nCurProgress }, {"Maxprogress", nMaxProgress} };
+            return Writefile("./Plugins/" MODULENAME "/Steamachievements.json", Parsed.dump(4));
+        }
+        catch (...) {};
+
         return false;
     }
     bool RequestCurrentStats1()
@@ -243,89 +340,19 @@ public:
     }
     bool GetStat3(const char *pchName, int32_t *pData)
     {
-        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamuserstats.csv");
-        Infoprint(va("Get stat \"%s\"..", pchName));
-
-        for(size_t Row = 0; ; ++Row)
-        {
-            // End of collection check.
-            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
-
-            // Find the name.
-            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
-            {
-                *pData = std::atoi(CSV::Getvalue(Row, 1, Collection).c_str());
-                return true;
-            }
-        }
-
-        return false;
+        return GetStat1({}, pchName, pData);
     }
     bool GetStat4(const char *pchName, float *pData)
     {
-        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamuserstats.csv");
-        Infoprint(va("Get stat \"%s\"..", pchName));
-
-        for(size_t Row = 0; ; ++Row)
-        {
-            // End of collection check.
-            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
-
-            // Find the name.
-            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
-            {
-                *pData = std::strtof(CSV::Getvalue(Row, 1, Collection).c_str(), nullptr);
-                return true;
-            }
-        }
-
-        return false;
+        return GetStat2({}, pchName, pData);
     }
     bool SetStat3(const char *pchName, int32_t nData)
     {
-        Infoprint(va("Set stat \"%s\" = %d", pchName, nData));
-        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamuserstats.csv");
-
-        for(size_t Row = 0; ; ++Row)
-        {
-            // End of collection check.
-            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
-
-            // Find the name.
-            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
-            {
-                Collection[Row].clear();
-                Collection[Row].push_back(pchName);
-                Collection[Row].push_back(va("%d", nData));
-                return CSV::Writefile("./Plugins/" MODULENAME "/Steamuserstats.csv", Collection);
-            }
-        }
-
-        CSV::Addrow({pchName, va("%d", nData)}, Collection);
-        return CSV::Writefile("./Plugins/" MODULENAME "/Steamuserstats.csv", Collection);
+        return SetStat1({}, pchName, nData);
     }
     bool SetStat4(const char *pchName, float fData)
     {
-        Infoprint(va("Set stat \"%s\" = %f", pchName, fData));
-        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamuserstats.csv");
-
-        for(size_t Row = 0; ; ++Row)
-        {
-            // End of collection check.
-            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
-
-            // Find the name.
-            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
-            {
-                Collection[Row].clear();
-                Collection[Row].push_back(pchName);
-                Collection[Row].push_back(va("%f", fData));
-                return CSV::Writefile("./Plugins/" MODULENAME "/Steamuserstats.csv", Collection);
-            }
-        }
-
-        CSV::Addrow({pchName, va("%f", fData)}, Collection);
-        return CSV::Writefile("./Plugins/" MODULENAME "/Steamuserstats.csv", Collection);
+        return SetStat2({}, pchName, fData);
     }
     bool UpdateAvgRateStat2(const char *pchName, float, double dSessionLength)
     {
@@ -334,52 +361,15 @@ public:
     }
     bool GetAchievement1(const char *pchName, bool *pbAchieved)
     {
-        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamachievements.csv");
-        Infoprint(va("Get achievement \"%s\"..", pchName));
-
-        for(size_t Row = 0; ; ++Row)
-        {
-            // End of collection check.
-            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
-
-            // Find the name.
-            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
-            {
-                *pbAchieved = std::strcmp(CSV::Getvalue(Row, 1, Collection).c_str(), CSV::Getvalue(Row, 2, Collection).c_str());
-                return true;
-            }
-        }
-
-        return false;
+        return GetAchievement0({}, pchName, pbAchieved);
     }
     bool SetAchievement1(const char *pchName)
     {
-        Infoprint(va("Set achievement \"%s\" completed.", pchName));
-        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamachievements.csv");
-
-        for(size_t Row = 0; ; ++Row)
-        {
-            // End of collection check.
-            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
-
-            // Find the name.
-            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
-            {
-                Collection[Row].clear();
-                Collection[Row].push_back(pchName);
-                Collection[Row].push_back("100");
-                Collection[Row].push_back("100");
-                return CSV::Writefile("./Plugins/" MODULENAME "/Steamachievements.csv", Collection);
-            }
-        }
-
-        CSV::Addrow({pchName, "100", "100"}, Collection);
-        return CSV::Writefile("./Plugins/" MODULENAME "/Steamachievements.csv", Collection);
+        return SetAchievement0({}, pchName);
     }
     bool ClearAchievement1(const char *pchName)
     {
-        Printfunction();
-        return false;
+        return ClearAchievement0({}, pchName);
     }
     bool StoreStats1()
     {
@@ -388,78 +378,56 @@ public:
     }
     int GetAchievementIcon1(const char *pchName)
     {
-        Printfunction();
-        return 0;
+        return GetAchievementIcon0({}, pchName);
     }
     const char *GetAchievementDisplayAttribute1(const char *pchName, const char *pchKey)
     {
-        Printfunction();
-        return "";
+        return GetAchievementDisplayAttribute0({}, pchName, pchKey);
     }
     bool IndicateAchievementProgress1(const char *pchName, uint32_t nCurProgress, uint32_t nMaxProgress)
     {
-        /*
-            TODO(Convery):
-            Trigger a steam-like toaster popup if
-            we have an overlay active.
-        */
-
-        Infoprint(va("Set achievement \"%s\" progress: %d of %d", pchName, nCurProgress, nMaxProgress));
-        auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamachievements.csv");
-
-        for(size_t Row = 0; ; ++Row)
-        {
-            // End of collection check.
-            if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
-
-            // Find the name.
-            if(0 == std::strcmp(CSV::Getvalue(Row, 0, Collection).c_str(), pchName))
-            {
-                Collection[Row].clear();
-                Collection[Row].push_back(pchName);
-                Collection[Row].push_back(va("%d", nCurProgress));
-                Collection[Row].push_back(va("%d", nMaxProgress));
-                return CSV::Writefile("./Plugins/" MODULENAME "/Steamachievements.csv", Collection);
-            }
-        }
-
-        CSV::Addrow({pchName, va("%d", nCurProgress), va("%d", nMaxProgress)}, Collection);
-        return CSV::Writefile("./Plugins/" MODULENAME "/Steamachievements.csv", Collection);
+        return IndicateAchievementProgress0({}, pchName, nCurProgress, nMaxProgress);
     }
-    static uint64_t RequestUserStats(CSteamID steamIDUser)
+    uint64_t RequestUserStats(CSteamID steamIDUser)
     {
         Printfunction();
         return 0;
     }
-    static bool GetUserStat1(CSteamID steamIDUser, const char *pchName, int32_t *pData)
+    bool GetUserStat1(CSteamID steamIDUser, const char *pchName, int32_t *pData)
     {
-        Printfunction();
-        return false;
+        if (steamIDUser.ConvertToUint64() == Steamconfig::UserID)
+            return false;
+        return GetStat3(pchName, pData);
     }
-    static bool GetUserStat2(CSteamID steamIDUser, const char *pchName, float *pData)
+    bool GetUserStat2(CSteamID steamIDUser, const char *pchName, float *pData)
     {
-        Printfunction();
-        return false;
+        if (steamIDUser.ConvertToUint64() == Steamconfig::UserID)
+            return false;
+        return GetStat4(pchName, pData);
     }
-    static bool GetUserAchievement(CSteamID steamIDUser, const char *pchName, bool *pbAchieved)
+    bool GetUserAchievement(CSteamID steamIDUser, const char *pchName, bool *pbAchieved)
     {
-        Printfunction();
-        return false;
+        if (steamIDUser.ConvertToUint64() == Steamconfig::UserID)
+            return false;
+        return GetAchievement1(pchName, pbAchieved);
     }
     bool ResetAllStats(bool bAchievementsToo)
     {
         Printfunction();
-        return false;
+
+        std::remove("./Plugins/" MODULENAME "/Steamuserstats.json");
+        if (bAchievementsToo) std::remove("./Plugins/" MODULENAME "/Steamachievements.json");
+
+        return true;
     }
     uint64_t FindOrCreateLeaderboard(const char *pchLeaderboardName, uint32_t eLeaderboardSortMethod, uint32_t eLeaderboardDisplayType)
     {
-        Printfunction();
-        return 0;
+        return FindLeaderboard(pchLeaderboardName);
     }
     uint64_t FindLeaderboard(const char *pchLeaderboardName)
     {
         // Update the leaderboards if we are online.
-        if(!Steamconfig::Offline) Updateleaderboardcache();
+        if(!Steamconfig::Offline) Loadleaderboards();
 
         auto RequestID = Steamcallback::Createrequest();
         auto Response = new LeaderboardFindResult_t();
@@ -474,12 +442,17 @@ public:
     const char *GetLeaderboardName(uint64_t hSteamLeaderboard)
     {
         Printfunction();
+
+        for (auto &Item : Leaderboardslist)
+            if (hSteamLeaderboard == Item.LeaderboardID)
+                return Item.Leaderboardname.c_str();
+
         return "";
     }
     int GetLeaderboardEntryCount(uint64_t hSteamLeaderboard)
     {
         Printfunction();
-        return 0;
+        return Leaderboardslist.size();
     }
     uint32_t GetLeaderboardSortMethod(uint64_t hSteamLeaderboard)
     {
@@ -494,15 +467,17 @@ public:
     uint64_t DownloadLeaderboardEntries(uint64_t hSteamLeaderboard, uint32_t eLeaderboardDataRequest, int nRangeStart, int nRangeEnd)
     {
         // Update the leaderboards if we are online.
-        if(!Steamconfig::Offline) Updateleaderboardcache();
+        if(!Steamconfig::Offline) Loadleaderboards();
 
         auto RequestID = Steamcallback::Createrequest();
         auto Response = new LeaderboardScoresDownloaded_t();
         Infoprint(va("Download leaderboard 0x%llx", hSteamLeaderboard));
+        for (auto &Item : Leaderboardslist)
+            if (Item.LeaderboardID == hSteamLeaderboard)
+                Response->m_cEntryCount = Item.Entries.size();
 
         Response->m_hSteamLeaderboard = hSteamLeaderboard;
         Response->m_hSteamLeaderboardEntries = hSteamLeaderboard;
-        Response->m_cEntryCount = Leaderboardcache[hSteamLeaderboard].size();
         Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
 
         return RequestID;
