@@ -19,8 +19,8 @@ add_library(steam_api SHARED ${SOURCES})
 #set_target_properties(Platformwrapper32 PROPERTIES SUFFIX "ayria32")
 #set_target_properties(Platformwrapper64 PROPERTIES SUFFIX "ayria64")
 
-#target_link_libraries(Platformwrapper32 dl pthread sqlite3)
-#target_link_libraries(Platformwrapper64 dl pthread sqlite3)
+#target_link_libraries(Platformwrapper32 dl pthread)
+#target_link_libraries(Platformwrapper64 dl pthread)
 
 set_target_properties(steam_api PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32 -static-libgcc -static-libstdc++")
-target_link_libraries(steam_api dl pthread sqlite3)
+target_link_libraries(steam_api dl pthread)

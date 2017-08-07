@@ -1,6 +1,6 @@
 /*
     Initial author: Convery (tcn@ayria.se)
-    Started: 03-08-2017
+    Started: 07-08-2017
     License: MIT
     Notes:
 */
@@ -29,19 +29,19 @@
 
 // Includes for thirdparty libraries.
 #include <nlohmann/json.hpp>
-#include <sqlite3.h>
 
 // Includes for our utilities.
 #include "Utility/Cryptography/FNV1Hash.h"
 #include "Utility/Text/Variadicstring.h"
 #include "Utility/Binary/Patternscan.h"
 #include "Utility/Binary/Memprotect.h"
+#include "Utility/Data/Filesysteem.h"
 #include "Utility/Data/Bytebuffer.h"
 #include "Utility/Binary/Hooking.h"
 #include "Utility/Text/Logfile.h"
-#include "Utility/Data/Database.h"
 #include "Utility/Data/Base64.h"
 #include "Utility/Text/CSV.h"
+
 
 // Includes for our components.
 #include "Steam/Interfaces/Interfaces.h"
