@@ -14,7 +14,7 @@ namespace Steamconfig
     // Application info.
     char Language[32]{ "english" };
     uint32_t ApplicationID{ 0 };
-    int64_t Startuptimestamp{ std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() };
+    uint64_t Startuptimestamp{ uint64_t(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) };
 
     // Network access.
     bool LAN{ false };

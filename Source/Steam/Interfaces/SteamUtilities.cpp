@@ -30,7 +30,7 @@ public:
     uint32_t GetSecondsSinceComputerActive()
     {
         Printfunction();
-        return uint32_t(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() - Steamconfig::Startuptimestamp + 600);
+        return uint32_t(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now().time_since_epoch()).count());
     }
     uint32_t GetConnectedUniverse()
     {

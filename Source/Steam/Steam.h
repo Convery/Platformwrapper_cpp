@@ -16,7 +16,7 @@ namespace Steamconfig
     // Application info.
     extern char Language[32];
     extern uint32_t ApplicationID;
-    extern int64_t Startuptimestamp;
+    extern uint64_t Startuptimestamp;
 
     // Network access.
     extern bool LAN;

@@ -12,47 +12,57 @@
 auto Temp ##Function = &Class::Function;        \
 Methods[Index] = *(void **)&Temp ##Function;
 
-// If both DLC-ID and app-ID are set, app-ID is the owner of the DLC.
-using Steamitem_t = struct { uint32_t DLCID; uint32_t ApplicationID; std::string Installpath; };
-std::vector<Steamitem_t> Purchaseditems;
-void Updatepurchases()
+// A cache of owned application.
+struct Steamgame_t
 {
-    #if defined(_WIN32)
-    std::FILE *Pipe = _popen("ayria://steamgames", "rt");
-    #else
-    std::FILE *Pipe = popen("ayria://steamgames", "rt");
-    #endif
+    uint32_t DLCCount;
+    uint32_t ApplicationID;
+    std::string Installationpath;
+};
+std::vector<Steamgame_t> Gameslist;
 
-    if (!Pipe) return;
+// Update the cache as requested.
+void Loadgames()
+{
+    std::string JSONBuffer;
+    Gameslist.clear();
 
-    // The output is split into chucks of 10 games..
-    auto Buffer = std::make_unique<char[]>(8192);
-    while (std::fgets(Buffer.get(), 8192, Pipe))
+    // Offlinemode reads from disk.
+    if (Steamconfig::Offline)
     {
-        try
-        {
-            auto Parsed = nlohmann::json::parse(Buffer.get());
-
-            for (auto &Item : Parsed["Steamgames"])
-            {
-                uint32_t ApplicationID;
-                std::string Installpath;
-
-                if (Item["ApplicationID"].is_null()) continue;
-                if (Item["Installpath"].is_null()) continue;
-                if (Item["DLCID"].is_null()) continue;
-
-                Purchaseditems.push_back({ Item["DLCID"], Item["ApplicationID"], Item["Installpath"] });
-            }
-        }
-        catch (...) {};
+        JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamgames.json");
+    }
+    else
+    {
+        JSONBuffer = Readpipe("ayria://getgames");
     }
 
-    #if defined(_WIN32)
-    _pclose(Pipe);
-    #else
-    pclose(Pipe);
-    #endif
+    try
+    {
+        auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
+
+        for (auto &Item : Parsed["Steamgames"])
+        {
+            Gameslist.push_back({ Item["DLCCount"], Item["ApplicationID"], Item["Installationpath"] });
+        }
+    }
+    catch (...) {};
+}
+void Savegames()
+{
+    nlohmann::json Object;
+
+    for (auto &Item : Gameslist)
+    {
+        Object["Steamgames"] +=
+        {
+            { "DLCCount", Item.DLCCount},
+            { "ApplicationID", Item.ApplicationID },
+            { "Installationpath", Item.Installationpath }
+        };
+    }
+
+    Writefile("./Plugins/" MODULENAME "/Steamgames.json", Object.dump(4));
 }
 
 #pragma region Methods
@@ -95,12 +105,12 @@ public:
     bool BIsSubscribedApp(uint32_t nAppID)
     {
         // Get the purchased items.
-        if (0 == Purchaseditems.size()) Updatepurchases();
+        if (0 == Gameslist.size()) Loadgames();
 
         // If we could not fetch any info, assume ownership.
-        if (0 == Purchaseditems.size()) return true;
+        if (0 == Gameslist.size()) return true;
 
-        for (auto &Item : Purchaseditems)
+        for (auto &Item : Gameslist)
             if (Item.ApplicationID == nAppID)
                 return true;
 
@@ -109,14 +119,14 @@ public:
     bool BIsDlcInstalled(uint32_t nAppID)
     {
         // Get the purchased items.
-        if (0 == Purchaseditems.size()) Updatepurchases();
+        if (0 == Gameslist.size()) Loadgames();
 
         // If we could not fetch any info, assume ownership.
-        if (0 == Purchaseditems.size()) return true;
+        if (0 == Gameslist.size()) return true;
 
-        for (auto &Item : Purchaseditems)
-            if (Item.ApplicationID == nAppID && Item.DLCID)
-                return true;
+        for (auto &Item : Gameslist)
+            if (Item.ApplicationID == nAppID)
+                return Fileexists(Item.Installationpath);
 
         return false;
     }
@@ -133,14 +143,12 @@ public:
     int GetDLCCount()
     {
         Printfunction();
-        int Count = 0;
 
-        for (auto &Item : Purchaseditems)
+        for (auto &Item : Gameslist)
             if (Item.ApplicationID == Steamconfig::ApplicationID)
-                if (Item.DLCID)
-                    Count++;
+                return Item.DLCCount;
 
-        return Count;
+        return 0;
     }
     bool BGetDLCDataByIndex(int iDLC, uint32_t *pAppID, bool *pbAvailable, char *pchName, int cchNameBufferSize)
     {
@@ -149,13 +157,37 @@ public:
     }
     void InstallDLC(uint32_t nAppID)
     {
-        Printfunction();
-        return;
+        Infoprint(va("Installing DLC %u..", nAppID));
+
+        if (Writepipe("ayria://addgame", nlohmann::json({ "Steamgame", { "ApplicationID", nAppID } })))
+            return Loadgames();
+
+        for (auto &Item : Gameslist)
+            if (Item.ApplicationID == Steamconfig::ApplicationID)
+                Item.DLCCount++;
+
+        Gameslist.push_back({ 0, nAppID, "" });
+        Savegames();
     }
     void UninstallDLC(uint32_t nAppID)
     {
-        Printfunction();
-        return;
+        Infoprint(va("Uninstalling DLC %u..", nAppID));
+
+        if (Writepipe("ayria://removegame", nlohmann::json({ "Steamgame", { "ApplicationID", nAppID } })))
+            return Loadgames();
+
+        for (auto &Item : Gameslist)
+            if (Item.ApplicationID == Steamconfig::ApplicationID)
+                Item.DLCCount--;
+
+        for (auto Iterator = Gameslist.begin(); Iterator != Gameslist.end(); ++Iterator)
+        {
+            if (Iterator->ApplicationID == nAppID)
+            {
+                Gameslist.erase(Iterator);
+                break;
+            }
+        }
     }
     void RequestAppProofOfPurchaseKey(uint32_t nAppID)
     {
@@ -182,16 +214,16 @@ public:
         Printfunction();
 
         // Get the purchased items.
-        if (0 == Purchaseditems.size()) Updatepurchases();
+        if (0 == Gameslist.size()) Loadgames();
 
-        for (auto &Item : Purchaseditems)
+        for (auto &Item : Gameslist)
         {
             if (Item.ApplicationID == appID)
             {
-                if (Item.Installpath.size() <= cchFolderBufferSize)
+                if (Item.Installationpath.size() <= cchFolderBufferSize)
                 {
-                    std::strcpy(pchFolder, Item.Installpath.c_str());
-                    return Item.Installpath.size();
+                    std::strcpy(pchFolder, Item.Installationpath.c_str());
+                    return Item.Installationpath.size();
                 }
             }
         }
@@ -201,21 +233,14 @@ public:
     bool BIsAppInstalled(uint32_t appID)
     {
         // Get the purchased items.
-        if (0 == Purchaseditems.size()) Updatepurchases();
+        if (0 == Gameslist.size()) Loadgames();
 
         // If we could not fetch any info, assume ownership.
-        if (0 == Purchaseditems.size()) return true;
+        if (0 == Gameslist.size()) return true;
 
-        for (auto &Item : Purchaseditems)
-        {
-            if (Item.ApplicationID == appID || Item.DLCID == appID)
-            {
-                std::FILE *Filehandle = std::fopen(Item.Installpath.c_str(), "rb");
-                if (!Filehandle) return false;
-                std::fclose(Filehandle);
-                return true;
-            }
-        }
+        for (auto &Item : Gameslist)
+            if (Item.ApplicationID == appID)
+                return Fileexists(Item.Installationpath);
 
         return false;
     }
@@ -237,6 +262,14 @@ public:
     bool GetDlcDownloadProgress(uint32_t nAppID, uint64_t *punBytesDownloaded, uint64_t *punBytesTotal)
     {
         Printfunction();
+
+        /*
+            NOTE(Convery):
+            I'm not sure if we can ever implement this function.
+            A thirdparty delivering content could be considered
+            some form of piracy. Check this with legal.
+        */
+
         return false;
     }
     int GetAppBuildId()
