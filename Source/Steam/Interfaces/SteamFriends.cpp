@@ -100,7 +100,7 @@ public:
     {
         Printfunction();
 
-        if (Writepipe("ayria://removefriend", nlohmann::json({ "Steamfriend", {"UserID", steamIDFriend.ConvertToUint64() } }).dump(4)))
+        if (Writepipe("ayria://removefriend", nlohmann::json({ "Steamfriend", { "UserID", steamIDFriend.ConvertToUint64() } }).dump(4)))
         {
             Loadfriends();
             return true;
@@ -480,7 +480,7 @@ public:
     CSteamID GetCoplayFriend(int iCoplayFriend)
     {
         Printfunction();
-        return CSteamID(Friendslist[iFriend].UserID);
+        return CSteamID(Friendslist[iCoplayFriend].UserID);
     }
     int GetFriendCoplayTime(CSteamID steamIDFriend)
     {
@@ -520,7 +520,7 @@ public:
     CSteamID GetChatMemberByIndex(CSteamID groupID, int iIndex)
     {
         Printfunction();
-        return CSteamID(0);
+        return CSteamID(uint64_t(0));
     }
     bool SendClanChatMessage(CSteamID groupID, const char *cszMessage)
     {
@@ -1342,11 +1342,7 @@ struct Steamfriendsloader
         Interfacemanager::Addinterface(STEAM_FRIENDS, "SteamFriends014", new SteamFriends014);
         Interfacemanager::Addinterface(STEAM_FRIENDS, "SteamFriends015", new SteamFriends015);
 
-        LoadFriendslist();
-        if (!Steamconfig::Offline)
-        {
-            UpdateFriendslist();
-        }
+        Loadfriends();
     }
 };
 static Steamfriendsloader Interfaceloader{};
