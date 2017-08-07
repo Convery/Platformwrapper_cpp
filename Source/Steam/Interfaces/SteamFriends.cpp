@@ -12,45 +12,52 @@
 auto Temp ##Function = &Class::Function;        \
 Methods[Index] = *(void **)&Temp ##Function;
 
-// Local cache of friends for offline mode.
-struct Steamfriend
+// A cache of friends and their status.
+struct Steamfriend_t
 {
+    std::string Username;
+    uint64_t UserID;
     bool Online;
-    uint64_t XUID;
-    std::string Name;
 };
-std::vector<Steamfriend> Friendcache;
-void Loadfriendcache()
-{
-    auto Collection = CSV::Readfile("./Plugins/" MODULENAME "/Steamfriends.csv");
+std::vector<Steamfriend_t> Friendslist;
 
-    for(size_t Row = 0; ; ++Row)
+// Update the cache as requested.
+void Loadfriends()
+{
+    std::string JSONBuffer;
+    Friendslist.clear();
+
+    // Offlinemode reads from disk.
+    if (Steamconfig::Offline)
     {
-        // End of collection check.
-        if(0 == CSV::Getvalue(Row, 0, Collection).size()) break;
-
-        // Create a new friend.
-        Steamfriend Friend{};
-        Friend.XUID = strtoull(CSV::Getvalue(Row, 0, Collection).c_str(), nullptr, 16);
-        Friend.Name = CSV::Getvalue(Row, 1, Collection);
-        Friendcache.push_back(Friend);
+        JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamfriends.json");
     }
-}
-void Savefriendcahce()
-{
-    CSV::Collection_t Collection;
+    else
+    {
+        JSONBuffer = Readpipe("ayria://getfriends");
+    }
 
-    for(auto &Item : Friendcache)
-        CSV::Addrow({va("%llx", Item.XUID), Item.Name}, Collection);
+    try
+    {
+        auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
 
-    CSV::Writefile("./Plugins/" MODULENAME "/Steamfriends.csv", Collection);
+        for (auto &Item : Parsed["Steamfriends"])
+        {
+            Friendslist.push_back({ Item["Username"], Item["UserID"], false });
+        }
+    }
+    catch (...) {};
 }
-void Updatefriendcache()
+void Savefriends()
 {
-    /*
-        TODO(Convery):
-        Connect to the desktopclient and request this data.
-    */
+    nlohmann::json Object;
+
+    for (auto &Item : Friendslist)
+    {
+        Object["Steamfriends"] += { { "Username", Item.Username}, { "UserID", Item.UserID } };
+    }
+
+    Writefile("./Plugins/" MODULENAME "/Steamfriends.json", Object.dump(4));
 }
 
 #pragma region Methods
@@ -79,34 +86,34 @@ public:
     {
         Printfunction();
 
-        // Add to local cache.
-        Friendcache.push_back({ false, steamIDFriend.ConvertToUint64(), "unknown" });
+        if (Writepipe("ayria://addfriend", nlohmann::json({ "Steamfriend", { "UserID", steamIDFriend.ConvertToUint64() } }).dump(4)))
+        {
+            Loadfriends();
+            return true;
+        }
 
-        /*
-            TODO(Convery):
-            Notify the desktopclient that we've made a new friend.
-        */
-
+        Friendslist.push_back({ "Unknown player", steamIDFriend.ConvertToUint64(), false });
+        Savefriends();
         return true;
     }
     bool RemoveFriend(CSteamID steamIDFriend)
     {
         Printfunction();
 
-        // Find and remove the friend.
-        for (auto Iterator = Friendcache.begin(); Iterator != Friendcache.end(); ++Iterator)
+        if (Writepipe("ayria://removefriend", nlohmann::json({ "Steamfriend", {"UserID", steamIDFriend.ConvertToUint64() } }).dump(4)))
         {
-            if (Iterator->XUID == steamIDFriend.ConvertToUint64())
+            Loadfriends();
+            return true;
+        }
+
+        for (auto Iterator = Friendslist.begin(); Iterator != Friendslist.end(); ++Iterator)
+        {
+            if (Iterator->UserID == steamIDFriend.ConvertToUint64())
             {
-                Friendcache.erase(Iterator);
+                Friendslist.erase(Iterator);
                 break;
             }
         }
-
-        /*
-            TODO(Convery):
-            Notify the desktopclient that we've lost a friend =(.
-        */
 
         return true;
     }
@@ -114,9 +121,9 @@ public:
     {
         Printfunction();
 
-        for (auto Iterator = Friendcache.begin(); Iterator != Friendcache.end(); ++Iterator)
+        for (auto Iterator = Friendslist.begin(); Iterator != Friendslist.end(); ++Iterator)
         {
-            if (Iterator->XUID == steamIDFriend.ConvertToUint64())
+            if (Iterator->UserID == steamIDFriend.ConvertToUint64())
             {
                 return true;
             }
@@ -128,21 +135,27 @@ public:
     {
         Printfunction();
 
-        // EFriendRelationship::Friend
-        return 3;
+        for (auto Iterator = Friendslist.begin(); Iterator != Friendslist.end(); ++Iterator)
+        {
+            if (Iterator->UserID == steamIDFriend.ConvertToUint64())
+            {
+                // EFriendRelationship::Friend
+                return 3;
+            }
+        }
+
+        return 0;
     }
     uint32_t GetFriendPersonaState(CSteamID steamIDFriend)
     {
         Printfunction();
 
-        for (auto Iterator = Friendcache.begin(); Iterator != Friendcache.end(); ++Iterator)
+        for (auto Iterator = Friendslist.begin(); Iterator != Friendslist.end(); ++Iterator)
         {
-            if (Iterator->XUID == steamIDFriend.ConvertToUint64())
+            if (Iterator->UserID == steamIDFriend.ConvertToUint64())
             {
-                if (Iterator->Online)
-                    return 1;
-                else
-                    return 0;
+                if (Iterator->Online) return 1;
+                else return 0;
             }
         }
 
@@ -157,29 +170,38 @@ public:
     const char *GetFriendPersonaName(CSteamID steamIDFriend)
     {
         Printfunction();
-        for (auto Iterator = Friendcache.begin(); Iterator != Friendcache.end(); ++Iterator)
+        for (auto Iterator = Friendslist.begin(); Iterator != Friendslist.end(); ++Iterator)
         {
-            if (Iterator->XUID == steamIDFriend.ConvertToUint64())
+            if (Iterator->UserID == steamIDFriend.ConvertToUint64())
             {
-                return Iterator->Name.c_str();
+                return Iterator->Username.c_str();
             }
         }
 
-        return "unknown";
+        return "Unknown player";
     }
     uint32_t AddFriendByName(const char *pchEmailOrAccountName)
     {
         Printfunction();
-        return 0;
+
+        if (Writepipe("ayria://addfriend", nlohmann::json({ "Steamfriend", { "Username", pchEmailOrAccountName} }).dump(4)))
+        {
+            Loadfriends();
+            return 1;
+        }
+
+        Friendslist.push_back({ pchEmailOrAccountName, 0, false });
+        Savefriends();
+        return 1;
     }
     int GetFriendCount0()
     {
-        return (int)Friendcache.size();
+        return (int)Friendslist.size();
     }
     CSteamID GetFriendByIndex0(int iFriend)
     {
         Printfunction();
-        return CSteamID(Friendcache[iFriend].XUID);
+        return CSteamID(Friendslist[iFriend].UserID);
     }
     void SendMsgToFriend0(CSteamID steamIDFriend, uint32_t eFriendMsgType, const char *pchMsgBody)
     {
@@ -244,12 +266,12 @@ public:
     }
     int GetFriendCount1(uint32_t iFriendFlags)
     {
-        return (int)Friendcache.size();
+        return (int)Friendslist.size();
     }
     CSteamID GetFriendByIndex1(int iFriend, uint32_t iFriendFlags)
     {
         Printfunction();
-        return CSteamID(Friendcache[iFriend].XUID);
+        return CSteamID(Friendslist[iFriend].UserID);
     }
     bool GetFriendGamePlayed1(CSteamID steamIDFriend, uint64_t *pulGameID, uint32_t *punGameIP, uint16_t *pusGamePort, uint16_t *pusQueryPort)
     {
@@ -260,9 +282,9 @@ public:
     {
         Printfunction();
 
-        for (auto Iterator = Friendcache.begin(); Iterator != Friendcache.end(); ++Iterator)
+        for (auto Iterator = Friendslist.begin(); Iterator != Friendslist.end(); ++Iterator)
         {
-            if (Iterator->XUID == steamIDFriend.ConvertToUint64())
+            if (Iterator->UserID == steamIDFriend.ConvertToUint64())
             {
                 return true;
             }
@@ -307,7 +329,7 @@ public:
     CSteamID GetFriendFromSourceByIndex(CSteamID steamIDSource, int iFriend)
     {
         Printfunction();
-        return CSteamID(Steamconfig::UserID);
+        return CSteamID(Friendslist[iFriend].UserID);
     }
     int GetFriendAvatar0(CSteamID steamIDFriend)
     {
@@ -335,7 +357,7 @@ public:
     CSteamID GetFriendByIndex2(int iFriend, int iFriendFlags)
     {
         Printfunction();
-        return CSteamID(Steamconfig::UserID);
+        return CSteamID(Friendslist[iFriend].UserID);
     }
     bool GetFriendGamePlayed3(CSteamID steamIDFriend, struct FriendGameInfo_t *pFriendGameInfo)
     {
@@ -458,7 +480,7 @@ public:
     CSteamID GetCoplayFriend(int iCoplayFriend)
     {
         Printfunction();
-        return CSteamID(Steamconfig::UserID);
+        return CSteamID(Friendslist[iFriend].UserID);
     }
     int GetFriendCoplayTime(CSteamID steamIDFriend)
     {
@@ -498,7 +520,7 @@ public:
     CSteamID GetChatMemberByIndex(CSteamID groupID, int iIndex)
     {
         Printfunction();
-        return CSteamID(Steamconfig::UserID);
+        return CSteamID(0);
     }
     bool SendClanChatMessage(CSteamID groupID, const char *cszMessage)
     {
@@ -1320,10 +1342,10 @@ struct Steamfriendsloader
         Interfacemanager::Addinterface(STEAM_FRIENDS, "SteamFriends014", new SteamFriends014);
         Interfacemanager::Addinterface(STEAM_FRIENDS, "SteamFriends015", new SteamFriends015);
 
-        Loadfriendcache();
+        LoadFriendslist();
         if (!Steamconfig::Offline)
         {
-            Updatefriendcache();
+            UpdateFriendslist();
         }
     }
 };
