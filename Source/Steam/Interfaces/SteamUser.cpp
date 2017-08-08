@@ -337,7 +337,7 @@ public:
     {
         // Clear the ticketbuffer and append the games data.
         std::memset(Ticketdata, 0, sizeof(Ticketdata));
-        std::memcpy(&Ticketdata[32], pDataToInclude, std::min(cbDataToInclude, sizeof(Ticketdata) - 32));
+        std::memcpy(&Ticketdata[32], pDataToInclude, std::min(cbDataToInclude, (unsigned int)sizeof(Ticketdata) - 32));
 
         auto RequestID = Steamcallback::Createrequest();
         auto Response = new EncryptedAppTicketResponse_t();

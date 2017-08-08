@@ -223,7 +223,7 @@ public:
                 if (Item.Installationpath.size() <= cchFolderBufferSize)
                 {
                     std::strcpy(pchFolder, Item.Installationpath.c_str());
-                    return Item.Installationpath.size();
+                    return uint32_t(Item.Installationpath.size());
                 }
             }
         }

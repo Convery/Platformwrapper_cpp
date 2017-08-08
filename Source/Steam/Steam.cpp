@@ -20,6 +20,17 @@ constexpr const char *Steamregistry = sizeof(void *) == 8 ? "Software\\Wow6432No
 extern "C"
 {
     // Interface access.
+    EXPORT_ATTR void *SteamInternal_CreateInterface(const char *Interfacename)
+    {
+        /*
+            NOTE(Convery):
+            This export is generally only used by DRM/anti-tampering systems.
+            As such this will likely cause a detection as they often check if
+            the address returned resides in steamclient(64).dll.
+        */
+
+        return Interfacemanager::Fetchinterface(Interfacename);
+    }
     EXPORT_ATTR void *SteamAppList()
     {
         return Interfacemanager::Fetchinterface(STEAM_APPLIST);
@@ -207,8 +218,8 @@ extern "C"
 
             RegSetValueExA(hRegKey, "ActiveUser", NULL, REG_DWORD, (LPBYTE)&UserID, sizeof(DWORD));
             RegSetValueExA(hRegKey, "pid", NULL, REG_DWORD, (LPBYTE)&ProcessID, sizeof(DWORD));
-            RegSetValueExA(hRegKey, "SteamClientDll", NULL, REG_SZ, (LPBYTE)Clientpath32.c_str(), Clientpath32.length() + 1);
-            RegSetValueExA(hRegKey, "SteamClientDll64", NULL, REG_SZ, (LPBYTE)Clientpath64.c_str(), Clientpath64.length() + 1);
+            RegSetValueExA(hRegKey, "SteamClientDll", NULL, REG_SZ, (LPBYTE)Clientpath32.c_str(), (DWORD)Clientpath32.length() + 1);
+            RegSetValueExA(hRegKey, "SteamClientDll64", NULL, REG_SZ, (LPBYTE)Clientpath64.c_str(), (DWORD)Clientpath64.length() + 1);
             RegSetValueExA(hRegKey, "Universe", NULL, REG_SZ, (LPBYTE)"Public", (DWORD)std::strlen("Public") + 1);
 
             RegCloseKey(hRegKey);
@@ -267,6 +278,28 @@ extern "C"
         // Usage information.
         Infoprint(va("Starting steamapp %i.", Steamconfig::ApplicationID));
         return false;
+    }
+
+    // Direct connections to Steam.
+    EXPORT_ATTR int32_t SteamAPI_GetHSteamUser()
+    {
+        Printfunction();
+        return 0;
+    }
+    EXPORT_ATTR int32_t SteamAPI_GetHSteamPipe()
+    {
+        Printfunction();
+        return 0;
+    }
+    EXPORT_ATTR int32_t SteamGameServer_GetHSteamUser()
+    {
+        Printfunction();
+        return 0;
+    }
+    EXPORT_ATTR int32_t SteamGameServer_GetHSteamPipe()
+    {
+        Printfunction();
+        return 0;
     }
 
     // Callback management.
@@ -333,6 +366,10 @@ extern "C"
         return true;
     }
     EXPORT_ATTR bool SteamGameServer_InitSafe(uint32_t unIP, uint16_t usSteamPort, uint16_t usGamePort, uint16_t usQueryPort, uint32_t eServerMode, const char *pchVersionString)
+    {
+        return SteamGameServer_Init(unIP, usSteamPort, usGamePort, usQueryPort, eServerMode, pchVersionString);
+    }
+    EXPORT_ATTR bool SteamInternal_GameServer_Init(uint32_t unIP, uint16_t usSteamPort, uint16_t usGamePort, uint16_t usQueryPort, uint32_t eServerMode, const char *pchVersionString)
     {
         return SteamGameServer_Init(unIP, usSteamPort, usGamePort, usQueryPort, eServerMode, pchVersionString);
     }

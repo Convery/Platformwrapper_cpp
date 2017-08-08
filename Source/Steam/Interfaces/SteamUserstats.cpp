@@ -452,7 +452,7 @@ public:
     int GetLeaderboardEntryCount(uint64_t hSteamLeaderboard)
     {
         Printfunction();
-        return Leaderboardslist.size();
+        return (int)Leaderboardslist.size();
     }
     uint32_t GetLeaderboardSortMethod(uint64_t hSteamLeaderboard)
     {
@@ -474,7 +474,7 @@ public:
         Infoprint(va("Download leaderboard 0x%llx", hSteamLeaderboard));
         for (auto &Item : Leaderboardslist)
             if (Item.LeaderboardID == hSteamLeaderboard)
-                Response->m_cEntryCount = Item.Entries.size();
+                Response->m_cEntryCount = (int)Item.Entries.size();
 
         Response->m_hSteamLeaderboard = hSteamLeaderboard;
         Response->m_hSteamLeaderboardEntries = hSteamLeaderboard;

@@ -33,6 +33,7 @@ namespace Steamconfig
 extern "C"
 {
     // Interface access.
+    EXPORT_ATTR void *SteamInternal_CreateInterface(const char *Interfacename);
     EXPORT_ATTR void *SteamAppList();
     EXPORT_ATTR void *SteamApps();
     EXPORT_ATTR void *SteamClient();
@@ -71,6 +72,12 @@ extern "C"
     EXPORT_ATTR const char *SteamAPI_GetSteamInstallPath();
     EXPORT_ATTR bool SteamAPI_RestartAppIfNecessary(uint32_t unOwnAppID);
 
+    // Direct connections to Steam.
+    EXPORT_ATTR int32_t SteamAPI_GetHSteamUser();
+    EXPORT_ATTR int32_t SteamAPI_GetHSteamPipe();
+    EXPORT_ATTR int32_t SteamGameServer_GetHSteamUser();
+    EXPORT_ATTR int32_t SteamGameServer_GetHSteamPipe();
+
     // Callback management.
     EXPORT_ATTR void SteamAPI_RunCallbacks();
     EXPORT_ATTR void SteamAPI_RegisterCallback(void *pCallback, int iCallback);
@@ -85,4 +92,5 @@ extern "C"
     EXPORT_ATTR uint64_t SteamGameServer_GetSteamID();
     EXPORT_ATTR bool SteamGameServer_Init(uint32_t unIP, uint16_t usSteamPort, uint16_t usGamePort, uint16_t usQueryPort, uint32_t eServerMode, const char *pchVersionString);
     EXPORT_ATTR bool SteamGameServer_InitSafe(uint32_t unIP, uint16_t usSteamPort, uint16_t usGamePort, uint16_t usQueryPort, uint32_t eServerMode, const char *pchVersionString);
+    EXPORT_ATTR bool SteamInternal_GameServer_Init(uint32_t unIP, uint16_t usSteamPort, uint16_t usGamePort, uint16_t usQueryPort, uint32_t eServerMode, const char *pchVersionString);
 }
