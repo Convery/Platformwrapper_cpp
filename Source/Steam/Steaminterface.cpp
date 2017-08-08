@@ -263,8 +263,14 @@ void Interfacemanager::Initialize()
 }
 void *Interfacemanager::Fetchinterface(const char *Name)
 {
+    // Internal lookup.
     auto Result = Interfacenames->find(Name);
     if (Result != Interfacenames->end()) return Result->second;
+
+    // External lookup.
+    for (auto &Item : Scandata)
+        if (0 == std::strcmp(Item.second.first, Name))
+            return Fetchinterface(Item.first);
 
     Debugprint(va("%s had no interface with the name \"%s\".", __FUNCTION__, Name));
     return nullptr;
