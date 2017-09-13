@@ -9,8 +9,6 @@
 #include "../../Stdinclude.h"
 
 #if defined (_WIN32)
-#include <Windows.h>
-
 constexpr const char *Gameoverlay = sizeof(void *) == 8 ? "gameoverlayrenderer64.dll" : "gameoverlayrenderer.dll";
 #endif
 

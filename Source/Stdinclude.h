@@ -27,6 +27,18 @@
 #include <ctime>
 #include <list>
 
+// Includes for platform libraries.
+#if defined (_WIN32)
+#include <Windows.h>
+#include <direct.h>
+#undef min
+#undef max
+#else
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#endif
+
 // Includes for thirdparty libraries.
 #include <nlohmann/json.hpp>
 

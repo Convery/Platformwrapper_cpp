@@ -936,9 +936,7 @@ struct Steamremotestorageloader
 static Steamremotestorageloader Interfaceloader{};
 
 #if !defined (_WIN32)
-#include <sys/stat.h>
 namespace { struct Createdir { Createdir() { mkdir(Storagedir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); }; }; static Createdir Created{}; }
 #else
-#include <direct.h>
 namespace { struct Createdir { Createdir() { _mkdir(Storagedir); }; }; static Createdir Created{}; }
 #endif

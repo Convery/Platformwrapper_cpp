@@ -15,10 +15,8 @@
 
 // Create a directory for our configfiles on startup.
 #if !defined (_WIN32)
-#include <sys/stat.h>
 namespace { struct Createdir { Createdir() { mkdir("./Plugins/" MODULENAME, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); }; }; static Createdir Created{}; }
 #else
-#include <direct.h>
 namespace { struct Createdir { Createdir() { _mkdir("./Plugins/" MODULENAME); }; }; static Createdir Created{}; }
 #endif
 
@@ -69,7 +67,6 @@ extern "C"
 
 // Load the bootsrapper on startup for developers that doesn't want to inject.
 #ifdef _WIN32
-#include <Windows.h>
 BOOLEAN WINAPI DllMain(HINSTANCE hDllHandle, DWORD nReason, LPVOID Reserved)
 {
     switch (nReason)
@@ -96,7 +93,6 @@ BOOLEAN WINAPI DllMain(HINSTANCE hDllHandle, DWORD nReason, LPVOID Reserved)
 }
 
 #else
-#include <dlfcn.h>
 
 __attribute__((constructor)) void DllMain()
 {
