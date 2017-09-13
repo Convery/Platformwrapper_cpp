@@ -8,10 +8,7 @@
 
 #include "../Stdinclude.h"
 
-// Registry and environment.
 #if defined(_WIN32)
-#include <Windows.h>
-
 // Steam components.
 constexpr const char *Gameoverlay = sizeof(void *) == 8 ? "gameoverlayrenderer64.dll" : "gameoverlayrenderer.dll";
 constexpr const char *Steamregistry = sizeof(void *) == 8 ? "Software\\Wow6432Node\\Valve\\Steam" : "Software\\Valve\\Steam";
@@ -253,6 +250,12 @@ extern "C"
 
         // Initialize the interface manager.
         Interfacemanager::Initialize();
+
+        // Remove any *.STEAMSTART metadata files.
+        std::vector<std::string> Filenames;
+        Findfiles("./", &Filenames, ".STEAMSTART");
+        for (auto &Item : Filenames) std::remove(Item.c_str());
+
         return true;
     }
     EXPORT_ATTR bool SteamAPI_InitSafe()
