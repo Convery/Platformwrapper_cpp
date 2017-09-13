@@ -86,7 +86,7 @@ BOOLEAN WINAPI DllMain(HINSTANCE hDllHandle, DWORD nReason, LPVOID Reserved)
                 freopen("CONOUT$", "w", stderr);
                 SetConsoleTitleA("Debug Console");
                 SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
-                LoadLibraryA("Localbootstrap");
+                LoadLibraryA("Localbootstrap.dll");
             #endif
             break;
         }
