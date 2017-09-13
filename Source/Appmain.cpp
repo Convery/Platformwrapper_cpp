@@ -79,7 +79,13 @@ BOOLEAN WINAPI DllMain(HINSTANCE hDllHandle, DWORD nReason, LPVOID Reserved)
             // Rather not handle all thread updates.
             DisableThreadLibraryCalls(hDllHandle);
 
+            // For developers we sideload a bootstrapper and create a console.
             #if !defined (NDEBUG)
+                AllocConsole();
+                freopen("CONOUT$", "w", stdout);
+                freopen("CONOUT$", "w", stderr);
+                SetConsoleTitleA("Debug Console");
+                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
                 LoadLibraryA("Localbootstrap");
             #endif
             break;
@@ -94,6 +100,7 @@ BOOLEAN WINAPI DllMain(HINSTANCE hDllHandle, DWORD nReason, LPVOID Reserved)
 
 __attribute__((constructor)) void DllMain()
 {
+    // For developers we sideload a bootstrapper.
     #if !defined (NDEBUG)
         dlopen("Localbootstrap", RTLD_LAZY);
     #endif
