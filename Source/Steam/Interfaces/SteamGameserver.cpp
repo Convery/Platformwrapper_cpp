@@ -12,6 +12,18 @@
 auto Temp ##Function = &Class::Function;        \
 Methods[Index] = *(void **)&Temp ##Function;
 
+struct SteamServersConnected_t
+{
+	enum { k_iCallback = 101 };
+};
+struct GSPolicyResponse_t
+{
+	enum { k_iCallback = 115 };
+
+	uint8_t m_bSecure;
+};
+
+
 #pragma region Methods
 class SteamGameserver
 {
@@ -19,6 +31,22 @@ public:
     void LogOn0()
     {
         Printfunction();
+
+        {
+            auto Response = new SteamServersConnected_t();
+            auto RequestID = Steamcallback::Createrequest();
+            Steamcallback::Markcallbackactive(Response->k_iCallback, RequestID);
+            Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
+        }
+
+        {
+            auto Response = new GSPolicyResponse_t();
+            auto RequestID = Steamcallback::Createrequest();
+
+            Response->m_bSecure = false;
+            Steamcallback::Markcallbackactive(Response->k_iCallback, RequestID);
+            Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
+        }
     }
     void LogOff()
     {
@@ -76,7 +104,7 @@ public:
     bool BSecure()
     {
         Printfunction();
-        return true;
+        return false;
     }
     CSteamID GetSteamID()
     {
@@ -239,10 +267,42 @@ public:
     void LogOn1(const char *pszAccountName, const char *pszPassword)
     {
         Printfunction();
+
+        {
+            auto Response = new SteamServersConnected_t();
+            auto RequestID = Steamcallback::Createrequest();
+            Steamcallback::Markcallbackactive(Response->k_iCallback, RequestID);
+            Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
+        }
+
+        {
+            auto Response = new GSPolicyResponse_t();
+            auto RequestID = Steamcallback::Createrequest();
+
+            Response->m_bSecure = false;
+            Steamcallback::Markcallbackactive(Response->k_iCallback, RequestID);
+            Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
+        }
     }
     void LogOnAnonymous()
     {
         Printfunction();
+
+        {
+            auto Response = new SteamServersConnected_t();
+            auto RequestID = Steamcallback::Createrequest();
+            Steamcallback::Markcallbackactive(Response->k_iCallback, RequestID);
+            Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
+        }
+
+        {
+            auto Response = new GSPolicyResponse_t();
+            auto RequestID = Steamcallback::Createrequest();
+
+            Response->m_bSecure = false;
+            Steamcallback::Markcallbackactive(Response->k_iCallback, RequestID);
+            Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
+        }
     }
     bool WasRestartRequested()
     {
@@ -333,6 +393,22 @@ public:
     void LogOn2(const char *pszUnk)
     {
         Printfunction();
+
+        {
+            auto Response = new SteamServersConnected_t();
+            auto RequestID = Steamcallback::Createrequest();
+            Steamcallback::Markcallbackactive(Response->k_iCallback, RequestID);
+            Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
+        }
+
+        {
+            auto Response = new GSPolicyResponse_t();
+            auto RequestID = Steamcallback::Createrequest();
+
+            Response->m_bSecure = false;
+            Steamcallback::Markcallbackactive(Response->k_iCallback, RequestID);
+            Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
+        }
     }
 };
 #pragma endregion
