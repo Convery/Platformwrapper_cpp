@@ -35,6 +35,7 @@ namespace Steamcallback
     // Add a games callback and result to the internal mapping.
     void Registercallback(Valvecallback *Callbackhandler, int32_t CallbackID);
     void Registerresult(Valvecallback *Callbackhandler, uint64_t RequestID);
+    void Markcallbackactive(int32_t CallbackID, uint64_t RequestID);
 
     // Remove a games callback and result from the internal mapping.
     void Removecallback(Valvecallback *Callbackhandler, int32_t CallbackID);

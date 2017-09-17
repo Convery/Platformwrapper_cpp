@@ -16,6 +16,7 @@ namespace Steamcallback
     std::list<Valvecallback *> Callbackhandlers;
     std::atomic<uint64_t> GlobalrequestID;
     std::list<Result_t> Requestresults;
+    std::mutex Threadguard;
 
     // Add a games callback and result to the internal mapping.
     void Registercallback(Valvecallback *Callbackhandler, int32_t CallbackID)
@@ -29,6 +30,20 @@ namespace Steamcallback
     {
         Debugprint(va("Registering result for RequestID 0x%llx (\"%s\").", RequestID, Callbackname(Callbackhandler->GetICallback()).c_str()));
         Activerequests[RequestID] = Callbackhandler;
+    }
+    void Markcallbackactive(int32_t CallbackID, uint64_t RequestID)
+    {
+        Threadguard.lock();
+        {
+            for (auto &Item : Callbackhandlers)
+            {
+                if (Item->GetICallback() == CallbackID)
+                {
+                    Activerequests[RequestID] = Item;
+                }
+            }
+        }
+        Threadguard.unlock();
     }
 
     // Remove a games callback and result from the internal mapping.
@@ -54,9 +69,13 @@ namespace Steamcallback
     // Create and complete the requests.
     void Completerequest(Result_t Result)
     {
-        Debugprint(va("Request with ID 0x%llx completed.", Result.RequestID));
-        Requeststatus[Result.RequestID] = true;
-        Requestresults.push_back(Result);
+        Threadguard.lock();
+        {
+            Requestresults.push_back(Result);
+            Requeststatus[Result.RequestID] = true;
+            Debugprint(va("Request with ID 0x%llx completed.", Result.RequestID));
+        }
+        Threadguard.unlock();
     }
     uint64_t Createrequest()
     {
@@ -71,24 +90,28 @@ namespace Steamcallback
     // Call all callbacks, usually every frame.
     void Runcallbacks()
     {
-        // For all our results.
-        LABEL_RESTART:
-        for (auto Resultiterator = Requestresults.begin(); Resultiterator != Requestresults.end(); ++Resultiterator)
+        Threadguard.lock();
         {
-            // Delay the result if the request is not synchronized yet.
-            if (!Requeststatus[Resultiterator->RequestID]) continue;
+            // For all our results.
+            LABEL_RESTART:
+            for (auto Resultiterator = Requestresults.begin(); Resultiterator != Requestresults.end(); Resultiterator++)
+            {
+                // Delay the result if the request is not synchronized yet.
+                if (!Requeststatus[Resultiterator->RequestID]) continue;
 
-            // Get the games callback if available.
-            auto Callback = Activerequests.find(Resultiterator->RequestID);
-            if (Callback == Activerequests.end()) continue;
+                // Get the games callback if available.
+                auto Callback = Activerequests.find(Resultiterator->RequestID);
+                if (Callback == Activerequests.end()) continue;
 
-            // Pass the result to the game.
-            Callback->second->Run(Resultiterator->Databuffer, false, Resultiterator->RequestID);
+                // Pass the result to the game.
+                Callback->second->Run(Resultiterator->Databuffer, false, Resultiterator->RequestID);
 
-            // Remove the result from the list.
-            Requestresults.erase(Resultiterator);
-            goto LABEL_RESTART;
+                // Remove the result from the list.
+                Requestresults.erase(Resultiterator);
+                goto LABEL_RESTART;
+            }
         }
+        Threadguard.unlock();
     }
 
     // Check the status of a request.
