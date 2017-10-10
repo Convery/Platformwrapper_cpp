@@ -11,6 +11,7 @@
 #if defined(_WIN32)
 // Steam components.
 constexpr const char *Gameoverlay = sizeof(void *) == 8 ? "gameoverlayrenderer64.dll" : "gameoverlayrenderer.dll";
+constexpr const char *Clientlibrary = sizeof(void *) == sizeof(uint64_t) ? "steamclient64.dll" : "steamclient.dll";
 constexpr const char *Steamregistry = sizeof(void *) == 8 ? "Software\\Wow6432Node\\Valve\\Steam" : "Software\\Valve\\Steam";
 #endif
 
@@ -234,9 +235,10 @@ extern "C"
             RegCloseKey(hRegKey);
         }
 
-        // Load the overlay.
+        // Load the overlay and clientlibrary.
         SetDllDirectoryA(Steamconfig::Path);
         LoadLibraryA(va("%s\\%s", Steamconfig::Path, Gameoverlay).c_str());
+        LoadLibraryA(va("%s\\%s", Steamconfig::Path, Clientlibrary).c_str());
 
         #else
 
