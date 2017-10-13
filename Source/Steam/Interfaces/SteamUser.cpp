@@ -11,6 +11,9 @@
 #define Createmethod(Index, Class, Function)    \
 auto Temp ##Function = &Class::Function;        \
 Methods[Index] = *(void **)&Temp ##Function;
+#define Createinterface(Enum, Class)            \
+static Class DEV ## Class;                      \
+Interfacemanager::Addinterface(Enum, #Class, &DEV ## Class);
 
 /*
     NOTE(Convery):
@@ -733,24 +736,24 @@ struct Steamuserloader
 {
     Steamuserloader()
     {
-        Interfacemanager::Addinterface(STEAM_USER, "SteamUser001", new SteamUser001);
-        Interfacemanager::Addinterface(STEAM_USER, "SteamUser002", new SteamUser002);
-        Interfacemanager::Addinterface(STEAM_USER, "SteamUser003", new SteamUser003);
-        Interfacemanager::Addinterface(STEAM_USER, "SteamUser004", new SteamUser004);
-        Interfacemanager::Addinterface(STEAM_USER, "SteamUser005", new SteamUser005);
-        Interfacemanager::Addinterface(STEAM_USER, "SteamUser006", new SteamUser006);
-        Interfacemanager::Addinterface(STEAM_USER, "SteamUser007", new SteamUser007);
-        Interfacemanager::Addinterface(STEAM_USER, "SteamUser008", new SteamUser008);
-        Interfacemanager::Addinterface(STEAM_USER, "SteamUser009", new SteamUser009);
-        Interfacemanager::Addinterface(STEAM_USER, "SteamUser010", new SteamUser010);
-        Interfacemanager::Addinterface(STEAM_USER, "SteamUser011", new SteamUser011);
-        Interfacemanager::Addinterface(STEAM_USER, "SteamUser012", new SteamUser012);
-        Interfacemanager::Addinterface(STEAM_USER, "SteamUser013", new SteamUser013);
-        Interfacemanager::Addinterface(STEAM_USER, "SteamUser014", new SteamUser014);
-        Interfacemanager::Addinterface(STEAM_USER, "SteamUser015", new SteamUser015);
-        Interfacemanager::Addinterface(STEAM_USER, "SteamUser016", new SteamUser016);
-        Interfacemanager::Addinterface(STEAM_USER, "SteamUser017", new SteamUser017);
-        Interfacemanager::Addinterface(STEAM_USER, "SteamUser018", new SteamUser018);
+        Createinterface(STEAM_USER, SteamUser001);
+        Createinterface(STEAM_USER, SteamUser002);
+        Createinterface(STEAM_USER, SteamUser003);
+        Createinterface(STEAM_USER, SteamUser004);
+        Createinterface(STEAM_USER, SteamUser005);
+        Createinterface(STEAM_USER, SteamUser006);
+        Createinterface(STEAM_USER, SteamUser007);
+        Createinterface(STEAM_USER, SteamUser008);
+        Createinterface(STEAM_USER, SteamUser009);
+        Createinterface(STEAM_USER, SteamUser010);
+        Createinterface(STEAM_USER, SteamUser011);
+        Createinterface(STEAM_USER, SteamUser012);
+        Createinterface(STEAM_USER, SteamUser013);
+        Createinterface(STEAM_USER, SteamUser014);
+        Createinterface(STEAM_USER, SteamUser015);
+        Createinterface(STEAM_USER, SteamUser016);
+        Createinterface(STEAM_USER, SteamUser017);
+        Createinterface(STEAM_USER, SteamUser018);
     }
 };
 static Steamuserloader Interfaceloader{};
