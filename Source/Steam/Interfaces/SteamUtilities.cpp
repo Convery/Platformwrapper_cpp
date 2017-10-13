@@ -15,6 +15,9 @@ constexpr const char *Gameoverlay = sizeof(void *) == 8 ? "gameoverlayrenderer64
 #define Createmethod(Index, Class, Function)    \
 auto Temp ##Function = &Class::Function;        \
 Methods[Index] = *(void **)&Temp ##Function;
+#define Createinterface(Enum, Class)            \
+static Class DEV ## Class;                      \
+Interfacemanager::Addinterface(Enum, #Class, &DEV ## Class);
 
 #pragma region Methods
 class SteamUtils
@@ -345,13 +348,13 @@ struct Steamutilitiesloader
 {
     Steamutilitiesloader()
     {
-        Interfacemanager::Addinterface(STEAM_UTILS, "SteamUtilities001", new SteamUtilities001);
-        Interfacemanager::Addinterface(STEAM_UTILS, "SteamUtilities002", new SteamUtilities002);
-        Interfacemanager::Addinterface(STEAM_UTILS, "SteamUtilities003", new SteamUtilities003);
-        Interfacemanager::Addinterface(STEAM_UTILS, "SteamUtilities004", new SteamUtilities004);
-        Interfacemanager::Addinterface(STEAM_UTILS, "SteamUtilities005", new SteamUtilities005);
-        Interfacemanager::Addinterface(STEAM_UTILS, "SteamUtilities006", new SteamUtilities006);
-        Interfacemanager::Addinterface(STEAM_UTILS, "SteamUtilities007", new SteamUtilities007);
+        Createinterface(STEAM_UTILS, SteamUtilities001);
+        Createinterface(STEAM_UTILS, SteamUtilities002);
+        Createinterface(STEAM_UTILS, SteamUtilities003);
+        Createinterface(STEAM_UTILS, SteamUtilities004);
+        Createinterface(STEAM_UTILS, SteamUtilities005);
+        Createinterface(STEAM_UTILS, SteamUtilities006);
+        Createinterface(STEAM_UTILS, SteamUtilities007);
     }
 };
 static Steamutilitiesloader Interfaceloader{};

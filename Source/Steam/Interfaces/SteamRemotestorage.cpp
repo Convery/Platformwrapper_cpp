@@ -11,6 +11,9 @@
 #define Createmethod(Index, Class, Function)    \
 auto Temp ##Function = &Class::Function;        \
 Methods[Index] = *(void **)&Temp ##Function;
+#define Createinterface(Enum, Class)            \
+static Class DEV ## Class;                      \
+Interfacemanager::Addinterface(Enum, #Class, &DEV ## Class);
 
 constexpr const char *Storagedir = "./Plugins/" MODULENAME "/Steamstorage/";
 
@@ -919,18 +922,18 @@ struct Steamremotestorageloader
 {
     Steamremotestorageloader()
     {
-        Interfacemanager::Addinterface(STEAM_REMOTESTORAGE, "SteamRemotestorage001", new SteamRemotestorage001);
-        Interfacemanager::Addinterface(STEAM_REMOTESTORAGE, "SteamRemotestorage002", new SteamRemotestorage002);
-        Interfacemanager::Addinterface(STEAM_REMOTESTORAGE, "SteamRemotestorage003", new SteamRemotestorage003);
-        Interfacemanager::Addinterface(STEAM_REMOTESTORAGE, "SteamRemotestorage004", new SteamRemotestorage004);
-        Interfacemanager::Addinterface(STEAM_REMOTESTORAGE, "SteamRemotestorage005", new SteamRemotestorage005);
-        Interfacemanager::Addinterface(STEAM_REMOTESTORAGE, "SteamRemotestorage006", new SteamRemotestorage006);
-        Interfacemanager::Addinterface(STEAM_REMOTESTORAGE, "SteamRemotestorage007", new SteamRemotestorage007);
-        Interfacemanager::Addinterface(STEAM_REMOTESTORAGE, "SteamRemotestorage008", new SteamRemotestorage008);
-        Interfacemanager::Addinterface(STEAM_REMOTESTORAGE, "SteamRemotestorage009", new SteamRemotestorage009);
-        Interfacemanager::Addinterface(STEAM_REMOTESTORAGE, "SteamRemotestorage010", new SteamRemotestorage010);
-        Interfacemanager::Addinterface(STEAM_REMOTESTORAGE, "SteamRemotestorage011", new SteamRemotestorage011);
-        Interfacemanager::Addinterface(STEAM_REMOTESTORAGE, "SteamRemotestorage012", new SteamRemotestorage012);
+        Createinterface(STEAM_REMOTESTORAGE, SteamRemotestorage001);
+        Createinterface(STEAM_REMOTESTORAGE, SteamRemotestorage002);
+        Createinterface(STEAM_REMOTESTORAGE, SteamRemotestorage003);
+        Createinterface(STEAM_REMOTESTORAGE, SteamRemotestorage004);
+        Createinterface(STEAM_REMOTESTORAGE, SteamRemotestorage005);
+        Createinterface(STEAM_REMOTESTORAGE, SteamRemotestorage006);
+        Createinterface(STEAM_REMOTESTORAGE, SteamRemotestorage007);
+        Createinterface(STEAM_REMOTESTORAGE, SteamRemotestorage008);
+        Createinterface(STEAM_REMOTESTORAGE, SteamRemotestorage009);
+        Createinterface(STEAM_REMOTESTORAGE, SteamRemotestorage010);
+        Createinterface(STEAM_REMOTESTORAGE, SteamRemotestorage011);
+        Createinterface(STEAM_REMOTESTORAGE, SteamRemotestorage012);
     }
 };
 static Steamremotestorageloader Interfaceloader{};

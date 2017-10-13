@@ -11,6 +11,9 @@
 #define Createmethod(Index, Class, Function)    \
 auto Temp ##Function = &Class::Function;        \
 Methods[Index] = *(void **)&Temp ##Function;
+#define Createinterface(Enum, Class)            \
+static Class DEV ## Class;                      \
+Interfacemanager::Addinterface(Enum, #Class, &DEV ## Class);
 
 #pragma region Methods
 class SteamNetworking
@@ -269,11 +272,11 @@ struct Steamnetworkingloader
 {
     Steamnetworkingloader()
     {
-        Interfacemanager::Addinterface(STEAM_NETWORKING, "SteamNetworking001", new SteamNetworking001);
-        Interfacemanager::Addinterface(STEAM_NETWORKING, "SteamNetworking002", new SteamNetworking002);
-        Interfacemanager::Addinterface(STEAM_NETWORKING, "SteamNetworking003", new SteamNetworking003);
-        Interfacemanager::Addinterface(STEAM_NETWORKING, "SteamNetworking004", new SteamNetworking004);
-        Interfacemanager::Addinterface(STEAM_NETWORKING, "SteamNetworking005", new SteamNetworking005);
+        Createinterface(STEAM_NETWORKING, SteamNetworking001);
+        Createinterface(STEAM_NETWORKING, SteamNetworking002);
+        Createinterface(STEAM_NETWORKING, SteamNetworking003);
+        Createinterface(STEAM_NETWORKING, SteamNetworking004);
+        Createinterface(STEAM_NETWORKING, SteamNetworking005);
     }
 };
 static Steamnetworkingloader Interfaceloader{};

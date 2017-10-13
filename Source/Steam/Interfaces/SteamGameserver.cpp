@@ -11,6 +11,9 @@
 #define Createmethod(Index, Class, Function)    \
 auto Temp ##Function = &Class::Function;        \
 Methods[Index] = *(void **)&Temp ##Function;
+#define Createinterface(Enum, Class)            \
+static Class DEV ## Class;                      \
+Interfacemanager::Addinterface(Enum, #Class, &DEV ## Class);
 
 struct SteamServersConnected_t
 {
@@ -727,18 +730,18 @@ struct Steamgameserverloader
 {
     Steamgameserverloader()
     {
-        Interfacemanager::Addinterface(STEAM_GAMESERVER, "SteamGameserver001", new SteamGameserver001);
-        Interfacemanager::Addinterface(STEAM_GAMESERVER, "SteamGameserver002", new SteamGameserver002);
-        Interfacemanager::Addinterface(STEAM_GAMESERVER, "SteamGameserver003", new SteamGameserver003);
-        Interfacemanager::Addinterface(STEAM_GAMESERVER, "SteamGameserver004", new SteamGameserver004);
-        Interfacemanager::Addinterface(STEAM_GAMESERVER, "SteamGameserver005", new SteamGameserver005);
-        Interfacemanager::Addinterface(STEAM_GAMESERVER, "SteamGameserver006", new SteamGameserver006);
-        Interfacemanager::Addinterface(STEAM_GAMESERVER, "SteamGameserver007", new SteamGameserver007);
-        Interfacemanager::Addinterface(STEAM_GAMESERVER, "SteamGameserver008", new SteamGameserver008);
-        Interfacemanager::Addinterface(STEAM_GAMESERVER, "SteamGameserver009", new SteamGameserver009);
-        Interfacemanager::Addinterface(STEAM_GAMESERVER, "SteamGameserver010", new SteamGameserver010);
-        Interfacemanager::Addinterface(STEAM_GAMESERVER, "SteamGameserver011", new SteamGameserver011);
-        Interfacemanager::Addinterface(STEAM_GAMESERVER, "SteamGameserver012", new SteamGameserver012);
+        Createinterface(STEAM_GAMESERVER, SteamGameserver001);
+        Createinterface(STEAM_GAMESERVER, SteamGameserver002);
+        Createinterface(STEAM_GAMESERVER, SteamGameserver003);
+        Createinterface(STEAM_GAMESERVER, SteamGameserver004);
+        Createinterface(STEAM_GAMESERVER, SteamGameserver005);
+        Createinterface(STEAM_GAMESERVER, SteamGameserver006);
+        Createinterface(STEAM_GAMESERVER, SteamGameserver007);
+        Createinterface(STEAM_GAMESERVER, SteamGameserver008);
+        Createinterface(STEAM_GAMESERVER, SteamGameserver009);
+        Createinterface(STEAM_GAMESERVER, SteamGameserver010);
+        Createinterface(STEAM_GAMESERVER, SteamGameserver011);
+        Createinterface(STEAM_GAMESERVER, SteamGameserver012);
     }
 };
 static Steamgameserverloader Interfaceloader{};

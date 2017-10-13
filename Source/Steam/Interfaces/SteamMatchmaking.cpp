@@ -11,6 +11,9 @@
 #define Createmethod(Index, Class, Function)    \
 auto Temp ##Function = &Class::Function;        \
 Methods[Index] = *(void **)&Temp ##Function;
+#define Createinterface(Enum, Class)            \
+static Class DEV ## Class;                      \
+Interfacemanager::Addinterface(Enum, #Class, &DEV ## Class);
 
 // Callbacks.
 #pragma pack( push, 8 )
@@ -618,15 +621,15 @@ struct Steammatchmakingloader
 {
     Steammatchmakingloader()
     {
-        Interfacemanager::Addinterface(STEAM_MATCHMAKING, "SteamMatchmaking001", new SteamMatchmaking001);
-        Interfacemanager::Addinterface(STEAM_MATCHMAKING, "SteamMatchmaking002", new SteamMatchmaking002);
-        Interfacemanager::Addinterface(STEAM_MATCHMAKING, "SteamMatchmaking003", new SteamMatchmaking003);
-        Interfacemanager::Addinterface(STEAM_MATCHMAKING, "SteamMatchmaking004", new SteamMatchmaking004);
-        Interfacemanager::Addinterface(STEAM_MATCHMAKING, "SteamMatchmaking005", new SteamMatchmaking005);
-        Interfacemanager::Addinterface(STEAM_MATCHMAKING, "SteamMatchmaking006", new SteamMatchmaking006);
-        Interfacemanager::Addinterface(STEAM_MATCHMAKING, "SteamMatchmaking007", new SteamMatchmaking007);
-        Interfacemanager::Addinterface(STEAM_MATCHMAKING, "SteamMatchmaking008", new SteamMatchmaking008);
-        Interfacemanager::Addinterface(STEAM_MATCHMAKING, "SteamMatchmaking009", new SteamMatchmaking009);
+        Createinterface(STEAM_MATCHMAKING, SteamMatchmaking001);
+        Createinterface(STEAM_MATCHMAKING, SteamMatchmaking002);
+        Createinterface(STEAM_MATCHMAKING, SteamMatchmaking003);
+        Createinterface(STEAM_MATCHMAKING, SteamMatchmaking004);
+        Createinterface(STEAM_MATCHMAKING, SteamMatchmaking005);
+        Createinterface(STEAM_MATCHMAKING, SteamMatchmaking006);
+        Createinterface(STEAM_MATCHMAKING, SteamMatchmaking007);
+        Createinterface(STEAM_MATCHMAKING, SteamMatchmaking008);
+        Createinterface(STEAM_MATCHMAKING, SteamMatchmaking009);
     }
 };
 static Steammatchmakingloader Interfaceloader{};
