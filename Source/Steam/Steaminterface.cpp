@@ -8,6 +8,7 @@
 */
 
 #include "../Stdinclude.h"
+#include <sstream>
 
 // Steam_api providers.
 constexpr const char *Steamso = "libsteam_api.so";
@@ -171,35 +172,29 @@ void Createcache(std::FILE *Filehandle)
 
     // Write to the cache.
     {
-        const char *Cachename = "./Plugins/" MODULENAME "/Steaminterfacecache";
-        std::FILE *Filehandle = std::fopen(Cachename, "wt");
-        if (Filehandle)
-        {
-            for (auto &Item : Results)
-            {
-                std::fputs(Item, Filehandle);
-                std::fputs("\n", Filehandle);
-            }
+        std::string Databuffer;
+        for (auto &Item : Results)
+            Databuffer += va("%s\n", Item);
 
-            std::fclose(Filehandle);
-        }
+        Package::Write("Steaminterfacecache", Databuffer);
     }
 }
 bool Readcache()
 {
-    const char *Cachename = "./Plugins/" MODULENAME "/Steaminterfacecache";
-    std::FILE *Filehandle = std::fopen(Cachename, "rt");
-    if (!Filehandle) return false;
+    if (!Package::Exists("Steaminterfacecache"))
+        return false;
 
-    char Inputstring[1024]{};
-    while (std::fgets(Inputstring, 1024, Filehandle))
+    auto Filebuffer = Package::Read("Steaminterfacecache");
+    if (Filebuffer.size() == 0)
+        return false;
+
+    std::string Inputstring;
+    auto Filestream = std::istringstream(Filebuffer);
+    while(std::getline(Filestream, Inputstring, '\n'))
     {
-        // Remove the newline if needed.
-        Inputstring[std::strcspn(Inputstring, "\n")] = '\0';
-
-        #define Checktype(Interfacename, Type)          \
-        if(std::strstr(Inputstring, Interfacename))     \
-        { Setmapbyname(Type, Inputstring); continue; }  \
+        #define Checktype(Interfacename, Type)                  \
+        if(std::strstr(Inputstring.c_str(), Interfacename))     \
+        { Setmapbyname(Type, Inputstring.c_str()); continue; }  \
 
         // Add the interface by type.
         Checktype("SteamUGC0", STEAM_UGC);
@@ -229,7 +224,6 @@ bool Readcache()
         Checktype("SteamMasterserverUpdater0", STEAM_MASTERSERVERUPDATER);
     }
 
-    std::fclose(Filehandle);
     return true;
 }
 
