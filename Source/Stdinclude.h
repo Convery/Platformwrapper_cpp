@@ -49,6 +49,7 @@
 #include "Utility/Binary/Memprotect.h"
 #include "Utility/Data/Bytebuffer.h"
 #include "Utility/Binary/Hooking.h"
+#include "Utility/Data/PackageFS.h"
 #include "Utility/Data/SystemIO.h"
 #include "Utility/Text/Logfile.h"
 #include "Utility/Data/Base64.h"

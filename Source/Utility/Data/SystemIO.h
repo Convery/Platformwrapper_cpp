@@ -152,7 +152,7 @@ inline bool Findfiles(std::string Searchpath, std::vector<std::string> *Filename
             if (!Extension.size())
                 Filenames->push_back(Filedata->d_name);
             else
-                if (std::strstr(Filedata->d_name, Extension.c_str())
+                if (std::strstr(Filedata->d_name, Extension.c_str()))
                     Filenames->push_back(Filedata->d_name);
     }
     closedir(Filehandle);
