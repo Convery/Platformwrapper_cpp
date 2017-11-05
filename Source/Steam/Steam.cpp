@@ -253,11 +253,6 @@ extern "C"
         // Initialize the interface manager.
         Interfacemanager::Initialize();
 
-        // Remove any *.STEAMSTART metadata files.
-        std::vector<std::string> Filenames;
-        Findfiles("./", &Filenames, ".STEAMSTART");
-        for (auto &Item : Filenames) std::remove(Item.c_str());
-
         return true;
     }
     EXPORT_ATTR bool SteamAPI_InitSafe()
