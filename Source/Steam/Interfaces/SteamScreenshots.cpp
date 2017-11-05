@@ -11,6 +11,9 @@
 #define Createmethod(Index, Class, Function)    \
 auto Temp ##Function = &Class::Function;        \
 Methods[Index] = *(void **)&Temp ##Function;
+#define Createinterface(Enum, Class)            \
+static Class DEV ## Class;                      \
+Interfacemanager::Addinterface(Enum, #Class, &DEV ## Class);
 
 #pragma region Methods
 class SteamScreenshots
@@ -76,8 +79,8 @@ struct Steamscreenshotsloader
 {
     Steamscreenshotsloader()
     {
-        Interfacemanager::Addinterface(STEAM_SCREENSHOTS, "SteamScreenshots001", new SteamScreenshots001);
-        Interfacemanager::Addinterface(STEAM_SCREENSHOTS, "SteamScreenshots002", new SteamScreenshots002);
+        Createinterface(STEAM_SCREENSHOTS, SteamScreenshots001);
+        Createinterface(STEAM_SCREENSHOTS, SteamScreenshots002);
     }
 };
 static Steamscreenshotsloader Interfaceloader{};

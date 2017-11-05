@@ -30,4 +30,3 @@ namespace Package
     bool Exists(Archivehandle &Handle, std::string Filename);
     void Delete(Archivehandle &Handle, std::string Filename);
 }
-

@@ -163,7 +163,9 @@
     <ClInclude Include="Source\Utility\Data\Base64.h" />
     <ClInclude Include="Source\Utility\Data\Bytebuffer.h" />
     <ClInclude Include="Source\Utility\Data\Database.h" />
+    <ClInclude Include="Source\Utility\Data\PackageFS.h" />
     <ClInclude Include="Source\Utility\Data\SystemIO.h" />
+    <ClInclude Include="Source\Utility\Data\zip_file.hpp" />
     <ClInclude Include="Source\Utility\Text\CSV.h" />
     <ClInclude Include="Source\Utility\Text\Logfile.h" />
     <ClInclude Include="Source\Utility\Text\Variadicstring.h" />
@@ -188,6 +190,7 @@
     <ClCompile Include="Source\Utility\Binary\Memprotect.cpp" />
     <ClCompile Include="Source\Utility\Binary\Patternscan.cpp" />
     <ClCompile Include="Source\Utility\Data\Bytebuffer.cpp" />
+    <ClCompile Include="Source\Utility\Data\PackageFS.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

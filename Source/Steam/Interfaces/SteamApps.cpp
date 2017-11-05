@@ -11,6 +11,9 @@
 #define Createmethod(Index, Class, Function)    \
 auto Temp ##Function = &Class::Function;        \
 Methods[Index] = *(void **)&Temp ##Function;
+#define Createinterface(Enum, Class)            \
+static Class DEV ## Class;                      \
+Interfacemanager::Addinterface(Enum, #Class, &DEV ## Class);
 
 // A cache of owned application.
 struct Steamgame_t
@@ -408,13 +411,13 @@ struct Steamappsloader
 {
     Steamappsloader()
     {
-        Interfacemanager::Addinterface(STEAM_APPS, "SteamApps001", new SteamApps001);
-        Interfacemanager::Addinterface(STEAM_APPS, "SteamApps002", new SteamApps002);
-        Interfacemanager::Addinterface(STEAM_APPS, "SteamApps003", new SteamApps003);
-        Interfacemanager::Addinterface(STEAM_APPS, "SteamApps004", new SteamApps004);
-        Interfacemanager::Addinterface(STEAM_APPS, "SteamApps005", new SteamApps005);
-        Interfacemanager::Addinterface(STEAM_APPS, "SteamApps006", new SteamApps006);
-        Interfacemanager::Addinterface(STEAM_APPS, "SteamApps007", new SteamApps007);
+        Createinterface(STEAM_APPS, SteamApps001);
+        Createinterface(STEAM_APPS, SteamApps002);
+        Createinterface(STEAM_APPS, SteamApps003);
+        Createinterface(STEAM_APPS, SteamApps004);
+        Createinterface(STEAM_APPS, SteamApps005);
+        Createinterface(STEAM_APPS, SteamApps006);
+        Createinterface(STEAM_APPS, SteamApps007);
     }
 };
 static Steamappsloader Interfaceloader{};
