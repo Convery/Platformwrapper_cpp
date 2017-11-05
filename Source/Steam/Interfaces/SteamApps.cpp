@@ -30,7 +30,7 @@ void Loadgames()
     // Offlinemode reads from disk.
     if (Steamconfig::Offline)
     {
-        JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamgames.json");
+        JSONBuffer = Package::Read("Steamgames.json");
     }
     else
     {
@@ -62,7 +62,7 @@ void Savegames()
         };
     }
 
-    Writefile("./Plugins/" MODULENAME "/Steamgames.json", Object.dump(4));
+    Package::Write("Steamgames.json", Object.dump(4));
 }
 
 #pragma region Methods
