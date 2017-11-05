@@ -57,7 +57,7 @@ void Loadleaderboards()
     // Offlinemode reads from disk.
     if (Steamconfig::Offline)
     {
-        JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamleaderboards.json");
+        JSONBuffer = Package::Read("Steamleaderboards.json");
     }
     else
     {
@@ -106,7 +106,7 @@ void Saveleaderboards()
         Object += { {"LeaderboardID", Item.LeaderboardID}, { "Leaderboardname", Item.Leaderboardname }, { "Entries", Subobject }};
     }
 
-    Writefile("./Plugins/" MODULENAME "/Steamleaderboards.json", Object.dump(4));
+    Package::Write("Steamleaderboards.json", Object.dump(4));
 }
 
 #pragma region Methods
@@ -117,7 +117,7 @@ public:
     {
         Printfunction();
 
-        auto JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamuserstats.csv");
+        auto JSONBuffer = Package::Read("Steamuserstats.csv");
         try
         {
             auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
@@ -166,7 +166,7 @@ public:
     {
         Infoprint(va("Get stat \"%s\"..", pchName));
 
-        auto JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamuserstats.json");
+        auto JSONBuffer = Package::Read("Steamuserstats.json");
         try
         {
             auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
@@ -183,7 +183,7 @@ public:
     {
         Infoprint(va("Get stat \"%s\"..", pchName));
 
-        auto JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamuserstats.json");
+        auto JSONBuffer = Package::Read("Steamuserstats.json");
         try
         {
             auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
@@ -199,13 +199,14 @@ public:
     bool SetStat1(CGameID nGameID, const char *pchName, int32_t nData)
     {
         Infoprint(va("Set stat \"%s\" = %d", pchName, nData));
-        auto JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamuserstats.json");
+        auto JSONBuffer = Package::Read("Steamuserstats.json");
         try
         {
             auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
             Parsed[pchName] = nData;
 
-            return Writefile("./Plugins/" MODULENAME "/Steamuserstats.json", Parsed.dump(4));
+            Package::Write("Steamuserstats.json", Parsed.dump(4));
+            return true;
         }
         catch (...) {};
 
@@ -214,13 +215,14 @@ public:
     bool SetStat2(CGameID nGameID, const char *pchName, float fData)
     {
         Infoprint(va("Set stat \"%s\" = %f", pchName, fData));
-        auto JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamuserstats.json");
+        auto JSONBuffer = Package::Read("Steamuserstats.json");
         try
         {
             auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
             Parsed[pchName] = fData;
 
-            return Writefile("./Plugins/" MODULENAME "/Steamuserstats.json", Parsed.dump(4));
+            Package::Write("Steamuserstats.json", Parsed.dump(4));
+            return true;
         }
         catch (...) {};
 
@@ -235,7 +237,7 @@ public:
     {
         Infoprint(va("Get achievement \"%s\"..", pchName));
 
-        auto JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamachievements.json");
+        auto JSONBuffer = Package::Read("Steamachievements.json");
         try
         {
             auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
@@ -260,12 +262,13 @@ public:
     {
         Infoprint(va("Achievement \"%s\" progress: 100%%", pchName));
 
-        auto JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamachievements.json");
+        auto JSONBuffer = Package::Read("Steamachievements.json");
         try
         {
             auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
             Parsed[pchName] = { {"Currentprogress", 100 }, {"Maxprogress", 100} };
-            return Writefile("./Plugins/" MODULENAME "/Steamachievements.json", Parsed.dump(4));
+            Package::Write("Steamachievements.json", Parsed.dump(4));
+            return true;
         }
         catch (...) {};
 
@@ -285,12 +288,13 @@ public:
     {
         Infoprint(va("Achievement \"%s\" progress: 0%%", pchName));
 
-        auto JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamachievements.json");
+        auto JSONBuffer = Package::Read("Steamachievements.json");
         try
         {
             auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
             Parsed[pchName] = { {"Currentprogress", 0 }, {"Maxprogress", 100} };
-            return Writefile("./Plugins/" MODULENAME "/Steamachievements.json", Parsed.dump(4));
+            Package::Write("Steamachievements.json", Parsed.dump(4));
+            return true;
         }
         catch (...) {};
 
@@ -325,12 +329,13 @@ public:
             Trigger a toaster-popup.
         */
 
-        auto JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamachievements.json");
+        auto JSONBuffer = Package::Read("Steamachievements.json");
         try
         {
             auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
             Parsed[pchName] = { {"Currentprogress", nCurProgress }, {"Maxprogress", nMaxProgress} };
-            return Writefile("./Plugins/" MODULENAME "/Steamachievements.json", Parsed.dump(4));
+            Package::Write("Steamachievements.json", Parsed.dump(4));
+            return true;
         }
         catch (...) {};
 

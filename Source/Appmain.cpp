@@ -13,13 +13,6 @@
     namespace { struct Deletelog { Deletelog() { Clearlog(); } }; static Deletelog Deleted{}; }
 #endif
 
-// Create a directory for our configfiles on startup.
-#if !defined (_WIN32)
-namespace { struct Createdir { Createdir() { mkdir("./Plugins/" MODULENAME, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); }; }; static Createdir Created{}; }
-#else
-namespace { struct Createdir { Createdir() { _mkdir("./Plugins/" MODULENAME); }; }; static Createdir Created{}; }
-#endif
-
 // The callback system for Ayria plugins.
 extern "C"
 {

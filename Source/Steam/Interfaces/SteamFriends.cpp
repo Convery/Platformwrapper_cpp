@@ -33,7 +33,7 @@ void Loadfriends()
     // Offlinemode reads from disk.
     if (Steamconfig::Offline)
     {
-        JSONBuffer = Readfile("./Plugins/" MODULENAME "/Steamfriends.json");
+        JSONBuffer = Package::Read("Steamfriends.json");
     }
     else
     {
@@ -60,7 +60,7 @@ void Savefriends()
         Object["Steamfriends"] += { { "Username", Item.Username}, { "UserID", Item.UserID } };
     }
 
-    Writefile("./Plugins/" MODULENAME "/Steamfriends.json", Object.dump(4));
+    Package::Write("Steamfriends.json", Object.dump(4));
 }
 
 #pragma region Methods
