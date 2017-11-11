@@ -19,7 +19,7 @@ namespace Steamconfig
     // Network access.
     bool LAN{ false };
     bool Server{ false };
-    bool Offline{ false };
+    bool Offline{ true };
 
     // User information.
     char Path[260]{};
