@@ -154,7 +154,7 @@ extern "C"
         // Check if we are forcing offline mode.
         #if defined (_WIN32)
         auto Commandline = GetCommandLineA();
-        Steamconfig::Offline = nullptr != std::strstr(Commandline, "-AYRIA_OFFLINE");
+        Steamconfig::Offline = nullptr == std::strstr(Commandline, "-AYRIA_ONLINE");
         #else
         {
             std::FILE *Filehandle = std::fopen("/proc/self/cmdline", "r");
@@ -163,7 +163,7 @@ extern "C"
                 char Buffer[1024]{};
                 std::fgets(Buffer, 1024, Filehandle);
 
-                Steamconfig::Offline = nullptr != std::strstr(Buffer, "-AYRIA_OFFLINE");
+                Steamconfig::Offline = nullptr == std::strstr(Buffer, "-AYRIA_ONLINE");
                 std::fclose(Filehandle);
             }
         }
