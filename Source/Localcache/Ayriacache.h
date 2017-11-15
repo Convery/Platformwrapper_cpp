@@ -11,9 +11,22 @@
 
 namespace Ayriacache
 {
-    // Account information.
-    extern std::string Accountname;
-    extern std::string AvatarPNG;
-    extern std::string Locale;
-    extern uint64_t UserID;
+    struct Account
+    {
+        std::string Accountname;
+        std::string AvatarPNG;
+        std::string Locale;
+        uint64_t UserID;
+    };
+    struct Friend
+    {
+        std::string Accountname;
+        std::string AvatarPNG;
+        std::string Game;
+        uint64_t UserID;
+        uint64_t Status;
+    };
+
+    extern Account Accountinformation;
+    extern std::vector<Friend> Friendslist;
 }
