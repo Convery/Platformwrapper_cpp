@@ -175,6 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Appmain.cpp" />
+    <ClCompile Include="Source\Localcache\Ayriacache.cpp" />
     <ClCompile Include="Source\Localcache\Cachetaskmanager.cpp" />
     <ClCompile Include="Source\Steam\Interfaces\SteamApps.cpp" />
     <ClCompile Include="Source\Steam\Interfaces\SteamFriends.cpp" />
