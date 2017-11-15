@@ -59,7 +59,7 @@
 #include "Utility/Text/CSV.h"
 
 // Includes for our components.
+#include "Steam/Subsystem/Steaminterface.h"
+#include "Steam/Subsystem/Steamcallback.h"
 #include "Steam/Interfaces/Interfaces.h"
-#include "Steam/Steaminterface.h"
-#include "Steam/Steamcallback.h"
 #include "Steam/Steam.h"

@@ -151,11 +151,11 @@
     <ClInclude Include="Source\Configuration\Macros.h" />
     <ClInclude Include="Source\Configuration\Warnings.h" />
     <ClInclude Include="Source\Stdinclude.h" />
-    <ClInclude Include="Source\Steam\CSteamID.h" />
+    <ClInclude Include="Source\Steam\Subsystem\CSteamID.h" />
     <ClInclude Include="Source\Steam\Interfaces\Interfaces.h" />
     <ClInclude Include="Source\Steam\Steam.h" />
-    <ClInclude Include="Source\Steam\Steamcallback.h" />
-    <ClInclude Include="Source\Steam\Steaminterface.h" />
+    <ClInclude Include="Source\Steam\Subsystem\Steamcallback.h" />
+    <ClInclude Include="Source\Steam\Subsystem\Steaminterface.h" />
     <ClInclude Include="Source\Utility\Binary\Hooking.h" />
     <ClInclude Include="Source\Utility\Binary\Memprotect.h" />
     <ClInclude Include="Source\Utility\Binary\Patternscan.h" />
@@ -183,9 +183,8 @@
     <ClCompile Include="Source\Steam\Interfaces\SteamUserstats.cpp" />
     <ClCompile Include="Source\Steam\Interfaces\SteamUtilities.cpp" />
     <ClCompile Include="Source\Steam\Steam.cpp" />
-    <ClCompile Include="Source\Steam\Steamcallback.cpp" />
-    <ClCompile Include="Source\Steam\Steamconfig.cpp" />
-    <ClCompile Include="Source\Steam\Steaminterface.cpp" />
+    <ClCompile Include="Source\Steam\Subsystem\Steamcallback.cpp" />
+    <ClCompile Include="Source\Steam\Subsystem\Steaminterface.cpp" />
     <ClCompile Include="Source\Utility\Binary\Hooking.cpp" />
     <ClCompile Include="Source\Utility\Binary\Memprotect.cpp" />
     <ClCompile Include="Source\Utility\Binary\Patternscan.cpp" />

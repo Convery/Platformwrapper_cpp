@@ -15,6 +15,25 @@ constexpr const char *Clientlibrary = sizeof(void *) == sizeof(uint64_t) ? "stea
 constexpr const char *Steamregistry = sizeof(void *) == 8 ? "Software\\Wow6432Node\\Valve\\Steam" : "Software\\Valve\\Steam";
 #endif
 
+// Configuration.
+namespace Steamconfig
+{
+    // Application info.
+    char Language[32]{ "english" };
+    uint32_t ApplicationID{ 0 };
+    uint64_t Startuptimestamp{ uint64_t(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) };
+
+    // Network access.
+    bool LAN{ false };
+    bool Server{ false };
+    bool Offline{ true };
+
+    // User information.
+    char Path[260]{};
+    uint64_t UserID{ 0x1100001DEADC0DE };
+    char Username[17]{ "Ayria" };
+}
+
 extern "C"
 {
     // Interface access.
