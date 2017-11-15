@@ -44,6 +44,10 @@ extern "C"
             This export is generally only used by DRM/anti-tampering systems.
             As such this will likely cause a detection as they often check if
             the address returned resides in steamclient(64).dll.
+
+            NOTE(Convery):
+            The aforementioned issue can be solved via the "STMSIGBypass"
+            plugin provided by Hedgehogscience on Github.
         */
 
         return Interfacemanager::Fetchinterface(Interfacename);
@@ -271,6 +275,9 @@ extern "C"
 
         // Initialize the interface manager.
         Interfacemanager::Initialize();
+
+        // Initialize the cache manager.
+        Localcache::Runtasks();
 
         return true;
     }

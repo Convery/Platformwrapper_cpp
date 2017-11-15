@@ -150,6 +150,9 @@
     <ClInclude Include="Source\Configuration\Defines.h" />
     <ClInclude Include="Source\Configuration\Macros.h" />
     <ClInclude Include="Source\Configuration\Warnings.h" />
+    <ClInclude Include="Source\Localcache\Ayriacache.h" />
+    <ClInclude Include="Source\Localcache\Cachetaskmanager.h" />
+    <ClInclude Include="Source\Localcache\Steamcache.h" />
     <ClInclude Include="Source\Stdinclude.h" />
     <ClInclude Include="Source\Steam\Subsystem\CSteamID.h" />
     <ClInclude Include="Source\Steam\Interfaces\Interfaces.h" />
@@ -172,6 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Appmain.cpp" />
+    <ClCompile Include="Source\Localcache\Cachetaskmanager.cpp" />
     <ClCompile Include="Source\Steam\Interfaces\SteamApps.cpp" />
     <ClCompile Include="Source\Steam\Interfaces\SteamFriends.cpp" />
     <ClCompile Include="Source\Steam\Interfaces\SteamGameserver.cpp" />
@@ -190,6 +194,9 @@
     <ClCompile Include="Source\Utility\Binary\Patternscan.cpp" />
     <ClCompile Include="Source\Utility\Data\Bytebuffer.cpp" />
     <ClCompile Include="Source\Utility\Data\PackageFS.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Platformwrapper_cpp.licenseheader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
