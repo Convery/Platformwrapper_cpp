@@ -58,8 +58,22 @@ extern "C"
     }
 }
 
+// Initialize the database on startup.
+namespace
+{
+    struct Databasestartup
+    {
+        Databasestartup()
+        {
+            Database::Load("Platformwrapper");
+            std::atexit([]() { Database::Save("Platformwrapper"); });
+        };
+    };
+    static Databasestartup Startup{};
+}
+
 // Load the bootsrapper on startup for developers that doesn't want to inject.
-#ifdef _WIN32
+#if defined (_WIN32)
 BOOLEAN WINAPI DllMain(HINSTANCE hDllHandle, DWORD nReason, LPVOID Reserved)
 {
     switch (nReason)
