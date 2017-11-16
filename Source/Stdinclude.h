@@ -64,4 +64,5 @@
 #include "Steam/Interfaces/Interfaces.h"
 #include "Localcache/Cachetaskmanager.h"
 #include "Localcache/Ayriacache.h"
+#include "Localcache/Steamcache.h"
 #include "Steam/Steam.h"

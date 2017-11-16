@@ -22,6 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{0FE40C96-A011-470A-A945-4600A4EB4D1C}</ProjectGuid>
     <RootNamespace>Platformwrapper_cpp</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -177,6 +178,7 @@
     <ClCompile Include="Source\Appmain.cpp" />
     <ClCompile Include="Source\Localcache\Ayriacache.cpp" />
     <ClCompile Include="Source\Localcache\Cachetaskmanager.cpp" />
+    <ClCompile Include="Source\Localcache\Steamcache.cpp" />
     <ClCompile Include="Source\Steam\Interfaces\SteamApps.cpp" />
     <ClCompile Include="Source\Steam\Interfaces\SteamFriends.cpp" />
     <ClCompile Include="Source\Steam\Interfaces\SteamGameserver.cpp" />

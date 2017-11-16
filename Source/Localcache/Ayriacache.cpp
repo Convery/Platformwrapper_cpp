@@ -16,8 +16,8 @@ namespace Ayriacache
     // Create the database on startup.
     void Ayriacachecreation()
     {
-        Database::Execute("CREATE TABLE IF NOT EXISTS Ayria_account (Accountname TEXT, AvatarPNG TEXT, Locale TEXT, UserID INTEGER);");
-        Database::Execute("CREATE TABLE IF NOT EXISTS Ayria_friends (Accountname TEXT, AvatarPNG TEXT, Game TEXT, UserID INTEGER, Status INTEGER);");
+        Database::Execute("CREATE TABLE IF NOT EXISTS Ayria_account (Accountname TEXT, AvatarPNG TEXT, Locale TEXT, UserID INTEGER UNIQUE);");
+        Database::Execute("CREATE TABLE IF NOT EXISTS Ayria_friends (Accountname TEXT, AvatarPNG TEXT, Game TEXT, UserID INTEGER UNIQUE, Status INTEGER);");
     }
 
     // Fetch the account information.
