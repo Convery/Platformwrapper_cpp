@@ -36,17 +36,44 @@ namespace Database
         std::unique_ptr<double> Floatvalue;
 
         Databasevalue() = default;
-        Databasevalue(Databasevalue &Ref)
+        Databasevalue(const Databasevalue &Ref)
         {
             Type = Ref.Type;
             Name = Ref.Name;
 
-            Integervalue.swap(Ref.Integervalue);
-            Stringvalue.swap(Ref.Stringvalue);
-            Floatvalue.swap(Ref.Floatvalue);
+            Integervalue.swap(const_cast<Databasevalue &>(Ref).Integervalue);
+            Stringvalue.swap(const_cast<Databasevalue &>(Ref).Stringvalue);
+            Floatvalue.swap(const_cast<Databasevalue &>(Ref).Floatvalue);
         }
     };
     using Databaserow = std::vector<Databasevalue>;
+
+    // Create a database value.
+    template <typename T> Databasevalue Value(std::string Name, T Input);
+    template <> inline Databasevalue Value(std::string Name, uint64_t Input)
+    {
+        Databasevalue Result;
+        Result.Integervalue = std::make_unique<uint64_t>(Input);
+        Result.Type = Databasetype::INT;
+        Result.Name = Name;
+        return Result;
+    }
+    template <> inline Databasevalue Value(std::string Name, std::string Input)
+    {
+        Databasevalue Result;
+        Result.Stringvalue = std::make_unique<std::string>(Input);
+        Result.Type = Databasetype::STRING;
+        Result.Name = Name;
+        return Result;
+    }
+    template <> inline Databasevalue Value(std::string Name, double Input)
+    {
+        Databasevalue Result;
+        Result.Floatvalue = std::make_unique<double>(Input);
+        Result.Type = Databasetype::FLOAT;
+        Result.Name = Name;
+        return Result;
+    }
 
     // Serialization.
     inline std::string to_string(Databasevalue &Value)
@@ -223,7 +250,7 @@ namespace Database
             }
 
             auto Array = reinterpret_cast<std::vector<Databaserow> *>(Input);
-            Array->push_back(Row);
+            Array->push_back(std::move(Row));
             return 0;
         };
 
