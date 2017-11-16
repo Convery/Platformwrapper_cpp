@@ -6,7 +6,6 @@
         Account-data provided by Ayria.
 */
 
-#pragma once
 #include "../Stdinclude.h"
 
 namespace Ayriacache

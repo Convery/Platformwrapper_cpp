@@ -19,7 +19,7 @@
 #define NO_CSTEAMID_STL
 #define STEAM
 
-#include "../Configuration/Defines.h"
+#include "../../Configuration/Defines.h"
 
 #ifdef _S4N_
 #define sprintf(...)
@@ -34,7 +34,7 @@
 enum EResult
 {
     k_EResultOK = 1,										// success
-    k_EResultFail = 2,										// generic failure 
+    k_EResultFail = 2,										// generic failure
     k_EResultNoConnection = 3,								// no/failed network connection
     k_EResultNoConnectionRetry = 4,						    // OBSOLETE - removed
     k_EResultInvalidPassword = 5,							// password/ticket is invalid
@@ -99,8 +99,8 @@ enum EResult
     k_EResultCannotUseOldPassword = 64,						// The requested new password is not legal
     k_EResultInvalidLoginAuthCode = 65,						// account login denied due to auth code invalid
     k_EResultAccountLogonDeniedNoMail = 66,					// account login denied due to 2nd factor auth failure - and no mail has been sent
-    k_EResultHardwareNotCapableOfIPT = 67,					// 
-    k_EResultIPTInitError = 68,								// 
+    k_EResultHardwareNotCapableOfIPT = 67,					//
+    k_EResultIPTInitError = 68,								//
     k_EResultParentalControlRestrictions = 69,				// Operation failed due to parental control restrictions for current user
     k_EResultFacebookQueryError = 70,						// Facebook query returned an error
     k_EResultExpiredLoginAuthCode = 71,						// Expired Login Auth Code
@@ -111,7 +111,7 @@ enum EResult
     k_EResultBadResponse = 76,								// parse failure, missing field, etc.
     k_EResultRequirePasswordReEntry = 77,					// The user cannot complete the action until they re-enter their password
     k_EResultValueOutOfRange = 78,							// the value entered is outside the acceptable range
-    k_EResultUnexpectedError = 79,							// 
+    k_EResultUnexpectedError = 79,							//
     k_EResultFeatureDisabled = 80,							//
     k_EResultInvalidCEGSubmission = 81,						//
     k_EResultRestrictedDevice = 82,							//
@@ -444,8 +444,8 @@ public:
     explicit CSteamID(const char *pchSteamID, uint32_t eDefaultUniverse = 0);
 
 #ifdef _MSC_VER
-#pragma warning(push) 
-#pragma warning(disable: 4996) 
+#pragma warning(push)
+#pragma warning(disable: 4996)
 #endif
 
     const char * Render() const				// renders this steam ID to string
@@ -542,7 +542,7 @@ public:
     }
 
 #ifdef _MSC_VER
-#pragma warning(pop) 
+#pragma warning(pop)
 #endif
 
     void SetFromString(const char *pchSteamID, uint32_t eDefaultUniverse);
@@ -686,7 +686,7 @@ CSteamID ClanIDFromChatID(const CSteamID &steamIDChat);
 
 #pragma pack( pop )
 
-#pragma pack( push, 1 )		
+#pragma pack( push, 1 )
 
 //-----------------------------------------------------------------------------
 // Purpose: encapsulates an appID/modID pair
@@ -747,7 +747,7 @@ public:
         CRC32_ProcessBuffer(&crc32, rgchModDir, Q_strlen(rgchModDir));
         CRC32_Final(&crc32);
 
-        // set the high-bit on the mod-id 
+        // set the high-bit on the mod-id
         // reduces crc32 to 31bits, but lets us use the modID as a guaranteed unique
         // replacement for appID's
         m_gameID.m_nModID = crc32 | (0x80000000);
@@ -765,7 +765,7 @@ public:
         CRC32_ProcessBuffer(&crc32, pchAppName, Q_strlen(pchAppName));
         CRC32_Final(&crc32);
 
-        // set the high-bit on the mod-id 
+        // set the high-bit on the mod-id
         // reduces crc32 to 31bits, but lets us use the modID as a guaranteed unique
         // replacement for appID's
         m_gameID.m_nModID = crc32 | (0x80000000);
@@ -785,7 +785,7 @@ public:
         CRC32_ProcessBuffer(&crc32, pchFileId, Q_strlen(pchFileId));
         CRC32_Final(&crc32);
 
-        // set the high-bit on the mod-id 
+        // set the high-bit on the mod-id
         // reduces crc32 to 31bits, but lets us use the modID as a guaranteed unique
         // replacement for appID's
         m_gameID.m_nModID = crc32 | (0x80000000);
