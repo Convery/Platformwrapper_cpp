@@ -40,7 +40,7 @@
 #endif
 
 // Includes for thirdparty libraries.
-#include <nlohmann/json.hpp>
+#include "Utility/Text/json.hpp"
 
 // Includes for our utilities.
 #include "Utility/Text/Variadicstring.h"
