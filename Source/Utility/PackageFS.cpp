@@ -6,7 +6,7 @@
         Plugins should keep all their files in their archive.
 */
 
-#include "../Stdinclude.hpppp"
+#include "../Stdinclude.hpp"
 #include "Thirdparty/zip_file.hpp"
 
 namespace Package

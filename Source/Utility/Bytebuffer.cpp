@@ -6,7 +6,7 @@
         Provides fast and simple storage for messages.
 */
 
-#include "../Stdinclude.hpppp"
+#include "../Stdinclude.hpp"
 
 // Core functionality.
 bool Bytebuffer::Readdatatype(Bytebuffertype Type)
