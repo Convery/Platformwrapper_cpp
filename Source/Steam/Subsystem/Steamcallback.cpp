@@ -7,7 +7,7 @@
         We generally return directly though.
 */
 
-#include "../../Stdinclude.h"
+#include "../../Stdinclude.hpp"
 
 namespace Steamcallback
 {

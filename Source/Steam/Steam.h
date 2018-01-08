@@ -7,7 +7,7 @@
 */
 
 #pragma once
-#include "../Stdinclude.h"
+#include "../Stdinclude.hpp"
 #include "Subsystem/CSteamID.h"
 
 // Configuration.

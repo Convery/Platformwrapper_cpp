@@ -6,7 +6,7 @@
         Steam data per appID.
 */
 
-#include "../Stdinclude.h"
+#include "../Stdinclude.hpp"
 
 namespace Steamcache
 {

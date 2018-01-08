@@ -8,7 +8,7 @@
 */
 
 #pragma once
-#include "../../Stdinclude.h"
+#include "../../Stdinclude.hpp"
 
 // A structure to mimic an actual class.
 struct Fakeclass

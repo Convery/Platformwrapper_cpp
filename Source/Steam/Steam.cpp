@@ -6,7 +6,7 @@
         Steam exports implementation.
 */
 
-#include "../Stdinclude.h"
+#include "../Stdinclude.hpp"
 
 #if defined(_WIN32)
 // Steam components.

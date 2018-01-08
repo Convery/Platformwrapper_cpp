@@ -8,7 +8,7 @@
 */
 
 #pragma once
-#include "../../Stdinclude.h"
+#include "../../Stdinclude.hpp"
 
 // Types of steam interfaces.
 enum eInterfaceType

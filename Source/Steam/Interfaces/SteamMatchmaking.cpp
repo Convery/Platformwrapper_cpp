@@ -6,7 +6,7 @@
         Steam gameplay information.
 */
 
-#include "../../Stdinclude.h"
+#include "../../Stdinclude.hpp"
 
 #define Createmethod(Index, Class, Function)    \
 auto Temp ##Function = &Class::Function;        \

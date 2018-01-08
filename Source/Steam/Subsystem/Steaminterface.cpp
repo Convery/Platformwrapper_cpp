@@ -7,7 +7,7 @@
         Steamclient.dll or libsteam.so
 */
 
-#include "../../Stdinclude.h"
+#include "../../Stdinclude.hpp"
 #include <sstream>
 
 // Steam_api providers.

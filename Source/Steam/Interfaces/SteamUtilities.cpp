@@ -6,7 +6,7 @@
         Platform specific utilities for steam.
 */
 
-#include "../../Stdinclude.h"
+#include "../../Stdinclude.hpp"
 
 #if defined (_WIN32)
 constexpr const char *Gameoverlay = sizeof(void *) == 8 ? "gameoverlayrenderer64.dll" : "gameoverlayrenderer.dll";
