@@ -8,7 +8,7 @@
 
 #pragma once
 #include "../Stdinclude.hpp"
-#include "Subsystem/CSteamID.h"
+#include "Subsystem/CSteamID.hpp"
 
 // Configuration.
 namespace Steamconfig

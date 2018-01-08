@@ -58,7 +58,7 @@
 #include "Utility/Base64.hpp"
 
 // Includes for our components.
-#include "Steam/Subsystem/Steaminterface.h"
-#include "Steam/Subsystem/Steamcallback.h"
-#include "Steam/Interfaces/Interfaces.h"
-#include "Steam/Steam.h"
+#include "Steam/Subsystem/Steaminterface.hpp"
+#include "Steam/Subsystem/Steamcallback.hpp"
+#include "Steam/Interfaces/Interfaces.hpp"
+#include "Steam/Steam.hpp"
