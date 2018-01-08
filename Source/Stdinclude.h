@@ -1,68 +1,55 @@
 /*
     Initial author: Convery (tcn@ayria.se)
-    Started: 07-08-2017
+    Started: 08-01-2018
     License: MIT
     Notes:
+        Provides a single include-file for all modules.
 */
 
 #pragma once
 
-// Includes for configuration settings.
-#include "Configuration/Defines.h"
-#include "Configuration/Macros.h"
+// The configuration settings.
+#include "Configuration/Defines.hpp"
+#include "Configuration/Macros.hpp"
 
-// Includes for standard libraries.
+// Standard libraries.
 #include <unordered_map>
-#include <algorithm>
+#include <string_view>
 #include <cstdint>
-#include <cstdlib>
 #include <cstdarg>
 #include <cstring>
 #include <cstdio>
 #include <vector>
 #include <memory>
 #include <chrono>
-#include <atomic>
+#include <thread>
+#include <string>
 #include <mutex>
 #include <ctime>
-#include <list>
 
-// Includes for platform libraries.
-#if defined (_WIN32)
-#include <Windows.h>
-#include <direct.h>
-#undef min
-#undef max
+// Platformspecific libraries.
+#if defined(_WIN32)
+    #include <Windows.h>
+    #include <direct.h>
+    #include <intrin.h>
+    #undef min
+    #undef max
 #else
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <dirent.h>
+    #include <sys/types.h>
+    #include <sys/stat.h>
+    #include <sys/mman.h>
+    #include <unistd.h>
+    #include <dirent.h>
+    #include <dlfcn.h>
 #endif
 
-// Includes for thirdparty libraries.
-#include "Utility/Text/json.hpp"
-
-// Includes for our utilities.
-#include "Utility/Text/Variadicstring.h"
-#include "Utility/Text/Logfile.h"
-
-#include "Utility/Cryptography/FNV1Hash.h"
-#include "Utility/Binary/Patternscan.h"
-#include "Utility/Binary/Memprotect.h"
-#include "Utility/Data/Bytebuffer.h"
-#include "Utility/Data/PackageFS.h"
-#include "Utility/Binary/Hooking.h"
-#include "Utility/Data/PackageFS.h"
-#include "Utility/Data/SystemIO.h"
-#include "Utility/Data/Database.h"
-#include "Utility/Data/Base64.h"
-#include "Utility/Text/CSV.h"
-
-// Includes for our components.
-#include "Steam/Subsystem/Steaminterface.h"
-#include "Steam/Subsystem/Steamcallback.h"
-#include "Steam/Interfaces/Interfaces.h"
-#include "Localcache/Cachetaskmanager.h"
-#include "Localcache/Ayriacache.h"
-#include "Localcache/Steamcache.h"
-#include "Steam/Steam.h"
+// Utility modules.
+#include "Utility/Variadicstring.hpp"
+#include "Utility/Filesystem.hpp"
+#include "Utility/Memprotect.hpp"
+#include "Utility/Bytebuffer.hpp"
+#include "Utility/PackageFS.hpp"
+#include "Utility/FNV1Hash.hpp"
+#include "Utility/Hooking.hpp"
+#include "Utility/Logfile.hpp"
+#include "Utility/Base64.hpp"
