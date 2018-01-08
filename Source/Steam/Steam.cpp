@@ -277,7 +277,7 @@ extern "C"
         Interfacemanager::Initialize();
 
         // Initialize the cache manager.
-        Localcache::Runtasks();
+        //Localcache::Runtasks();
 
         return true;
     }

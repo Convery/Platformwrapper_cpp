@@ -19,7 +19,7 @@
 #define NO_CSTEAMID_STL
 #define STEAM
 
-#include "../../Configuration/Defines.h"
+#include "../../Configuration/Defines.hpp"
 
 #ifdef _S4N_
 #define sprintf(...)

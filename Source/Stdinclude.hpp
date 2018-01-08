@@ -54,3 +54,9 @@
 #include "Utility/Hooking.hpp"
 #include "Utility/Logfile.hpp"
 #include "Utility/Base64.hpp"
+
+// Includes for our components.
+#include "Steam/Subsystem/Steaminterface.h"
+#include "Steam/Subsystem/Steamcallback.h"
+#include "Steam/Interfaces/Interfaces.h"
+#include "Steam/Steam.h"
