@@ -15,9 +15,11 @@
 // Standard libraries.
 #include <unordered_map>
 #include <string_view>
+#include <algorithm>
 #include <cstdint>
 #include <cstdarg>
 #include <cstring>
+#include <atomic>
 #include <cstdio>
 #include <vector>
 #include <memory>

@@ -15,59 +15,6 @@ Methods[Index] = *(void **)&Temp ##Function;
 static Class DEV ## Class;                      \
 Interfacemanager::Addinterface(Enum, #Class, &DEV ## Class);
 
-// A cache of owned application.
-struct Steamgame_t
-{
-    uint32_t DLCCount;
-    uint32_t ApplicationID;
-    std::string Installationpath;
-};
-std::vector<Steamgame_t> Gameslist;
-
-// Update the cache as requested.
-void Loadgames()
-{
-    std::string JSONBuffer;
-    Gameslist.clear();
-
-    // Offlinemode reads from disk.
-    if (Steamconfig::Offline)
-    {
-        JSONBuffer = Package::Read("Steamgames.json");
-    }
-    else
-    {
-        JSONBuffer = Readpipe("ayria://getgames");
-    }
-
-    try
-    {
-        auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
-
-        for (auto &Item : Parsed["Steamgames"])
-        {
-            Gameslist.push_back({ Item["DLCCount"], Item["ApplicationID"], Item["Installationpath"] });
-        }
-    }
-    catch (...) {};
-}
-void Savegames()
-{
-    nlohmann::json Object;
-
-    for (auto &Item : Gameslist)
-    {
-        Object["Steamgames"] +=
-        {
-            { "DLCCount", Item.DLCCount},
-            { "ApplicationID", Item.ApplicationID },
-            { "Installationpath", Item.Installationpath }
-        };
-    }
-
-    Package::Write("Steamgames.json", Object.dump(4));
-}
-
 #pragma region Methods
 class SteamApps
 {
@@ -107,31 +54,11 @@ public:
     }
     bool BIsSubscribedApp(uint32_t nAppID)
     {
-        // Get the purchased items.
-        if (0 == Gameslist.size()) Loadgames();
-
-        // If we could not fetch any info, assume ownership.
-        if (0 == Gameslist.size()) return true;
-
-        for (auto &Item : Gameslist)
-            if (Item.ApplicationID == nAppID)
-                return true;
-
-        return false;
+        return true;
     }
     bool BIsDlcInstalled(uint32_t nAppID)
     {
-        // Get the purchased items.
-        if (0 == Gameslist.size()) Loadgames();
-
-        // If we could not fetch any info, assume ownership.
-        if (0 == Gameslist.size()) return true;
-
-        for (auto &Item : Gameslist)
-            if (Item.ApplicationID == nAppID)
-                return Fileexists(Item.Installationpath);
-
-        return false;
+        return true;
     }
     uint32_t GetEarliestPurchaseUnixTime(uint32_t nAppID)
     {
@@ -146,11 +73,6 @@ public:
     int GetDLCCount()
     {
         Printfunction();
-
-        for (auto &Item : Gameslist)
-            if (Item.ApplicationID == Steamconfig::ApplicationID)
-                return Item.DLCCount;
-
         return 0;
     }
     bool BGetDLCDataByIndex(int iDLC, uint32_t *pAppID, bool *pbAvailable, char *pchName, int cchNameBufferSize)
@@ -161,36 +83,10 @@ public:
     void InstallDLC(uint32_t nAppID)
     {
         Infoprint(va("Installing DLC %u..", nAppID));
-
-        if (Writepipe("ayria://addgame", nlohmann::json({ "Steamgame", { "ApplicationID", nAppID } })))
-            return Loadgames();
-
-        for (auto &Item : Gameslist)
-            if (Item.ApplicationID == Steamconfig::ApplicationID)
-                Item.DLCCount++;
-
-        Gameslist.push_back({ 0, nAppID, "" });
-        Savegames();
     }
     void UninstallDLC(uint32_t nAppID)
     {
         Infoprint(va("Uninstalling DLC %u..", nAppID));
-
-        if (Writepipe("ayria://removegame", nlohmann::json({ "Steamgame", { "ApplicationID", nAppID } })))
-            return Loadgames();
-
-        for (auto &Item : Gameslist)
-            if (Item.ApplicationID == Steamconfig::ApplicationID)
-                Item.DLCCount--;
-
-        for (auto Iterator = Gameslist.begin(); Iterator != Gameslist.end(); ++Iterator)
-        {
-            if (Iterator->ApplicationID == nAppID)
-            {
-                Gameslist.erase(Iterator);
-                break;
-            }
-        }
     }
     void RequestAppProofOfPurchaseKey(uint32_t nAppID)
     {
@@ -216,36 +112,11 @@ public:
     {
         Printfunction();
 
-        // Get the purchased items.
-        if (0 == Gameslist.size()) Loadgames();
-
-        for (auto &Item : Gameslist)
-        {
-            if (Item.ApplicationID == appID)
-            {
-                if (Item.Installationpath.size() <= cchFolderBufferSize)
-                {
-                    std::strcpy(pchFolder, Item.Installationpath.c_str());
-                    return uint32_t(Item.Installationpath.size());
-                }
-            }
-        }
-
         return 0;
     }
     bool BIsAppInstalled(uint32_t appID)
     {
-        // Get the purchased items.
-        if (0 == Gameslist.size()) Loadgames();
-
-        // If we could not fetch any info, assume ownership.
-        if (0 == Gameslist.size()) return true;
-
-        for (auto &Item : Gameslist)
-            if (Item.ApplicationID == appID)
-                return Fileexists(Item.Installationpath);
-
-        return false;
+        return true;
     }
     uint32_t GetInstalledDepots1(uint32_t appID, uint32_t *pvecDepots, uint32_t cMaxDepots)
     {
