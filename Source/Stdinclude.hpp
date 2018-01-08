@@ -62,4 +62,5 @@
 #include "Steam/Subsystem/Steaminterface.hpp"
 #include "Steam/Subsystem/Steamcallback.hpp"
 #include "Steam/Interfaces/Interfaces.hpp"
+#include "Platform/Platformstructures.hpp"
 #include "Steam/Steam.hpp"
