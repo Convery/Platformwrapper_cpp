@@ -53,10 +53,10 @@ namespace Platform
     {
         struct Entry
         {
-            uint64_t Modifiedtime;
-            uint64_t UserID;
-            uint64_t Rank;
             int64_t Score;
+            uint64_t Rank;
+            uint64_t UserID;
+            uint64_t Modifiedtime;
         };
 
         Subplatform Provider;
