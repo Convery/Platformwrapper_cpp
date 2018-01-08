@@ -64,4 +64,24 @@ namespace Platform
         uint64_t LeaderboardID;
         std::vector<Entry> Entries;
     };
+    using Playerstats = Leaderboard;
+
+    struct Lobby
+    {
+        bool Public;
+        bool Locked;
+        bool Silent;
+        bool Reserved;
+        uint32_t Slots;
+        uint64_t OwnerID;
+        uint64_t UniqueID;
+        uint32_t Reserved2;
+        Subplatform Provider;
+        std::string Password;
+        std::string Friendlyname;
+        std::vector<uint64_t> Members;
+        std::vector<std::pair<std::string, std::string>> Keyvalues;
+    };
+    using Chatroom = Lobby;
+    using Matchmakinglobby = Lobby;
 }
