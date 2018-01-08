@@ -111,7 +111,7 @@ namespace Database
     inline void Save(std::string Filename) {};
     inline void Load(std::string Filename) {};
     inline void Execute(std::string Querystring) {};
-    inline bool Set(std::string Tablename, Databaserow Row) { return false; }:
+    inline bool Set(std::string Tablename, Databaserow Row) { return false; };
     inline std::vector<Databaserow> Get(std::string Tablename, std::string Condition) { return {}; };
     #else
 
