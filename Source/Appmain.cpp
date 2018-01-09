@@ -66,8 +66,8 @@ BOOLEAN WINAPI DllMain(HINSTANCE hDllHandle, DWORD nReason, LPVOID Reserved)
             Clearlog();
 
             // Initialize the database.
-            Database::Load("Platformwrapper");
-            std::atexit([]() { Database::Save("Platformwrapper"); });
+            Database::Load("Platformwrapper.db");
+            std::atexit([]() { Database::Save("Platformwrapper.db"); });
 
             // For developers we sideload a bootstrapper and create a console.
             #if !defined (NDEBUG)
@@ -90,8 +90,8 @@ __attribute__((constructor)) void DllMain()
     Clearlog();
 
     // Initialize the database.
-    Database::Load("Platformwrapper");
-    std::atexit([]() { Database::Save("Platformwrapper"); });
+    Database::Load("Platformwrapper.db");
+    std::atexit([]() { Database::Save("Platformwrapper.db"); });
 
     // For developers we sideload a bootstrapper.
     #if !defined (NDEBUG)
