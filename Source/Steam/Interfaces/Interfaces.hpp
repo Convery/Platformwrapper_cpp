@@ -22,6 +22,14 @@ struct Fakeclass
     }
 };
 
+// Create the fake class from real methods.
+#define Createmethod(Index, Class, Function)    \
+auto Temp ##Function = &Class::Function;        \
+Methods[Index] = *(void **)&Temp ##Function;
+#define Createinterface(Enum, Class)            \
+static Class DEV ## Class;                      \
+Interfacemanager::Addinterface(Enum, #Class, &DEV ## Class);
+
 // Steam utility interfaces.
 struct SteamUtilities001 : public Fakeclass
 {

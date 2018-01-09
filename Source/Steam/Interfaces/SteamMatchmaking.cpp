@@ -8,13 +8,6 @@
 
 #include "../../Stdinclude.hpp"
 
-#define Createmethod(Index, Class, Function)    \
-auto Temp ##Function = &Class::Function;        \
-Methods[Index] = *(void **)&Temp ##Function;
-#define Createinterface(Enum, Class)            \
-static Class DEV ## Class;                      \
-Interfacemanager::Addinterface(Enum, #Class, &DEV ## Class);
-
 // Callbacks.
 #pragma pack( push, 8 )
 struct LobbyCreated_t
