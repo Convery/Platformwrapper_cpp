@@ -144,6 +144,7 @@ namespace Steamcallback
         Callbacknames[0] = "";
 
         #if defined (STEAM_PRINTCALLBACKS)
+        Callbacknames[100] = "Base::Steamuser";
         Callbacknames[101] = "SteamServersConnected";
         Callbacknames[102] = "SteamServerConnectFailure";
         Callbacknames[103] = "SteamServersDisconnected";
@@ -161,6 +162,7 @@ namespace Steamcallback
         Callbacknames[163] = "GetAuthSessionTicketResponse";
         Callbacknames[164] = "GameWebCallback";
 
+        Callbacknames[200] = "Base::Steamgameserver";
         Callbacknames[201] = "GSClientApprove";
         Callbacknames[202] = "GSClientDeny";
         Callbacknames[203] = "GSClientKick";
@@ -173,6 +175,7 @@ namespace Steamcallback
         Callbacknames[210] = "AssociateWithClanResult";
         Callbacknames[211] = "ComputeNewPlayerCompatibilityResult";
 
+        Callbacknames[300] = "Base::Steamfriends";
         Callbacknames[304] = "PersonaStateChange";
         Callbacknames[331] = "GameOverlayActivated";
         Callbacknames[332] = "GameServerChangeRequested";
@@ -192,6 +195,9 @@ namespace Steamcallback
         Callbacknames[346] = "FriendsEnumerateFollowingList";
         Callbacknames[347] = "SetPersonaNameResponse";
 
+        Callbacknames[400] = "Base::Steambilling";
+
+        Callbacknames[500] = "Base::Steammatchmaking";
         Callbacknames[501] = "FavoritesListChangedOld";
         Callbacknames[502] = "FavoritesListChanged";
         Callbacknames[503] = "LobbyInvite";
@@ -207,6 +213,9 @@ namespace Steamcallback
         Callbacknames[513] = "LobbyCreated";
         Callbacknames[514] = "RequestFriendsLobbiesResponse";
 
+        Callbacknames[600] = "Base::Steamcontent";
+
+        Callbacknames[700] = "Base::Steamutilities";
         Callbacknames[701] = "IPCountry";
         Callbacknames[702] = "LowBatteryPower";
         Callbacknames[703] = "SteamAPICallCompleted";
@@ -223,6 +232,7 @@ namespace Steamcallback
         Callbacknames[714] = "GamepadTextInputDismissed";
         Callbacknames[715] = "SteamUtils_Reserved";
 
+        Callbacknames[800] = "Base::Clientfriends";
         Callbacknames[805] = "FriendChatMsg";
         Callbacknames[810] = "ChatRoomMsg";
         Callbacknames[811] = "ChatRoomDlgClose";
@@ -230,9 +240,11 @@ namespace Steamcallback
         Callbacknames[819] = "ClanInfoChanged";
         Callbacknames[836] = "FriendsMenuChange";
 
+        Callbacknames[900] = "Base::Clientuser";
         Callbacknames[903] = "PrimaryChatDestinationSet";
         Callbacknames[963] = "FriendMessageHistoryChatLog";
 
+        Callbacknames[1000] = "Base::Steamapps";
         Callbacknames[1001] = "AppDataChanged";
         Callbacknames[1002] = "RequestAppCallbacksComplete";
         Callbacknames[1003] = "AppInfoUpdateComplete";
@@ -240,15 +252,86 @@ namespace Steamcallback
         Callbacknames[1005] = "DlcInstalled";
         Callbacknames[1006] = "AppEventStateChange";
 
+        Callbacknames[1100] = "Base::Steamuserstats";
         Callbacknames[1101] = "UserStatsReceived";
         Callbacknames[1102] = "UserStatsStored";
         Callbacknames[1103] = "UserAchievementStored";
 
+        Callbacknames[1200] = "Base::Steamnetworking";
         Callbacknames[1201] = "SocketStatusChanged";
         Callbacknames[1202] = "P2PSessionRequest";
         Callbacknames[1203] = "P2PSessionConnectFail";
 
+        Callbacknames[1300] = "Base::Clientremotestorage";
+
+        Callbacknames[1400] = "Base::Steamuseritems";
+
+        Callbacknames[1500] = "Base::Steamgameserveritems";
+
+        Callbacknames[1600] = "Base::Clientutilities";
         Callbacknames[1603] = "CellIDChanged";
+
+        Callbacknames[1700] = "Base::Steamgamecoordinator";
+
+        Callbacknames[1800] = "Base::Steamgameserverstats";
+
+        Callbacknames[1900] = "Base::Steam2Async";
+
+        Callbacknames[2000] = "Base::Steamgamestats";
+
+        Callbacknames[2100] = "Base::ClientHTTP";
+
+        Callbacknames[2200] = "Base::Clientscreenshots";
+
+        Callbacknames[2300] = "Base::Steamscreenshots";
+
+        Callbacknames[2400] = "Base::Clientaudio";
+
+        Callbacknames[2500] = "Base::Steamunifiedmessages";
+
+        Callbacknames[2600] = "Base::Clientunifiedmessages";
+
+        Callbacknames[2700] = "Base::Clientcontroller";
+
+        Callbacknames[2800] = "Base::Steamcontroller";
+
+        Callbacknames[2900] = "Base::Clientparentalsettings";
+
+        Callbacknames[3000] = "Base::Clientdeviceauthentication";
+
+        Callbacknames[3100] = "Base::Clientnetworkdevicemanager";
+
+        Callbacknames[3200] = "Base::Clientmusic";
+
+        Callbacknames[3300] = "Base::Clientremoteclientmanager";
+
+        Callbacknames[3400] = "Base::ClientUGC";
+
+        Callbacknames[3500] = "Base::Steamstreamclient";
+
+        Callbacknames[3600] = "Base::Clientproductbuilder";
+
+        Callbacknames[3700] = "Base::Clientshortcuts";
+
+        Callbacknames[3800] = "Base::Clientremotecontrolmanager";
+
+        Callbacknames[3900] = "Base::Steamapplist";
+
+        Callbacknames[4000] = "Base::Steammusic";
+
+        Callbacknames[4100] = "Base::Steammusicremote";
+
+        Callbacknames[4200] = "Base::ClientVR";
+
+        Callbacknames[4300] = "Base::Clientreserved";
+
+        Callbacknames[4400] = "Base::Steamreserved";
+
+        Callbacknames[4500] = "Base::SteamHTML";
+
+        Callbacknames[4600] = "Base::Clientvideo";
+
+        Callbacknames[4700] = "Base::Clientinventory";
         #endif
 
         /*
