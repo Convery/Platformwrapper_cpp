@@ -1,17 +1,16 @@
 /*
     Initial author: Convery (tcn@ayria.se)
-    Started: 15-11-2017
+    Started: 08-01-2018
     License: MIT
     Notes:
-        Wraps SQLIte to provide simple interface for PackageFS.
-        Should probably implement sqlite3_vfs
+        Wraps SQLite for basic database IO.
 */
 
 #pragma once
-#include "../../Stdinclude.h"
+#include "../Stdinclude.hpp"
 
 #if __has_include("sqlite3.h")
-#include "sqlite3.h"
+#include <sqlite/sqlite3.h>
 #endif
 
 namespace Database

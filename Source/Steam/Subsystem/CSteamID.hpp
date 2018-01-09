@@ -17,9 +17,8 @@
 #ifndef CSTEAMID_H
 #define CSTEAMID_H
 #define NO_CSTEAMID_STL
-#define STEAM
 
-#include "../../Configuration/Defines.h"
+#include "../../Configuration/Defines.hpp"
 
 #ifdef _S4N_
 #define sprintf(...)
@@ -639,7 +638,6 @@ inline bool CSteamID::IsValid() const
 #define k_steamIDNonSteamGS CSteamID( 2, 0, k_EUniverseInvalid, k_EAccountTypeInvalid )
 
 
-#ifdef STEAM
 // Returns the matching chat steamID, with the default instance of 0
 // If the steamID passed in is already of type k_EAccountTypeChat it will be returned with the same instance
 inline CSteamID ChatIDFromSteamID(const CSteamID &steamID)
@@ -681,7 +679,7 @@ CSteamID ChatIDFromClanID(const CSteamID &steamIDClan);
 // Asserts steamID type before conversion
 CSteamID ClanIDFromChatID(const CSteamID &steamIDChat);
 
-#endif // _STEAM
+
 
 
 #pragma pack( pop )

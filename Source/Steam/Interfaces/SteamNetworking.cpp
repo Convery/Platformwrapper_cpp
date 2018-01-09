@@ -6,14 +6,7 @@
         Steam networking information.
 */
 
-#include "../../Stdinclude.h"
-
-#define Createmethod(Index, Class, Function)    \
-auto Temp ##Function = &Class::Function;        \
-Methods[Index] = *(void **)&Temp ##Function;
-#define Createinterface(Enum, Class)            \
-static Class DEV ## Class;                      \
-Interfacemanager::Addinterface(Enum, #Class, &DEV ## Class);
+#include "../../Stdinclude.hpp"
 
 #pragma region Methods
 class SteamNetworking

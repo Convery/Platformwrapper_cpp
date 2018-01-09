@@ -6,7 +6,7 @@
         Steam exports implementation.
 */
 
-#include "../Stdinclude.h"
+#include "../Stdinclude.hpp"
 
 #if defined(_WIN32)
 // Steam components.
@@ -275,9 +275,6 @@ extern "C"
 
         // Initialize the interface manager.
         Interfacemanager::Initialize();
-
-        // Initialize the cache manager.
-        Localcache::Runtasks();
 
         return true;
     }

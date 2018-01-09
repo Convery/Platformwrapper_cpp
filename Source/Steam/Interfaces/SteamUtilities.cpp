@@ -6,18 +6,11 @@
         Platform specific utilities for steam.
 */
 
-#include "../../Stdinclude.h"
+#include "../../Stdinclude.hpp"
 
 #if defined (_WIN32)
 constexpr const char *Gameoverlay = sizeof(void *) == 8 ? "gameoverlayrenderer64.dll" : "gameoverlayrenderer.dll";
 #endif
-
-#define Createmethod(Index, Class, Function)    \
-auto Temp ##Function = &Class::Function;        \
-Methods[Index] = *(void **)&Temp ##Function;
-#define Createinterface(Enum, Class)            \
-static Class DEV ## Class;                      \
-Interfacemanager::Addinterface(Enum, #Class, &DEV ## Class);
 
 #pragma region Methods
 class SteamUtils

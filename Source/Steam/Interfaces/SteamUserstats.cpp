@@ -6,108 +6,7 @@
         User statistics for steam.
 */
 
-#include "../../Stdinclude.h"
-
-#define Createmethod(Index, Class, Function)    \
-auto Temp ##Function = &Class::Function;        \
-Methods[Index] = *(void **)&Temp ##Function;
-#define Createinterface(Enum, Class)            \
-static Class DEV ## Class;                      \
-Interfacemanager::Addinterface(Enum, #Class, &DEV ## Class);
-
-struct LeaderboardFindResult_t
-{
-    enum { k_iCallback = 1104 };
-
-    uint64_t m_hSteamLeaderboard;
-    uint8_t m_bLeaderboardFound;
-};
-struct LeaderboardScoresDownloaded_t
-{
-	enum { k_iCallback = 1105 };
-
-    uint64_t m_hSteamLeaderboard;
-	uint64_t m_hSteamLeaderboardEntries;
-	int m_cEntryCount;
-};
-
-// Cached leaderboards.
-struct Leaderboardentry_t
-{
-	uint64_t UserID;
-	int32_t Rank;
-	int32_t Score;
-	int32_t Details;
-	uint32_t UGCHandle;
-};
-struct Leaderboard_t
-{
-    uint64_t LeaderboardID;
-    std::string Leaderboardname;
-    std::vector<Leaderboardentry_t> Entries;
-};
-std::vector<Leaderboard_t> Leaderboardslist;
-
-// Update the cache as requested.
-void Loadleaderboards()
-{
-    std::string JSONBuffer;
-    Leaderboardslist.clear();
-
-    // Offlinemode reads from disk.
-    if (Steamconfig::Offline)
-    {
-        JSONBuffer = Package::Read("Steamleaderboards.json");
-    }
-    else
-    {
-        JSONBuffer = Readpipe("ayria://getleaderboards");
-    }
-
-    try
-    {
-        auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
-
-        for (auto &Item : Parsed["Steamleaderboards"])
-        {
-            std::vector<Leaderboardentry_t> Localentries;
-
-            for (auto &Entry : Item["Entries"])
-            {
-                Localentries.push_back({ Entry["UserID"], Entry["Rank"],Entry["Score"],Entry["Details"], Entry["UGCHandle"] });
-            }
-
-
-            Leaderboardslist.push_back({ Item["LeaderboardID"], Item["Leaderboardname"], Localentries });
-        }
-    }
-    catch (...) {};
-}
-void Saveleaderboards()
-{
-    nlohmann::json Object;
-
-    for (auto &Item : Leaderboardslist)
-    {
-        nlohmann::json Subobject;
-
-        for (auto &Entry : Item.Entries)
-        {
-            Subobject +=
-            {
-                {"UserID", Entry.UserID},
-                {"Rank", Entry.Rank},
-                {"Score", Entry.Score},
-                {"Details", Entry.Details},
-                {"UGCHandle", Entry.UGCHandle}
-            };
-        }
-
-        Object += { {"LeaderboardID", Item.LeaderboardID}, { "Leaderboardname", Item.Leaderboardname }, { "Entries", Subobject }};
-    }
-
-    Package::Write("Steamleaderboards.json", Object.dump(4));
-}
+#include "../../Stdinclude.hpp"
 
 #pragma region Methods
 class SteamUserstats
@@ -116,15 +15,6 @@ public:
     uint32_t GetNumStats(CGameID nGameID)
     {
         Printfunction();
-
-        auto JSONBuffer = Package::Read("Steamuserstats.csv");
-        try
-        {
-            auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
-            return uint32_t(Parsed.size());
-        }
-        catch (...) {};
-
         return 0;
     }
     const char *GetStatName(CGameID nGameID, uint32_t iStat)
@@ -165,67 +55,21 @@ public:
     bool GetStat1(CGameID nGameID, const char *pchName, int32_t *pData)
     {
         Infoprint(va("Get stat \"%s\"..", pchName));
-
-        auto JSONBuffer = Package::Read("Steamuserstats.json");
-        try
-        {
-            auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
-
-            if (!Parsed[pchName].is_number()) return false;
-            *pData = Parsed[pchName];
-            return true;
-        }
-        catch (...) {};
-
         return false;
     }
     bool GetStat2(CGameID nGameID, const char *pchName, float *pData)
     {
         Infoprint(va("Get stat \"%s\"..", pchName));
-
-        auto JSONBuffer = Package::Read("Steamuserstats.json");
-        try
-        {
-            auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
-
-            if (!Parsed[pchName].is_number()) return false;
-            *pData = Parsed[pchName];
-            return true;
-        }
-        catch (...) {};
-
         return false;
     }
     bool SetStat1(CGameID nGameID, const char *pchName, int32_t nData)
     {
         Infoprint(va("Set stat \"%s\" = %d", pchName, nData));
-        auto JSONBuffer = Package::Read("Steamuserstats.json");
-        try
-        {
-            auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
-            Parsed[pchName] = nData;
-
-            Package::Write("Steamuserstats.json", Parsed.dump(4));
-            return true;
-        }
-        catch (...) {};
-
         return false;
     }
     bool SetStat2(CGameID nGameID, const char *pchName, float fData)
     {
         Infoprint(va("Set stat \"%s\" = %f", pchName, fData));
-        auto JSONBuffer = Package::Read("Steamuserstats.json");
-        try
-        {
-            auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
-            Parsed[pchName] = fData;
-
-            Package::Write("Steamuserstats.json", Parsed.dump(4));
-            return true;
-        }
-        catch (...) {};
-
         return false;
     }
     bool UpdateAvgRateStat0(CGameID nGameID, const char *pchName, float, double dSessionLength)
@@ -236,21 +80,6 @@ public:
     bool GetAchievement0(CGameID nGameID, const char *pchName, bool *pbAchieved)
     {
         Infoprint(va("Get achievement \"%s\"..", pchName));
-
-        auto JSONBuffer = Package::Read("Steamachievements.json");
-        try
-        {
-            auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
-
-            if (Parsed[pchName].is_null()) return false;
-            if (Parsed[pchName]["Currentprogress"].get<uint32_t>() == Parsed[pchName]["Maxprogress"].get<uint32_t>())
-            {
-                *pbAchieved = true;
-                return true;
-            }
-        }
-        catch (...) {};
-
         return false;
     }
     bool GetGroupAchievement(CGameID nGameID, const char *pchName, bool *pbAchieved)
@@ -261,17 +90,6 @@ public:
     bool SetAchievement0(CGameID nGameID, const char *pchName)
     {
         Infoprint(va("Achievement \"%s\" progress: 100%%", pchName));
-
-        auto JSONBuffer = Package::Read("Steamachievements.json");
-        try
-        {
-            auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
-            Parsed[pchName] = { {"Currentprogress", 100 }, {"Maxprogress", 100} };
-            Package::Write("Steamachievements.json", Parsed.dump(4));
-            return true;
-        }
-        catch (...) {};
-
         return false;
     }
     bool SetGroupAchievement(CGameID nGameID, const char *pchName)
@@ -287,17 +105,6 @@ public:
     bool ClearAchievement0(CGameID nGameID, const char *pchName)
     {
         Infoprint(va("Achievement \"%s\" progress: 0%%", pchName));
-
-        auto JSONBuffer = Package::Read("Steamachievements.json");
-        try
-        {
-            auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
-            Parsed[pchName] = { {"Currentprogress", 0 }, {"Maxprogress", 100} };
-            Package::Write("Steamachievements.json", Parsed.dump(4));
-            return true;
-        }
-        catch (...) {};
-
         return false;
     }
     bool ClearGroupAchievement(CGameID nGameID, const char *pchName)
@@ -328,16 +135,6 @@ public:
             TODO(Convery):
             Trigger a toaster-popup.
         */
-
-        auto JSONBuffer = Package::Read("Steamachievements.json");
-        try
-        {
-            auto Parsed = nlohmann::json::parse(JSONBuffer.c_str());
-            Parsed[pchName] = { {"Currentprogress", nCurProgress }, {"Maxprogress", nMaxProgress} };
-            Package::Write("Steamachievements.json", Parsed.dump(4));
-            return true;
-        }
-        catch (...) {};
 
         return false;
     }
@@ -422,10 +219,6 @@ public:
     bool ResetAllStats(bool bAchievementsToo)
     {
         Printfunction();
-
-        std::remove("./Plugins/" MODULENAME "/Steamuserstats.json");
-        if (bAchievementsToo) std::remove("./Plugins/" MODULENAME "/Steamachievements.json");
-
         return true;
     }
     uint64_t FindOrCreateLeaderboard(const char *pchLeaderboardName, uint32_t eLeaderboardSortMethod, uint32_t eLeaderboardDisplayType)
@@ -434,33 +227,17 @@ public:
     }
     uint64_t FindLeaderboard(const char *pchLeaderboardName)
     {
-        // Update the leaderboards if we are online.
-        if(!Steamconfig::Offline) Loadleaderboards();
-
-        auto RequestID = Steamcallback::Createrequest();
-        auto Response = new LeaderboardFindResult_t();
-
-        Response->m_bLeaderboardFound = 1;
-        Response->m_hSteamLeaderboard = Hash::FNV1_64(pchLeaderboardName);
-        Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
-        Infoprint(va("Find leaderboard \"%s\" returning 0x%llx", pchLeaderboardName, Hash::FNV1_64(pchLeaderboardName)));
-
-        return RequestID;
+        return 0;
     }
     const char *GetLeaderboardName(uint64_t hSteamLeaderboard)
     {
         Printfunction();
-
-        for (auto &Item : Leaderboardslist)
-            if (hSteamLeaderboard == Item.LeaderboardID)
-                return Item.Leaderboardname.c_str();
-
         return "";
     }
     int GetLeaderboardEntryCount(uint64_t hSteamLeaderboard)
     {
         Printfunction();
-        return (int)Leaderboardslist.size();
+        return (int)0;
     }
     uint32_t GetLeaderboardSortMethod(uint64_t hSteamLeaderboard)
     {
@@ -474,21 +251,7 @@ public:
     }
     uint64_t DownloadLeaderboardEntries(uint64_t hSteamLeaderboard, uint32_t eLeaderboardDataRequest, int nRangeStart, int nRangeEnd)
     {
-        // Update the leaderboards if we are online.
-        if(!Steamconfig::Offline) Loadleaderboards();
-
-        auto RequestID = Steamcallback::Createrequest();
-        auto Response = new LeaderboardScoresDownloaded_t();
-        Infoprint(va("Download leaderboard 0x%llx", hSteamLeaderboard));
-        for (auto &Item : Leaderboardslist)
-            if (Item.LeaderboardID == hSteamLeaderboard)
-                Response->m_cEntryCount = (int)Item.Entries.size();
-
-        Response->m_hSteamLeaderboard = hSteamLeaderboard;
-        Response->m_hSteamLeaderboardEntries = hSteamLeaderboard;
-        Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
-
-        return RequestID;
+        return 0;
     }
     uint64_t UploadLeaderboardScore0(uint64_t hSteamLeaderboard, int32_t nScore, int32_t *pScoreDetails, int cScoreDetailsCount)
     {

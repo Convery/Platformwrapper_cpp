@@ -6,16 +6,19 @@
         Steam cloudstorage.
 */
 
-#include "../../Stdinclude.h"
+#include "../../Stdinclude.hpp"
 
-#define Createmethod(Index, Class, Function)    \
-auto Temp ##Function = &Class::Function;        \
-Methods[Index] = *(void **)&Temp ##Function;
-#define Createinterface(Enum, Class)            \
-static Class DEV ## Class;                      \
-Interfacemanager::Addinterface(Enum, #Class, &DEV ## Class);
+struct RemoteStorageDownloadUGCResult_t
+{
+	enum { k_iCallback = Steamcallback::k_iClientRemoteStorageCallbacks + 17 };
 
-constexpr const char *Storagedir = "./Plugins/" MODULENAME "/Steamstorage/";
+	EResult m_eResult;
+	uint64_t m_hFile;
+	uint32_t m_nAppID;
+	int32_t m_nSizeInBytes;
+	char m_pchFileName[260];
+	uint64_t m_ulSteamIDOwner;
+};
 
 #pragma region Methods
 class SteamRemotestorage
@@ -25,98 +28,94 @@ public:
     {
         Printfunction();
 
-        std::FILE *Filehandle = std::fopen(va("%s%s", Storagedir, filename).c_str(), "rb");
-        if (!Filehandle) return false;
+        // Read the file from our archive.
+        auto Filebuffer = Package::Read(va("Steam/Remotestorage/%s", filename));
+        if (0 == Filebuffer.size()) return false;
 
-        uint8_t *pBuffer = (uint8_t *)buffer;
-        while (1 != std::fread(pBuffer, 1, 1, Filehandle) && size--) pBuffer++;
-        std::fclose(Filehandle);
+        // Copy as much data as we can.
+        std::memcpy(buffer, Filebuffer.data(), std::min(Filebuffer.size(), size_t(size)));
         return true;
     }
     bool FileExists(const char *filename)
     {
         Printfunction();
 
-        std::FILE *Filehandle = std::fopen(va("%s%s", Storagedir, filename).c_str(), "rb");
-        if (!Filehandle) return false;
-        std::fclose(Filehandle);
-        return true;
+        return Package::Exists(va("Steam/Remotestorage/%s", filename));
     }
     bool FileDelete(const char *filename)
     {
         Printfunction();
 
-        return 0 == std::remove(va("%s%s", Storagedir, filename).c_str());
+        if (!Package::Exists(va("Steam/Remotestorage/%s", filename))) return false;
+        else Package::Delete(va("Steam/Remotestorage/%s", filename)); return true;
     }
     const char *GetFileNameAndSize(int index, int *size)
     {
         Printfunction();
 
-        return "";
+        // Find the nth item in the storage dir.
+        auto List = Package::Findfiles("Steam/Remotestorage");
+        if (List.size() < size_t(index)) return "";
+
+        // TODO(Convery): Maybe replace this with something more efficient.
+        *size = Package::Read(List[index]).size();
+        return List[index].c_str();
     }
     bool GetQuota(int *current, int *maximum)
     {
         Printfunction();
 
-        return false;
+        *current = 0;
+        *maximum = INT_MAX;
+        return true;
     }
     bool FileWrite(const char *pchFile, const void *pvData, int32_t cubData)
     {
         Printfunction();
 
-        std::FILE *Filehandle = std::fopen(va("%s%s", Storagedir, pchFile).c_str(), "wb");
-        if (!Filehandle) return false;
-
-        std::fwrite(Filehandle, cubData, 1, Filehandle);
-        std::fclose(Filehandle);
+        // Write the file from the archive.
+        std::string Filebuffer((char *)pvData, cubData);
+        Package::Write(va("Steam/Remotestorage/%s", pchFile), Filebuffer);
         return true;
     }
     int32_t GetFileSize(const char *pchFile)
     {
         Printfunction();
 
-        int32_t Result = 0;
-        std::FILE *Filehandle = std::fopen(va("%s%s", Storagedir, pchFile).c_str(), "rb");
-        if (!Filehandle) return false;
-
-        std::fseek(Filehandle, 0, SEEK_END);
-        Result = std::ftell(Filehandle);
-        std::fclose(Filehandle);
-
-        return Result;
+        // Read the file from our archive.
+        auto Filebuffer = Package::Read(va("Steam/Remotestorage/%s", pchFile));
+        return int32_t(Filebuffer.size());
     }
     int32_t FileRead1(const char *pchFile, void *pvData, int32_t cubDataToRead)
     {
         Printfunction();
 
-        int32_t Maxread = cubDataToRead;
+        // Read the file from our archive.
+        auto Filebuffer = Package::Read(va("Steam/Remotestorage/%s", pchFile));
+        if (0 == Filebuffer.size()) return 0;
 
-        std::FILE *Filehandle = std::fopen(va("%s%s", Storagedir, pchFile).c_str(), "rb");
-        if (!Filehandle) return false;
-
-        uint8_t *pBuffer = (uint8_t *)pvData;
-        while (1 != std::fread(pBuffer, 1, 1, Filehandle) && Maxread--) pBuffer++;
-        std::fclose(Filehandle);
-
-        return cubDataToRead + ~Maxread;
+        // Copy as much data as we can.
+        std::memcpy(pvData, Filebuffer.data(), std::min(Filebuffer.size(), size_t(cubDataToRead)));
+        return std::min(Filebuffer.size(), size_t(cubDataToRead));
     }
     int32_t GetFileCount()
     {
         Printfunction();
 
-        return 0;
+        auto List = Package::Findfiles("Steam/Remotestorage");
+        return int32_t(List.size());
     }
     bool FilePersisted(const char *pchFile)
     {
         Printfunction();
 
-        return 0;
+        return Package::Exists(va("Steam/Remotestorage/%s", pchFile));
     }
     int64_t GetFileTimestamp(const char *pchFile)
     {
         Printfunction();
 
-        return 0;
+        return time(NULL) - 3000;
     }
     bool IsCloudEnabledForAccount()
     {
@@ -140,19 +139,53 @@ public:
     {
         Printfunction();
 
-        return 0;
+        // HACK(Convery): Reuse hContent as index as the archive should only grow.
+        auto List = Package::Findfiles("Steam/Remotestorage");
+        if (List.size() < hContent) return 0;
+
+        auto RequestID = Steamcallback::Createrequest();
+        auto Response = new RemoteStorageDownloadUGCResult_t();
+
+        Response->m_eResult = k_EResultOK;
+        Response->m_hFile = hContent;
+        Response->m_nAppID = Steamconfig::ApplicationID;
+        Response->m_ulSteamIDOwner = Steamconfig::UserID;
+        Response->m_nSizeInBytes = Package::Read(List[hContent]).size();
+        std::strcpy(Response->m_pchFileName, List[hContent].substr(List[hContent].find_last_of('/')).c_str());
+
+        Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
+        return RequestID;
     }
     bool GetUGCDetails(uint32_t hContent, uint32_t *pnAppID, char **ppchName, int32_t *pnFileSizeInBytes, CSteamID *pSteamIDOwner)
     {
         Printfunction();
 
-        return 0;
+        // HACK(Convery): Reuse hContent as index as the archive should only grow.
+        auto List = Package::Findfiles("Steam/Remotestorage");
+        if (List.size() < hContent) return false;
+
+        std::string Localfilename = List[hContent].substr(List[hContent].find_last_of('/'));
+        *ppchName = (char *)std::malloc(Localfilename.size() + 1);
+        std::strcpy(*ppchName, Localfilename.c_str());
+
+        *pnFileSizeInBytes = Package::Read(List[hContent]).size();
+        *pSteamIDOwner = Steamconfig::UserID;
+        *pnAppID = Steamconfig::ApplicationID;
+
+        return true;
     }
     int32_t UGCRead0(uint32_t hContent, void *pvData, int32_t cubDataToRead)
     {
         Printfunction();
 
-        return 0;
+        // HACK(Convery): Reuse hContent as index as the archive should only grow.
+        auto List = Package::Findfiles("Steam/Remotestorage");
+        if (List.size() < hContent) return 0;
+
+        auto Filebuffer = Package::Read(List[hContent]);
+        std::memcpy(pvData, Filebuffer.data(), std::min(Filebuffer.size(), size_t(cubDataToRead)));
+
+        return std::min(Filebuffer.size(), size_t(cubDataToRead));
     }
     int32_t GetCachedUGCCount()
     {
@@ -182,7 +215,7 @@ public:
     {
         Printfunction();
 
-        return 0;
+        return 1;
     }
     void SetCloudEnabledForApp(bool bEnabled)
     {
@@ -248,7 +281,9 @@ public:
     {
         Printfunction();
 
-        return 0;
+        *puDownloadedBytes = 1;
+        *puTotalBytes = 1;
+        return true;
     }
     uint64_t PublishWorkshopFile1(const char *pchFile, const char *pchPreviewFile, uint32_t nConsumerAppId, const char *pchTitle, const char *pchDescription, uint32_t eVisibility, struct SteamParamStringArray_t *pTags, uint32_t eWorkshopFileType)
     {
@@ -390,23 +425,17 @@ public:
     }
     int32_t UGCRead1(uint32_t hContent, void *pvData, int32_t cubDataToRead, uint32_t uOffset)
     {
-        Printfunction();
-
-        return 0;
+        return UGCRead0(hContent, pvData, cubDataToRead);
     }
-    uint64_t UGCDownload1(uint32_t hContent, uint32_t uUnk)
+    uint64_t UGCDownload1(uint32_t hContent, uint32_t unPriority)
     {
-        Printfunction();
-
-        return 0;
+        return UGCDownload0(hContent);
     }
-    uint64_t UGCDownloadToLocation(uint32_t hContent, const char *cszLocation, uint32_t uUnk)
+    uint64_t UGCDownloadToLocation(uint32_t hContent, const char *cszLocation, uint32_t unPriority)
     {
-        Printfunction();
-
-        return 0;
+        return UGCDownload0(hContent);
     }
-    uint64_t GetPublishedFileDetails1(uint32_t unPublishedFileId, uint32_t)
+    uint64_t GetPublishedFileDetails1(uint32_t unPublishedFileId, uint32_t unMaxSecondsOld)
     {
         Printfunction();
 
@@ -414,9 +443,7 @@ public:
     }
     int32_t UGCRead2(uint32_t hContent, void *pvData, int32_t cubDataToRead, uint32_t uOffset, uint32_t eAction)
     {
-        Printfunction();
-
-        return 0;
+        return UGCRead0(hContent, pvData, cubDataToRead);
     }
 
     bool FileForget(const char *pchFile)
@@ -431,13 +458,6 @@ public:
 
         return 0;
     }
-    uint64_t UGCDownload(uint32_t hContent)
-    {
-        Printfunction();
-
-        return 0;
-    }
-
 };
 #pragma endregion
 
@@ -504,7 +524,7 @@ SteamRemotestorage004::SteamRemotestorage004()
     Createmethod(14, SteamRemotestorage, IsCloudEnabledForAccount);
     Createmethod(15, SteamRemotestorage, IsCloudEnabledForApp);
     Createmethod(16, SteamRemotestorage, SetCloudEnabledForApp);
-    Createmethod(17, SteamRemotestorage, UGCDownload);
+    Createmethod(17, SteamRemotestorage, UGCDownload0);
     Createmethod(18, SteamRemotestorage, GetUGCDetails);
     Createmethod(19, SteamRemotestorage, UGCRead0);
     Createmethod(20, SteamRemotestorage, GetCachedUGCCount);
@@ -529,7 +549,7 @@ SteamRemotestorage005::SteamRemotestorage005()
     Createmethod(14, SteamRemotestorage, IsCloudEnabledForAccount);
     Createmethod(15, SteamRemotestorage, IsCloudEnabledForApp);
     Createmethod(16, SteamRemotestorage, SetCloudEnabledForApp);
-    Createmethod(17, SteamRemotestorage, UGCDownload);
+    Createmethod(17, SteamRemotestorage, UGCDownload0);
     Createmethod(18, SteamRemotestorage, GetUGCDetails);
     Createmethod(19, SteamRemotestorage, UGCRead0);
     Createmethod(20, SteamRemotestorage, GetCachedUGCCount);
@@ -563,7 +583,7 @@ SteamRemotestorage006::SteamRemotestorage006()
     Createmethod(14, SteamRemotestorage, IsCloudEnabledForAccount);
     Createmethod(15, SteamRemotestorage, IsCloudEnabledForApp);
     Createmethod(16, SteamRemotestorage, SetCloudEnabledForApp);
-    Createmethod(17, SteamRemotestorage, UGCDownload);
+    Createmethod(17, SteamRemotestorage, UGCDownload0);
     Createmethod(18, SteamRemotestorage, GetUGCDownloadProgress);
     Createmethod(19, SteamRemotestorage, GetUGCDetails);
     Createmethod(20, SteamRemotestorage, UGCRead0);
@@ -613,7 +633,7 @@ SteamRemotestorage007::SteamRemotestorage007()
     Createmethod(14, SteamRemotestorage, IsCloudEnabledForAccount);
     Createmethod(15, SteamRemotestorage, IsCloudEnabledForApp);
     Createmethod(16, SteamRemotestorage, SetCloudEnabledForApp);
-    Createmethod(17, SteamRemotestorage, UGCDownload);
+    Createmethod(17, SteamRemotestorage, UGCDownload0);
     Createmethod(18, SteamRemotestorage, GetUGCDownloadProgress);
     Createmethod(19, SteamRemotestorage, GetUGCDetails);
     Createmethod(20, SteamRemotestorage, UGCRead0);
@@ -667,7 +687,7 @@ SteamRemotestorage008::SteamRemotestorage008()
     Createmethod(18, SteamRemotestorage, IsCloudEnabledForAccount);
     Createmethod(19, SteamRemotestorage, IsCloudEnabledForApp);
     Createmethod(20, SteamRemotestorage, SetCloudEnabledForApp);
-    Createmethod(21, SteamRemotestorage, UGCDownload);
+    Createmethod(21, SteamRemotestorage, UGCDownload0);
     Createmethod(22, SteamRemotestorage, GetUGCDownloadProgress);
     Createmethod(23, SteamRemotestorage, GetUGCDetails);
     Createmethod(24, SteamRemotestorage, UGCRead0);
@@ -721,7 +741,7 @@ SteamRemotestorage009::SteamRemotestorage009()
     Createmethod(18, SteamRemotestorage, IsCloudEnabledForAccount);
     Createmethod(19, SteamRemotestorage, IsCloudEnabledForApp);
     Createmethod(20, SteamRemotestorage, SetCloudEnabledForApp);
-    Createmethod(21, SteamRemotestorage, UGCDownload);
+    Createmethod(21, SteamRemotestorage, UGCDownload0);
     Createmethod(22, SteamRemotestorage, GetUGCDownloadProgress);
     Createmethod(23, SteamRemotestorage, GetUGCDetails);
     Createmethod(24, SteamRemotestorage, UGCRead1);
@@ -775,7 +795,7 @@ SteamRemotestorage010::SteamRemotestorage010()
     Createmethod(18, SteamRemotestorage, IsCloudEnabledForAccount);
     Createmethod(19, SteamRemotestorage, IsCloudEnabledForApp);
     Createmethod(20, SteamRemotestorage, SetCloudEnabledForApp);
-    Createmethod(21, SteamRemotestorage, UGCDownload);
+    Createmethod(21, SteamRemotestorage, UGCDownload1);
     Createmethod(22, SteamRemotestorage, GetUGCDownloadProgress);
     Createmethod(23, SteamRemotestorage, GetUGCDetails);
     Createmethod(24, SteamRemotestorage, UGCRead1);
@@ -830,7 +850,7 @@ SteamRemotestorage011::SteamRemotestorage011()
     Createmethod(18, SteamRemotestorage, IsCloudEnabledForAccount);
     Createmethod(19, SteamRemotestorage, IsCloudEnabledForApp);
     Createmethod(20, SteamRemotestorage, SetCloudEnabledForApp);
-    Createmethod(21, SteamRemotestorage, UGCDownload);
+    Createmethod(21, SteamRemotestorage, UGCDownload1);
     Createmethod(22, SteamRemotestorage, GetUGCDownloadProgress);
     Createmethod(23, SteamRemotestorage, GetUGCDetails);
     Createmethod(24, SteamRemotestorage, UGCRead1);
@@ -885,7 +905,7 @@ SteamRemotestorage012::SteamRemotestorage012()
     Createmethod(18, SteamRemotestorage, IsCloudEnabledForAccount);
     Createmethod(19, SteamRemotestorage, IsCloudEnabledForApp);
     Createmethod(20, SteamRemotestorage, SetCloudEnabledForApp);
-    Createmethod(21, SteamRemotestorage, UGCDownload);
+    Createmethod(21, SteamRemotestorage, UGCDownload1);
     Createmethod(22, SteamRemotestorage, GetUGCDownloadProgress);
     Createmethod(23, SteamRemotestorage, GetUGCDetails);
     Createmethod(24, SteamRemotestorage, UGCRead2);

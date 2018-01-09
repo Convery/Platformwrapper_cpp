@@ -1,14 +1,13 @@
 /*
     Initial author: Convery (tcn@ayria.se)
-    Started: 29-10-2017
+    Started: 08-01-2018
     License: MIT
     Notes:
-        Plugins keep their files in their archive.
-        Initial test version, horribly inefficient.
+        Plugins should keep all their files in their archive.
 */
 
 #pragma once
-#include "../../Stdinclude.h"
+#include "../Stdinclude.hpp"
 
 namespace Package
 {
@@ -17,7 +16,7 @@ namespace Package
     // Operations on the default archive.
     std::string Read(std::string Filename);
     void Write(std::string Filename, std::string &Buffer);
-    bool Findfiles(std::string Criteria, std::vector<std::string> *Filenames);
+    std::vector<std::string> Findfiles(std::string Criteria);
     bool Exists(std::string Filename);
     void Delete(std::string Filename);
 
@@ -26,7 +25,7 @@ namespace Package
     void Savearchive(Archivehandle &Handle, std::string Filename);
     std::string Read(Archivehandle &Handle, std::string Filename);
     void Write(Archivehandle &Handle, std::string Filename, std::string &Buffer);
-    bool Findfiles(Archivehandle &Handle, std::string Criteria, std::vector<std::string> *Filenames);
+    std::vector<std::string> Findfiles(Archivehandle &Handle, std::string Criteria);
     bool Exists(Archivehandle &Handle, std::string Filename);
     void Delete(Archivehandle &Handle, std::string Filename);
 }
