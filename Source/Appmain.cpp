@@ -1,9 +1,9 @@
 /*
     Initial author: Convery (tcn@ayria.se)
-    Started: 29-07-2017
+    Started: 08-01-2018
     License: MIT
     Notes:
-        Module entrypoint.
+        Provides the entrypoint for Windows and Nix.
 */
 
 #include "Stdinclude.hpp"
