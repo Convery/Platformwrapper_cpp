@@ -263,6 +263,7 @@ namespace Steamcallback
         Callbacknames[1203] = "P2PSessionConnectFail";
 
         Callbacknames[1300] = "Base::Clientremotestorage";
+        Callbacknames[1317] = "RemoteStorageDownloadUGCResult";
 
         Callbacknames[1400] = "Base::Steamuseritems";
 
