@@ -276,9 +276,6 @@ extern "C"
         // Initialize the interface manager.
         Interfacemanager::Initialize();
 
-        // Initialize the cache manager.
-        //Localcache::Runtasks();
-
         return true;
     }
     EXPORT_ATTR bool SteamAPI_InitSafe()
