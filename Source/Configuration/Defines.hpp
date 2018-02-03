@@ -43,6 +43,7 @@
 
 // Print the steam async calls to the log.
 #define STEAM_PRINTCALLBACKS
+#define ARC_PRINTCALLBACKS
 
 // Database name for the utility.
 #define DATABASENAME "Platformwrapper"

@@ -59,9 +59,10 @@
 #include "Utility/Base64.hpp"
 
 // Includes for our components.
+#include "Arclight/Subsystem/Arccallback.hpp"
 #include "Steam/Subsystem/Steaminterface.hpp"
 #include "Steam/Subsystem/Steamcallback.hpp"
 #include "Steam/Interfaces/Interfaces.hpp"
 #include "Platform/Platformstructures.hpp"
-#include "Steam/Steam.hpp"
 #include "Arclight/Arclight.hpp"
+#include "Steam/Steam.hpp"

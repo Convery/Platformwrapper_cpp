@@ -101,19 +101,7 @@ namespace CC_SDK
     };
 }
 
-#pragma pack(1)
-struct Arclightcallback_t
-{
-    uint32_t CallbackID;
-    void    *Gamestate;
-    void    *Callback;
-    void    *Data;
 
-    Arclightcallback_t() = default;
-    Arclightcallback_t(Arclightcallback_t &Right) = default;
-    virtual uint32_t Resultsize() = 0;
-};
-#pragma pack()
 
 // Helpers.
 std::wstring Formatrequest(uint32_t Requesttype, std::vector<std::wstring> Parameters)
@@ -164,7 +152,7 @@ extern "C"
     EXPORT_ATTR int64_t CC_GetArcRunningMode(uint32_t *Mode)
     {
         // enum Mode { Arc = 0, Steam = 1 }
-        *Mode = 1;
+        *Mode = 0;
 
         return 0;
     }
@@ -273,35 +261,14 @@ extern "C"
         // Status::Initialized
         return 0xE0000019;
     }
-    EXPORT_ATTR int64_t CC_RegisterCallback(Arclightcallback_t *Callback, uint32_t CallbackID)
+    EXPORT_ATTR int64_t CC_RegisterCallback(Arccallback::PWCallback *Callback, int32_t CallbackID)
     {
-        auto toReadable = [](uint32_t ID) -> const char *
-        {
-            switch (ID)
-            {
-                case 102: return "LobbyEnter_t";
-                case 103: return "LobbyDataUpdate_t";
-                case 104: return "LobbyChatUpdate_t";
-                case 106: return "LobbyMatchList_t";
-                case 108: return "LobbyCreated_t";
-
-                case 202: return "P2PSessionRequest_t";
-                case 203: return "P2PSessionConnectFail_t";
-
-                case 301: return "GameInvite_t";
-                case 302: return "FriendsStatus_t";
-
-                case 401: return "P2PSessionRequest_t";
-
-                default: return "Unknown";
-            }
-        };
-
-        Debugprint(va("Register callback: %s", toReadable(CallbackID)));
+        Arccallback::Registercallback(Callback, CallbackID);
         return -2;
     }
     EXPORT_ATTR int64_t CC_RunCallbacks()
     {
+        Arccallback::Runcallbacks();
         return 0;
     }
     EXPORT_ATTR int64_t CC_SetViewableRect(const wchar_t *Gameabbreviation, uint32_t Top, uint32_t Left, uint32_t Bottom, uint32_t Right)
@@ -317,8 +284,9 @@ extern "C"
     {
         return 0;
     }
-    EXPORT_ATTR int64_t CC_UnregisterCallback(Arclightcallback_t *Callback)
+    EXPORT_ATTR int64_t CC_UnregisterCallback(Arccallback::PWCallback *Callback)
     {
+        Arccallback::Removecallback(Callback);
         return 0;
     }
 }
