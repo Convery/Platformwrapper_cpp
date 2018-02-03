@@ -150,7 +150,7 @@ extern "C"
     EXPORT_ATTR int64_t CC_GetArcRunningMode(uint32_t *Mode)
     {
         // enum Mode { Arc = 0, Steam = 1 }
-        *Mode = 0;
+        *Mode = 1;
 
         return 0;
     }
