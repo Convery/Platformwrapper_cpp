@@ -221,7 +221,7 @@ extern "C"
     }
     EXPORT_ATTR wchar_t *CC_Init(int64_t a1, int64_t GameID, uint32_t *Handles)
     {
-        static wchar_t Internalstate[1080]{ L"This is our secret, probably encrypted, internal state.."};
+        static wchar_t Internalstate[]{ L"This is our secret, probably encrypted, internal state.."};
         Debugprint(va("Initializing gameID %u", GameID));
 
         // Set the environment handles.
