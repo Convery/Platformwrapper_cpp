@@ -11,6 +11,9 @@
 
 namespace Arccallback
 {
+    // Result of the async request.
+    using Result_t = struct Anontype_t { int32_t CallbackID; std::string Data; std::function<void(void *Callback, std::string &Data)> Run; };
+
     #pragma pack(1)
     struct PWCallback
     {
@@ -30,6 +33,9 @@ namespace Arccallback
 
     // Remove a games callback from the internal mapping.
     void Removecallback(PWCallback *Callbackhandler);
+
+    // Return data to the game.
+    void Completerequest(Result_t Result);
 
     // Call all callbacks, usually every frame.
     void Runcallbacks();

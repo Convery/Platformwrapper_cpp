@@ -10,7 +10,9 @@
 
 namespace Arccallback
 {
-    std::list<PWCallback *> Callbackhandlers;
+    std::vector<PWCallback *> Callbackhandlers;
+    std::vector<Result_t> Requestresults;
+    std::mutex Threadguard;
 
     // Add a games callback to the internal mapping.
     void Registercallback(PWCallback *Callbackhandler, int32_t CallbackID)
@@ -35,10 +37,42 @@ namespace Arccallback
         }
     }
 
+    // Return data to the game.
+    void Completerequest(Result_t Result)
+    {
+        Threadguard.lock();
+        {
+            Requestresults.push_back(Result);
+        }
+        Threadguard.unlock();
+    }
+
     // Call all callbacks, usually every frame.
     void Runcallbacks()
     {
+        Threadguard.lock();
+        {
+            // For all our results.
+            LABEL_RESTART:
+            for (auto Resultiterator = Requestresults.begin(); Resultiterator != Requestresults.end(); Resultiterator++)
+            {
+                // Find a handler for the type.
+                for (auto Handleriterator = Callbackhandlers.begin(); Handleriterator != Callbackhandlers.end(); Handleriterator++)
+                {
+                    if (Resultiterator->CallbackID == (*Handleriterator)->CallbackID)
+                    {
+                        // Run the formatter and call the callback.
+                        Resultiterator->Run((*Handleriterator)->Callback, Resultiterator->Data);
+                        break;
+                    }
+                }
 
+                // Remove the result from the list.
+                Requestresults.erase(Resultiterator);
+                goto LABEL_RESTART;
+            }
+        }
+        Threadguard.unlock();
     }
 
     // Debug information.
