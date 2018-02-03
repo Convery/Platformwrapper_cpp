@@ -101,15 +101,13 @@ namespace CC_SDK
     };
 }
 
-
-
-// Helpers.
-std::wstring Formatrequest(uint32_t Requesttype, std::vector<std::wstring> Parameters)
+// Create a request or response from a list of parameters.
+std::wstring Createmessage(uint32_t Messagetype, std::vector<std::wstring> Parameters)
 {
     std::wstring Result;
 
     wchar_t Number[16]{};
-    _itow(Requesttype, Number, 10);
+    _itow(Messagetype, Number, 10);
 
     Result += Number;
     for (auto &Item : Parameters)
@@ -185,12 +183,9 @@ extern "C"
         // Clear the games buffer.
         std::memset(Buffer, 0, Bufferlength * 2);
 
-        // Build the parameterstring.
-        std::wstring Parameters = Formatrequest(41,
-            { Gameabbreviation, LanguagefromID(Language) });
-        // NOTE(Convery): There's one more parameter field to RE.
-
-        std::memcpy(Buffer, Parameters.c_str(), Parameters.size() * 2);
+        // Format a response from the input.
+        auto Response = Createmessage(41, { Gameabbreviation, LanguagefromID(Language) });
+        std::memcpy(Buffer, Response.c_str(), Response.size() * 2);
         return 0;
     }
     EXPORT_ATTR int64_t CC_GetNickName(const wchar_t *State, wchar_t *Buffer, uint32_t Bufferlength)
@@ -211,8 +206,9 @@ extern "C"
     }
     EXPORT_ATTR int64_t CC_GetTokenEx(const wchar_t *State, const wchar_t *Accountname, const wchar_t *Gameabbreviation, wchar_t *Buffer, uint32_t Bufferlength, uint32_t Sendduration)
     {
-        auto Parameters = Formatrequest(10, { Accountname, Gameabbreviation });
-        std::memcpy(Buffer, Parameters.c_str(), Parameters.size() * 2);
+        // Format a response from the input.
+        auto Response = Createmessage(10, { Accountname, Gameabbreviation });
+        std::memcpy(Buffer, Response.c_str(), Response.size() * 2);
         return 0;
     }
     EXPORT_ATTR int64_t CC_GetUserAvatarLink(int64_t a1, wchar_t *a2, unsigned int *a3, int a4)
