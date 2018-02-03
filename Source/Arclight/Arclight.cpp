@@ -269,7 +269,7 @@ extern "C"
     }
     EXPORT_ATTR int64_t CC_SetViewableRect(const wchar_t *Gameabbreviation, uint32_t Top, uint32_t Left, uint32_t Bottom, uint32_t Right)
     {
-        Debugprint(va("Creating gamewindow at %u %u %u %u", Top, Left, Bottom, Right));
+        Debugprint(va("Gamewindow position: %u %u %u %u", Top, Left, Bottom, Right));
         return 0;
     }
     EXPORT_ATTR int64_t CC_ShowOverlay(int64_t a1, unsigned int a2)
