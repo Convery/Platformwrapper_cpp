@@ -40,9 +40,9 @@ namespace CC_SDK
             Internalstring = new wchar_t[256]();
             Set(Plaintext);
         };
-        ~ArcID() 
-        { 
-            delete[] Internalstring; 
+        ~ArcID()
+        {
+            delete[] Internalstring;
         };
 
         ArcID &operator = (const ArcID &Right) noexcept
@@ -84,9 +84,9 @@ namespace CC_SDK
             Internalstring = new wchar_t[256]();
             Set(Plaintext);
         };
-        ~LobbyID() 
-        { 
-            delete[] Internalstring; 
+        ~LobbyID()
+        {
+            delete[] Internalstring;
         };
 
         LobbyID &operator = (const LobbyID &Right) noexcept
@@ -276,7 +276,7 @@ extern "C"
     {
         return 0;
     }
-    EXPORT_ATTR int64_t CC_UnInit(int64_t a1)
+    EXPORT_ATTR int64_t CC_UnInit(const wchar_t *State)
     {
         return 0;
     }
