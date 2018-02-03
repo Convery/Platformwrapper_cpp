@@ -101,6 +101,20 @@ namespace CC_SDK
     };
 }
 
+#pragma pack(1)
+struct Arclightcallback_t
+{
+    uint32_t CallbackID;
+    void    *Gamestate;
+    void    *Callback;
+    void    *Data;
+
+    Arclightcallback_t() = default;
+    Arclightcallback_t(Arclightcallback_t &Right) = default;
+    virtual uint32_t Resultsize() = 0;
+};
+#pragma pack(0)
+
 // Interfaces.
 extern "C"
 {
@@ -161,7 +175,7 @@ extern "C"
         std::memset(Buffer, 0, Bufferlength * 2);
 
         // Build the parameterstring.
-        Parameters.append(L"41");           // SDK version.
+        Parameters.append(L"41");           // Current state.
         Parameters.append(L"|");            // Separator.
         Parameters.append(Gameabbreviation);
         Parameters.append(L"|");
@@ -171,8 +185,15 @@ extern "C"
         std::memcpy(Buffer, Parameters.c_str(), Parameters.size() * 2);
         return 0;
     }
-    EXPORT_ATTR int64_t CC_GetNickName(int64_t a1, wchar_t *a2, unsigned int *a3)
+    EXPORT_ATTR int64_t CC_GetNickName(wchar_t *State, wchar_t *Buffer, unsigned int Bufferlength)
     {
+        // Old SDK version?
+        if (Bufferlength <= 16) return 0xE000001A;
+
+        // Add a nickname.
+        std::memset(Buffer, 0, Bufferlength * 2);
+        std::memcpy(Buffer, L"Ayria", 12);
+
         return 0;
     }
     EXPORT_ATTR int64_t CC_GetSteamTicket(int64_t a1, unsigned int *a2)
@@ -195,9 +216,17 @@ extern "C"
     {
         return 0;
     }
-    EXPORT_ATTR wchar_t *CC_Init(int64_t a1, int64_t a2, unsigned int *a3)
+    EXPORT_ATTR wchar_t *CC_Init(int64_t a1, int64_t GameID, uint32_t *Handles)
     {
-        return nullptr;
+        static wchar_t Internalstate[1080]{ L"This is our secret, probably encrypted, internal state.."};
+        Debugprint(va("Initializing gameID %u", GameID));
+
+        // Set the environment handles.
+        if (Handles[0]) SetEnvironmentVariableA("ArcGameWindowHandle", va("%u", Handles[0]).c_str());
+        // TODO(Convery): Research Handles[1] as it's a hardcoded ID.
+        if (Handles[2]) SetEnvironmentVariableA("ArcGameMessageId", va("%u", Handles[2]).c_str());
+
+        return Internalstate;
     }
     EXPORT_ATTR char CC_InstalledFromArc(unsigned int a1, unsigned int a2)
     {
@@ -225,16 +254,40 @@ extern "C"
         // Status::Initialized
         return 0xE0000019;
     }
-    EXPORT_ATTR int64_t CC_RegisterCallback(int16_t *a1, unsigned int a2)
+    EXPORT_ATTR int64_t CC_RegisterCallback(Arclightcallback_t *Callback, uint32_t CallbackID)
     {
-        return 0;
+        auto toReadable = [](uint32_t ID) -> const char *
+        {
+            switch (ID)
+            {
+                case 102: return "LobbyEnter_t";
+                case 103: return "LobbyDataUpdate_t";
+                case 104: return "LobbyChatUpdate_t";
+                case 106: return "LobbyMatchList_t";
+                case 108: return "LobbyCreated_t";
+
+                case 202: return "P2PSessionRequest_t";
+                case 203: return "P2PSessionConnectFail_t";
+
+                case 301: return "GameInvite_t";
+                case 302: return "FriendsStatus_t";
+
+                case 401: return "P2PSessionRequest_t";
+
+                default: return "Unknown";
+            }
+        };
+
+        Debugprint(va("Register callback: %s", toReadable(CallbackID)));
+        return -2;
     }
     EXPORT_ATTR int64_t CC_RunCallbacks()
     {
         return 0;
     }
-    EXPORT_ATTR int64_t CC_SetViewableRect(int16_t *a1, unsigned int a2, unsigned int a3, unsigned int a4, unsigned int a5)
+    EXPORT_ATTR int64_t CC_SetViewableRect(const wchar_t *Gameabbreviation, uint32_t Top, uint32_t Left, uint32_t Bottom, uint32_t Right)
     {
+        Debugprint(va("Creating gamewindow at %u %u %u %u", Top, Left, Bottom, Right));
         return 0;
     }
     EXPORT_ATTR int64_t CC_ShowOverlay(int64_t a1, unsigned int a2)
@@ -245,7 +298,7 @@ extern "C"
     {
         return 0;
     }
-    EXPORT_ATTR int64_t CC_UnregisterCallback(int64_t a1)
+    EXPORT_ATTR int64_t CC_UnregisterCallback(Arclightcallback_t *Callback)
     {
         return 0;
     }
