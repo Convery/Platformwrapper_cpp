@@ -64,3 +64,4 @@
 #include "Steam/Interfaces/Interfaces.hpp"
 #include "Platform/Platformstructures.hpp"
 #include "Steam/Steam.hpp"
+#include "Arclight/Arclight.hpp"

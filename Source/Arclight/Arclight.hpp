@@ -5,3 +5,6 @@
     Notes:
         ARC exports for IAT hooking.
 */
+
+#pragma once
+#include "../Stdinclude.hpp"
