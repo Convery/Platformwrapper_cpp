@@ -131,8 +131,12 @@ extern "C"
         return nullptr;
     }
 
-    EXPORT_ATTR int64_t CC_GetAccountName(int64_t a1, int64_t a2, unsigned int *a3)
+    EXPORT_ATTR int64_t CC_GetAccountName(const wchar_t *State, wchar_t *Buffer, uint32_t Bufferlength)
     {
+        // Return an accountname.
+        std::memset(Buffer, 0, Bufferlength * 2);
+        std::memcpy(Buffer, L"Ayria", 12);
+
         return 0;
     }
     EXPORT_ATTR int64_t CC_GetArcID(int64_t a1, int64_t a2)
@@ -185,12 +189,9 @@ extern "C"
         std::memcpy(Buffer, Parameters.c_str(), Parameters.size() * 2);
         return 0;
     }
-    EXPORT_ATTR int64_t CC_GetNickName(wchar_t *State, wchar_t *Buffer, unsigned int Bufferlength)
+    EXPORT_ATTR int64_t CC_GetNickName(const wchar_t *State, wchar_t *Buffer, uint32_t Bufferlength)
     {
-        // Old SDK version?
-        if (Bufferlength <= 16) return 0xE000001A;
-
-        // Add a nickname.
+        // Return a nickname.
         std::memset(Buffer, 0, Bufferlength * 2);
         std::memcpy(Buffer, L"Ayria", 12);
 
