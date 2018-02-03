@@ -113,7 +113,25 @@ struct Arclightcallback_t
     Arclightcallback_t(Arclightcallback_t &Right) = default;
     virtual uint32_t Resultsize() = 0;
 };
-#pragma pack(0)
+#pragma pack()
+
+// Helpers.
+std::wstring Formatrequest(uint32_t Requesttype, std::vector<std::wstring> Parameters)
+{
+    std::wstring Result;
+
+    wchar_t Number[16]{};
+    _itow(Requesttype, Number, 10);
+
+    Result += Number;
+    for (auto &Item : Parameters)
+    {
+        Result += L"|";
+        Result += Item;
+    }
+
+    return Result;
+}
 
 // Interfaces.
 extern "C"
@@ -143,14 +161,15 @@ extern "C"
     {
         return 0;
     }
-    EXPORT_ATTR int64_t CC_GetArcRunningMode(int64_t a1)
+    EXPORT_ATTR int64_t CC_GetArcRunningMode(uint32_t *Mode)
     {
+        // enum Mode { Arc = 0, Steam = 1 }
+        *Mode = 1;
+
         return 0;
     }
     EXPORT_ATTR int64_t CC_GetLaunchedParameter(const wchar_t *Gameabbreviation, int Language, wchar_t *Buffer, signed int Bufferlength)
     {
-        std::wstring Parameters;
-
         // Enum to string.
         auto LanguagefromID = [](int Language) -> const wchar_t *
         {
@@ -179,13 +198,10 @@ extern "C"
         std::memset(Buffer, 0, Bufferlength * 2);
 
         // Build the parameterstring.
-        Parameters.append(L"41");           // Current state.
-        Parameters.append(L"|");            // Separator.
-        Parameters.append(Gameabbreviation);
-        Parameters.append(L"|");
-        Parameters.append(LanguagefromID(Language));
-
+        std::wstring Parameters = Formatrequest(41,
+            { Gameabbreviation, LanguagefromID(Language) });
         // NOTE(Convery): There's one more parameter field to RE.
+
         std::memcpy(Buffer, Parameters.c_str(), Parameters.size() * 2);
         return 0;
     }
@@ -205,8 +221,10 @@ extern "C"
     {
         return 0;
     }
-    EXPORT_ATTR int64_t CC_GetTokenEx(int64_t a1, int *a2)
+    EXPORT_ATTR int64_t CC_GetTokenEx(const wchar_t *State, const wchar_t *Accountname, const wchar_t *Gameabbreviation, wchar_t *Buffer, uint32_t Bufferlength, uint32_t Sendduration)
     {
+        auto Parameters = Formatrequest(10, { Accountname, Gameabbreviation });
+        std::memcpy(Buffer, Parameters.c_str(), Parameters.size() * 2);
         return 0;
     }
     EXPORT_ATTR int64_t CC_GetUserAvatarLink(int64_t a1, wchar_t *a2, unsigned int *a3, int a4)
