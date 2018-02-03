@@ -129,8 +129,46 @@ extern "C"
     {
         return 0;
     }
-    EXPORT_ATTR int64_t CC_GetLaunchedParameter(int16_t *a1, int a2, wchar_t *a3, signed int a4)
+    EXPORT_ATTR int64_t CC_GetLaunchedParameter(const wchar_t *Gameabbreviation, int Language, wchar_t *Buffer, signed int Bufferlength)
     {
+        std::wstring Parameters;
+
+        // Enum to string.
+        auto LanguagefromID = [](int Language) -> const wchar_t *
+        {
+            switch (Language)
+            {
+                case 1: return L"en";
+                case 2: return L"de";
+                case 3: return L"fr";
+                case 4: return L"pt";
+                case 5: return L"ru";
+                case 6: return L"tr";
+
+                case 0:
+                default:
+                    return L"";
+            }
+        };
+
+        // Should be enum >= 0.
+        if (Language < 0) return 0xE0000002;
+
+        // Game built against old SDK?
+        if (Bufferlength < 128) return 0xE000001A;
+
+        // Clear the games buffer.
+        std::memset(Buffer, 0, Bufferlength * 2);
+
+        // Build the parameterstring.
+        Parameters.append(L"41");           // SDK version.
+        Parameters.append(L"|");            // Separator.
+        Parameters.append(Gameabbreviation);
+        Parameters.append(L"|");
+        Parameters.append(LanguagefromID(Language));
+
+        // NOTE(Convery): There's one more parameter field to RE.
+        std::memcpy(Buffer, Parameters.c_str(), Parameters.size() * 2);
         return 0;
     }
     EXPORT_ATTR int64_t CC_GetNickName(int64_t a1, wchar_t *a2, unsigned int *a3)
@@ -169,9 +207,23 @@ extern "C"
     {
         return 0;
     }
-    EXPORT_ATTR int64_t CC_LaunchClient(int16_t *a1, int a2, int64_t a3)
+    EXPORT_ATTR int64_t CC_LaunchClient(const wchar_t *Gameabbreviation, int a2, int64_t a3)
     {
-        return 0;
+        Debugprint(va("Starting game \"%ls\"", Gameabbreviation));
+
+        /*
+            TODO(Convery):
+            SetEnvironmentVariableW
+                "CoreGameId"
+                "ArcGameExeName"
+                "ArcGameInstallPath"
+                "ArcProcessId"
+                "ArcGameAbbr"
+                "ArcEnableOverlay"
+        */
+
+        // Status::Initialized
+        return 0xE0000019;
     }
     EXPORT_ATTR int64_t CC_RegisterCallback(int16_t *a1, unsigned int a2)
     {
