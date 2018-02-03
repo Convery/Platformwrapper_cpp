@@ -13,9 +13,9 @@ namespace Steamcallback
 {
     std::unordered_map<uint64_t /* RequestID */, Valvecallback *> Activerequests;
     std::unordered_map<uint64_t /* RequestID */, bool> Requeststatus;
-    std::list<Valvecallback *> Callbackhandlers;
+    std::vector<Valvecallback *> Callbackhandlers;
     std::atomic<uint64_t> GlobalrequestID;
-    std::list<Result_t> Requestresults;
+    std::vector<Result_t> Requestresults;
     std::mutex Threadguard;
 
     // Add a games callback and result to the internal mapping.
