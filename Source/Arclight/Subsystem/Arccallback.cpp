@@ -15,7 +15,7 @@ namespace Arccallback
     std::mutex Threadguard;
 
     // Add a games callback to the internal mapping.
-    void Registercallback(PWCallback *Callbackhandler, int32_t CallbackID)
+    void Registercallback(PWCallback *Callbackhandler, uint32_t CallbackID)
     {
         Debugprint(va("Registering callback \"%s\".", Callbackname(CallbackID).c_str()));
 
@@ -77,8 +77,8 @@ namespace Arccallback
 
     // Debug information.
     void Buildnamemap();
-    std::unordered_map<int32_t, std::string> Callbacknames;
-    std::string Callbackname(int32_t CallbackID)
+    std::unordered_map<uint32_t, std::string> Callbacknames;
+    std::string Callbackname(uint32_t CallbackID)
     {
         static bool Initialized = false;
         if(!Initialized) Buildnamemap();

@@ -12,7 +12,7 @@
 namespace Arccallback
 {
     // Result of the async request.
-    using Result_t = struct Anontype_t { int32_t CallbackID; std::string Data; std::function<void(void *Callback, std::string &Data)> Run; };
+    using Result_t = struct Anontype_t { uint32_t CallbackID; std::string Data; std::function<void(void *Callback, std::string &Data)> Run; };
 
     #pragma pack(1)
     struct PWCallback
@@ -29,7 +29,7 @@ namespace Arccallback
     #pragma pack()
 
     // Add a games callback to the internal mapping.
-    void Registercallback(PWCallback *Callbackhandler, int32_t CallbackID);
+    void Registercallback(PWCallback *Callbackhandler, uint32_t CallbackID);
 
     // Remove a games callback from the internal mapping.
     void Removecallback(PWCallback *Callbackhandler);
@@ -41,5 +41,5 @@ namespace Arccallback
     void Runcallbacks();
 
     // Debug information.
-    std::string Callbackname(int32_t CallbackID);
+    std::string Callbackname(uint32_t CallbackID);
 }
