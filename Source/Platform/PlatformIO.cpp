@@ -31,7 +31,7 @@ namespace Platform
 
         // Format the message so we can do a single send.
         auto Formatted = va("%u|%s", Type, Data.c_str());
-        WriteFile(Pipe, Formatted.c_str(), Formatted.size(), NULL, NULL);
+        WriteFile(Pipe, Formatted.c_str(), (uint32_t)Formatted.size(), NULL, NULL);
 
         // Poll until we get our response.
         while (true)
@@ -47,7 +47,7 @@ namespace Platform
             std::sscanf(Buffer, "%u|%s", &MSGType, JSON);
 
             // Check if it's the one we expect, else OOB.
-            if (MSGType != Type + 1)
+            if (MSGType != uint32_t(Type + 1))
             {
                 OOBCallbacks[(Messagetype_t)MSGType](JSON);
             }
@@ -74,7 +74,7 @@ namespace Platform
 
         // Format the message so we can do a single send.
         auto Formatted = va("%u|%s", Type, Data.c_str());
-        write(Pipe, Formatted.c_str(), Formatted.size());
+        write(Pipe, Formatted.c_str(), (uint32_t)Formatted.size());
 
         // Poll until we get our response.
         while (true)
@@ -90,7 +90,7 @@ namespace Platform
             std::sscanf(Buffer, "%u|%s", &MSGType, JSON);
 
             // Check if it's the one we expect, else OOB.
-            if (MSGType != Type + 1)
+            if (MSGType != uint32_t(Type + 1))
             {
                 OOBCallbacks[(Messagetype_t)MSGType](JSON);
             }

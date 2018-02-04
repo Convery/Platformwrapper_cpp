@@ -226,9 +226,9 @@ public:
 
         auto RequestID = Steamcallback::Createrequest();
         LobbyEnter_t *Response = new LobbyEnter_t();
+        Response->m_rgfChatPermissions = uint32_t(-1);
         Response->m_ulSteamIDLobby = steamIDLobby;
         Response->m_EChatRoomEnterResponse = 1;
-        Response->m_rgfChatPermissions = -1;
         Response->m_bLocked = false;
 
         Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
