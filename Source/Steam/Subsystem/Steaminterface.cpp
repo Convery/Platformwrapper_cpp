@@ -129,8 +129,26 @@ std::unordered_map<const char *, std::pair<const char *, eInterfaceType>> Scanda
     { "SteamUtils006", {"SteamUtilities006", eInterfaceType::STEAM_UTILS } },
     { "SteamUtils007", {"SteamUtilities007", eInterfaceType::STEAM_UTILS } },
 
-    { "SteamMasterServerUpdater001", {"SteamMasterserverUpdater001", eInterfaceType::STEAM_MASTERSERVERUPDATER } },
+    { "SteamMasterServerUpdater001", {"SteamMasterserverupdater001", eInterfaceType::STEAM_MASTERSERVERUPDATER } },
 
+    { "SteamClient001", {"SteamClient001", eInterfaceType::STEAM_CLIENT } },
+    { "SteamClient002", {"SteamClient002", eInterfaceType::STEAM_CLIENT } },
+    { "SteamClient003", {"SteamClient003", eInterfaceType::STEAM_CLIENT } },
+    { "SteamClient004", {"SteamClient004", eInterfaceType::STEAM_CLIENT } },
+    { "SteamClient005", {"SteamClient005", eInterfaceType::STEAM_CLIENT } },
+    { "SteamClient006", {"SteamClient006", eInterfaceType::STEAM_CLIENT } },
+    { "SteamClient007", {"SteamClient007", eInterfaceType::STEAM_CLIENT } },
+    { "SteamClient008", {"SteamClient008", eInterfaceType::STEAM_CLIENT } },
+    { "SteamClient009", {"SteamClient009", eInterfaceType::STEAM_CLIENT } },
+    { "SteamClient010", {"SteamClient010", eInterfaceType::STEAM_CLIENT } },
+    { "SteamClient011", {"SteamClient011", eInterfaceType::STEAM_CLIENT } },
+    { "SteamClient012", {"SteamClient012", eInterfaceType::STEAM_CLIENT } },
+    { "SteamClient013", {"SteamClient013", eInterfaceType::STEAM_CLIENT } },
+    { "SteamClient014", {"SteamClient014", eInterfaceType::STEAM_CLIENT } },
+    { "SteamClient015", {"SteamClient015", eInterfaceType::STEAM_CLIENT } },
+    { "SteamClient016", {"SteamClient016", eInterfaceType::STEAM_CLIENT } },
+    { "SteamClient017", {"SteamClient017", eInterfaceType::STEAM_CLIENT } },
+        
     /* More interfaces */
 };
 
