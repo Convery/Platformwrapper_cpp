@@ -131,6 +131,9 @@ std::unordered_map<const char *, std::pair<const char *, eInterfaceType>> Scanda
 
     { "SteamMasterServerUpdater001", {"SteamMasterserverupdater001", eInterfaceType::STEAM_MASTERSERVERUPDATER } },
 
+    { "SteamMatchMakingServers001", {"SteamMatchmakingservers001", eInterfaceType::STEAM_MATCHMAKINGSERVERS } },
+    { "SteamMatchMakingServers002", {"SteamMatchmakingservers002", eInterfaceType::STEAM_MATCHMAKINGSERVERS } },
+
     { "SteamClient001", {"SteamClient001", eInterfaceType::STEAM_CLIENT } },
     { "SteamClient002", {"SteamClient002", eInterfaceType::STEAM_CLIENT } },
     { "SteamClient003", {"SteamClient003", eInterfaceType::STEAM_CLIENT } },

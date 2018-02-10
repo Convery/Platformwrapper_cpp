@@ -443,9 +443,19 @@ struct SteamScreenshots002 : public Fakeclass
 };
 
 // Server browser.
-struct SteamMasterserverUpdater001 : public Fakeclass
+struct SteamMasterserverupdater001 : public Fakeclass
 {
-    SteamMasterserverUpdater001();
+    SteamMasterserverupdater001();
+};
+
+// Server browser.
+struct SteamMatchmakingservers001 : public Fakeclass
+{
+    SteamMatchmakingservers001();
+};
+struct SteamMatchmakingservers002 : public Fakeclass
+{
+    SteamMatchmakingservers002();
 };
 
 // Steam interface proxy.
