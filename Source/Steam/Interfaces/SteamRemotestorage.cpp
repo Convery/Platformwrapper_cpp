@@ -1,5 +1,5 @@
 /*
-    Initial author: Convery (tcn@ayria.se)
+    Initial author: Convery (tcn@hedgehogscience.com)
     Started: 03-08-2017
     License: MIT
     Notes:
@@ -58,7 +58,7 @@ public:
         if (List.size() < size_t(index)) return "";
 
         // TODO(Convery): Maybe replace this with something more efficient.
-        *size = Package::Read(List[index]).size();
+        *size = (int)Package::Read(List[index]).size();
         return List[index].c_str();
     }
     bool GetQuota(int *current, int *maximum)
@@ -96,7 +96,7 @@ public:
 
         // Copy as much data as we can.
         std::memcpy(pvData, Filebuffer.data(), std::min(Filebuffer.size(), size_t(cubDataToRead)));
-        return std::min(Filebuffer.size(), size_t(cubDataToRead));
+        return std::min(int32_t(Filebuffer.size()), cubDataToRead);
     }
     int32_t GetFileCount()
     {
@@ -150,7 +150,7 @@ public:
         Response->m_hFile = hContent;
         Response->m_nAppID = Steamconfig::ApplicationID;
         Response->m_ulSteamIDOwner = Steamconfig::UserID;
-        Response->m_nSizeInBytes = Package::Read(List[hContent]).size();
+        Response->m_nSizeInBytes = (int32_t)Package::Read(List[hContent]).size();
         std::strcpy(Response->m_pchFileName, List[hContent].substr(List[hContent].find_last_of('/')).c_str());
 
         Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
@@ -168,7 +168,7 @@ public:
         *ppchName = (char *)std::malloc(Localfilename.size() + 1);
         std::strcpy(*ppchName, Localfilename.c_str());
 
-        *pnFileSizeInBytes = Package::Read(List[hContent]).size();
+        *pnFileSizeInBytes = (int32_t)Package::Read(List[hContent]).size();
         *pSteamIDOwner = Steamconfig::UserID;
         *pnAppID = Steamconfig::ApplicationID;
 
@@ -185,7 +185,7 @@ public:
         auto Filebuffer = Package::Read(List[hContent]);
         std::memcpy(pvData, Filebuffer.data(), std::min(Filebuffer.size(), size_t(cubDataToRead)));
 
-        return std::min(Filebuffer.size(), size_t(cubDataToRead));
+        return std::min((int32_t)Filebuffer.size(), cubDataToRead);
     }
     int32_t GetCachedUGCCount()
     {

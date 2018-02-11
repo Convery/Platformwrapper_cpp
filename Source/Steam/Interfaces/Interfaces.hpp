@@ -1,5 +1,5 @@
 /*
-    Initial author: Convery (tcn@ayria.se)
+    Initial author: Convery (tcn@hedgehogscience.com)
     Started: 03-08-2017
     License: MIT
     Notes:
@@ -443,7 +443,87 @@ struct SteamScreenshots002 : public Fakeclass
 };
 
 // Server browser.
-struct SteamMasterserverUpdater001 : public Fakeclass
+struct SteamMasterserverupdater001 : public Fakeclass
 {
-    SteamMasterserverUpdater001();
+    SteamMasterserverupdater001();
+};
+
+// Server browser.
+struct SteamMatchmakingservers001 : public Fakeclass
+{
+    SteamMatchmakingservers001();
+};
+struct SteamMatchmakingservers002 : public Fakeclass
+{
+    SteamMatchmakingservers002();
+};
+
+// Steam interface proxy.
+struct SteamClient001 : public Fakeclass
+{
+    SteamClient001();
+};
+struct SteamClient002 : public Fakeclass
+{
+    SteamClient002();
+};
+struct SteamClient003 : public Fakeclass
+{
+    SteamClient003();
+};
+struct SteamClient004 : public Fakeclass
+{
+    SteamClient004();
+};
+struct SteamClient005 : public Fakeclass
+{
+    SteamClient005();
+};
+struct SteamClient006 : public Fakeclass
+{
+    SteamClient006();
+};
+struct SteamClient007 : public Fakeclass
+{
+    SteamClient007();
+};
+struct SteamClient008 : public Fakeclass
+{
+    SteamClient008();
+};
+struct SteamClient009 : public Fakeclass
+{
+    SteamClient009();
+};
+struct SteamClient010 : public Fakeclass
+{
+    SteamClient010();
+};
+struct SteamClient011 : public Fakeclass
+{
+    SteamClient011();
+};
+struct SteamClient012 : public Fakeclass
+{
+    SteamClient012();
+};
+struct SteamClient013 : public Fakeclass
+{
+    SteamClient013();
+};
+struct SteamClient014 : public Fakeclass
+{
+    SteamClient014();
+};
+struct SteamClient015 : public Fakeclass
+{
+    SteamClient015();
+};
+struct SteamClient016 : public Fakeclass
+{
+    SteamClient016();
+};
+struct SteamClient017 : public Fakeclass
+{
+    SteamClient017();
 };

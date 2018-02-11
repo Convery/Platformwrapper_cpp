@@ -1,5 +1,5 @@
 /*
-    Initial author: Convery (tcn@ayria.se)
+    Initial author: Convery (tcn@hedgehogscience.com)
     Started: 08-01-2018
     License: MIT
     Notes:
@@ -59,8 +59,11 @@
 #include "Utility/Base64.hpp"
 
 // Includes for our components.
+#include "Arclight/Subsystem/Arccallback.hpp"
 #include "Steam/Subsystem/Steaminterface.hpp"
 #include "Steam/Subsystem/Steamcallback.hpp"
 #include "Steam/Interfaces/Interfaces.hpp"
 #include "Platform/Platformstructures.hpp"
+#include "Platform/PlatformIO.hpp"
+#include "Arclight/Arclight.hpp"
 #include "Steam/Steam.hpp"

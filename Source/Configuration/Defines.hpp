@@ -1,5 +1,5 @@
 /*
-    Initial author: Convery (tcn@ayria.se)
+    Initial author: Convery (tcn@hedgehogscience.com)
     Started: 08-01-2018
     License: MIT
     Notes:
@@ -43,6 +43,7 @@
 
 // Print the steam async calls to the log.
 #define STEAM_PRINTCALLBACKS
+#define ARC_PRINTCALLBACKS
 
 // Database name for the utility.
 #define DATABASENAME "Platformwrapper"
