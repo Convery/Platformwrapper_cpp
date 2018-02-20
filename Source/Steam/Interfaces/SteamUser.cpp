@@ -331,10 +331,15 @@ public:
     }
     uint64_t RequestEncryptedAppTicket(void *pDataToInclude, unsigned int cbDataToInclude)
     {
-        // Clear the ticketbuffer and append the games data.
+        // Clear the buffer and fill the ticket part with useful data.
         std::memset(Ticketdata, 0, sizeof(Ticketdata));
+        std::memcpy(&Ticketdata[0], &Steamconfig::UserID, 8);
+        std::memcpy(&Ticketdata[8], Steamconfig::Username, 17);
+        
+        // Append the extra data.
         std::memcpy(&Ticketdata[32], pDataToInclude, std::min(cbDataToInclude, (unsigned int)sizeof(Ticketdata) - 32));
 
+        // Return the ticket to the game.
         auto RequestID = Steamcallback::Createrequest();
         auto Response = new EncryptedAppTicketResponse_t();
 
