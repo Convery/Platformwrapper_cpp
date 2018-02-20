@@ -334,7 +334,9 @@ public:
         // Clear the buffer and fill the ticket part with useful data.
         std::memset(Ticketdata, 0, sizeof(Ticketdata));
         std::memcpy(&Ticketdata[0], &Steamconfig::UserID, 8);
-        std::memcpy(&Ticketdata[8], Steamconfig::Username, 17);
+        std::memcpy(&Ticketdata[8], Steamconfig::Username, 16);
+        std::memcpy(&Ticketdata[24], "\x00", 1);
+        /* NOTE(Convery): 7 bytes unused */
         
         // Append the extra data.
         std::memcpy(&Ticketdata[32], pDataToInclude, std::min(cbDataToInclude, (unsigned int)sizeof(Ticketdata) - 32));
