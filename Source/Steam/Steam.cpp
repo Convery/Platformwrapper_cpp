@@ -215,6 +215,15 @@ extern "C"
             Infoprint("This will probably cause errors. Contact the developer.");
         }
 
+        // Check if we should override the username (mainly for developers).
+        {
+            auto Filebuffer = Package::Read("Username.txt");
+            if (Filebuffer.size())
+            {
+                std::memcpy(Steamconfig::Username, Filebuffer.c_str(), std::min(Filebuffer.size(), size_t(16)));
+            }
+        }
+
         // Set the environment variable for games that use it.
         SetEnvironmentVariableA("SteamAppId", va("%lu", Steamconfig::ApplicationID).c_str());
         SetEnvironmentVariableA("SteamGameId", va("%llu", Steamconfig::ApplicationID & 0xFFFFFF).c_str());
