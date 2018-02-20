@@ -174,26 +174,26 @@ extern "C"
     {
         Printfunction();
 
-        // Check if we are forcing offline mode.
-        #if defined (_WIN32)
-        auto Commandline = GetCommandLineA();
-        Steamconfig::Offline = nullptr == std::strstr(Commandline, "-AYRIA_ONLINE");
-        #else
+        auto Commandlinecontains = [](std::string_view Needle) -> bool
         {
+            #if defined (_WIN32)
+            return !!std::strstr(GetCommandLineA(), Needle.data());
+            #else
             std::FILE *Filehandle = std::fopen("/proc/self/cmdline", "r");
+            char Buffer[1024]{};
             if(Filehandle)
             {
-                char Buffer[1024]{};
                 std::fgets(Buffer, 1024, Filehandle);
-
-                Steamconfig::Offline = nullptr == std::strstr(Buffer, "-AYRIA_ONLINE");
                 std::fclose(Filehandle);
             }
-        }
-        #endif
+            return !!std::strstr(Buffer, Needle.data());
+            #endif
+        };
 
-        // Read the application ID from a file if the host
-        // is too old to use RestartApp or a dev build.
+        /*
+            Some games are too old to use SteamAPI_RestartAppIfNecessary,
+            or they are simple not started via Steam; like dedicated servers.
+        */
         if (Steamconfig::ApplicationID == 0)
         {
             // Open the configuration file.
@@ -208,70 +208,83 @@ extern "C"
             }
         }
 
-        // If no application ID is provided, we can't do much.
+        // We can't know which interface version to use, so we'll use the latest and pray.
         if (Steamconfig::ApplicationID == 0)
         {
             Infoprint("No application ID has been provided to the wrapper.");
             Infoprint("This will probably cause errors. Contact the developer.");
         }
 
-#if defined(_WIN32)
         // Set the environment variable for games that use it.
         SetEnvironmentVariableA("SteamAppId", va("%lu", Steamconfig::ApplicationID).c_str());
         SetEnvironmentVariableA("SteamGameId", va("%llu", Steamconfig::ApplicationID & 0xFFFFFF).c_str());
 
-        // Get the install directory.
-        HKEY hRegKey;
-        unsigned long Size = 260;
-        if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, Steamregistry, 0, KEY_QUERY_VALUE, &hRegKey) == ERROR_SUCCESS)
+        // Set the registry variables as some games check that.
         {
-            RegQueryValueExA(hRegKey, "InstallPath", NULL, NULL, (BYTE*)Steamconfig::Path, &Size);
-            RegCloseKey(hRegKey);
+            #if defined(_WIN32)
+            HKEY Registrykey;
+
+            // Get the steam path.
+            if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, Steamregistry, 0, KEY_QUERY_VALUE, &Registrykey) == ERROR_SUCCESS)
+            {
+                unsigned long Size = 260;
+                RegQueryValueExA(Registrykey, "InstallPath", NULL, NULL, (BYTE*)Steamconfig::Path, &Size);
+                RegCloseKey(Registrykey);
+            }
+
+            // Add the active process to the registry.
+            if (RegOpenKeyExA(HKEY_CURRENT_USER, "Software\\Valve\\Steam\\ActiveProcess", 0, KEY_QUERY_VALUE, &Registrykey) == ERROR_SUCCESS)
+            {
+                DWORD UserID = Steamconfig::UserID & 0xffffffff;
+                DWORD ProcessID = GetCurrentProcessId();
+                std::string Clientpath32 = va("%s\\steamclient.dll", Steamconfig::Path);
+                std::string Clientpath64 = va("%s\\steamclient64.dll", Steamconfig::Path);
+
+                RegSetValueExA(Registrykey, "ActiveUser", NULL, REG_DWORD, (LPBYTE)&UserID, sizeof(DWORD));
+                RegSetValueExA(Registrykey, "pid", NULL, REG_DWORD, (LPBYTE)&ProcessID, sizeof(DWORD));
+                RegSetValueExA(Registrykey, "SteamClientDll", NULL, REG_SZ, (LPBYTE)Clientpath32.c_str(), (DWORD)Clientpath32.length() + 1);
+                RegSetValueExA(Registrykey, "SteamClientDll64", NULL, REG_SZ, (LPBYTE)Clientpath64.c_str(), (DWORD)Clientpath64.length() + 1);
+                RegSetValueExA(Registrykey, "Universe", NULL, REG_SZ, (LPBYTE)"Public", (DWORD)std::strlen("Public") + 1);
+
+                RegCloseKey(Registrykey);
+            }
+
+            // Set the game to active.
+            DWORD Disposition;
+            if (RegCreateKeyExA(HKEY_CURRENT_USER, va("Software\\Valve\\Steam\\Apps\\%i", Steamconfig::ApplicationID).c_str(), 0, NULL, 0, KEY_WRITE, NULL, &Registrykey, &Disposition) == ERROR_SUCCESS)
+            {
+                DWORD Running = TRUE;
+
+                RegSetValueExA(Registrykey, "Installed", NULL, REG_DWORD, (LPBYTE)&Running, sizeof(DWORD));
+                RegSetValueExA(Registrykey, "Running", NULL, REG_DWORD, (LPBYTE)&Running, sizeof(DWORD));
+
+                RegCloseKey(Registrykey);
+            }
+
+            #else
+            /*
+                TODO(Convery):
+                Investigate what Steam environment variables *nix platforms expect.
+            */
+            #endif
         }
 
-        // Add the active process to the registry.
-        if (RegOpenKeyExA(HKEY_CURRENT_USER, "Software\\Valve\\Steam\\ActiveProcess", 0, KEY_QUERY_VALUE, &hRegKey) == ERROR_SUCCESS)
+        // See if we should disable networking.
+        Steamconfig::Offline = Commandlinecontains("-no_net");
+
+        // Load the overlay if not disabled.
+        if (!Commandlinecontains("-no_overlay"))
         {
-            DWORD UserID = Steamconfig::UserID & 0xffffffff;
-            DWORD ProcessID = GetCurrentProcessId();
-            std::string Clientpath32 = va("%s\\steamclient.dll", Steamconfig::Path);
-            std::string Clientpath64 = va("%s\\steamclient64.dll", Steamconfig::Path);
-
-            RegSetValueExA(hRegKey, "ActiveUser", NULL, REG_DWORD, (LPBYTE)&UserID, sizeof(DWORD));
-            RegSetValueExA(hRegKey, "pid", NULL, REG_DWORD, (LPBYTE)&ProcessID, sizeof(DWORD));
-            RegSetValueExA(hRegKey, "SteamClientDll", NULL, REG_SZ, (LPBYTE)Clientpath32.c_str(), (DWORD)Clientpath32.length() + 1);
-            RegSetValueExA(hRegKey, "SteamClientDll64", NULL, REG_SZ, (LPBYTE)Clientpath64.c_str(), (DWORD)Clientpath64.length() + 1);
-            RegSetValueExA(hRegKey, "Universe", NULL, REG_SZ, (LPBYTE)"Public", (DWORD)std::strlen("Public") + 1);
-
-            RegCloseKey(hRegKey);
+            #if defined(_WIN32)
+            LoadLibraryA(va("%s\\%s", Steamconfig::Path, Gameoverlay).c_str());
+            LoadLibraryA(va("%s\\%s", Steamconfig::Path, Clientlibrary).c_str());
+            #else
+            /*
+                TODO(Convery):
+                Investigate what Steam calls the overlay on *nix platforms.
+            */
+            #endif
         }
-
-        // Set the game to active.
-        DWORD dwDisposition;
-        if (RegCreateKeyExA(HKEY_CURRENT_USER, va("Software\\Valve\\Steam\\Apps\\%i", Steamconfig::ApplicationID).c_str(), 0, NULL, 0, KEY_WRITE, NULL, &hRegKey, &dwDisposition) == ERROR_SUCCESS)
-        {
-            DWORD Running = TRUE;
-
-            RegSetValueExA(hRegKey, "Installed", NULL, REG_DWORD, (LPBYTE)&Running, sizeof(DWORD));
-            RegSetValueExA(hRegKey, "Running", NULL, REG_DWORD, (LPBYTE)&Running, sizeof(DWORD));
-
-            RegCloseKey(hRegKey);
-        }
-
-        // Load the overlay and clientlibrary.
-        SetDllDirectoryA(Steamconfig::Path);
-        LoadLibraryA(va("%s\\%s", Steamconfig::Path, Gameoverlay).c_str());
-        LoadLibraryA(va("%s\\%s", Steamconfig::Path, Clientlibrary).c_str());
-
-        #else
-
-        /*
-            TODO(Convery):
-            Investigate and set any environment variables and
-            gameoverlay thing the *nix client uses.
-        */
-
-        #endif
 
         // Initialize the interface manager.
         Interfacemanager::Initialize();
