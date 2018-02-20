@@ -168,15 +168,20 @@ BOOLEAN WINAPI DllMain(HINSTANCE hDllHandle, DWORD nReason, LPVOID Reserved)
             Database::Load("Platformwrapper.db");
             std::atexit([]() { Database::Save("Platformwrapper.db"); std::remove("file"); });
 
-            // For developers we sideload a bootstrapper and create a console.
-            #if !defined (NDEBUG)
+            // Although useless for most users, we create a console if we get a switch.
+            #if defined(NDEBUG)
+            if (std::strstr(GetCommandLineA(), "-devcon"))
+            #endif
+            {
                 AllocConsole();
                 freopen("CONOUT$", "w", stdout);
                 freopen("CONOUT$", "w", stderr);
-                SetConsoleTitleA("Debug Console");
+                SetConsoleTitleA("Developer Console");
                 SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
-                LoadLibraryA("Localbootstrap.dll");
-            #endif
+            }
+
+            // Sideload the bootstrapper if it's available.
+            LoadLibraryA("Localbootstrap.dll");
         }
     }
 
@@ -192,9 +197,7 @@ __attribute__((constructor)) void DllMain()
     Database::Load("Platformwrapper.db");
     std::atexit([]() { Database::Save("Platformwrapper.db"); std::remove("file"); });
 
-    // For developers we sideload a bootstrapper.
-    #if !defined (NDEBUG)
-        dlopen("Localbootstrap", RTLD_LAZY);
-    #endif
+    // Sideload the bootstrapper if it's available.
+    dlopen("Localbootstrap", RTLD_LAZY);
 }
 #endif
