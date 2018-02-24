@@ -54,7 +54,7 @@ namespace Arccallback
         {
             // For all our results.
             LABEL_RESTART:
-            for (auto Resultiterator = Requestresults.begin(); Resultiterator != Requestresults.end(); Resultiterator++)
+            for (auto Resultiterator = Requestresults.begin(); Resultiterator != Requestresults.end(); )
             {
                 // Find a handler for the type.
                 for (auto Handleriterator = Callbackhandlers.begin(); Handleriterator != Callbackhandlers.end(); Handleriterator++)
