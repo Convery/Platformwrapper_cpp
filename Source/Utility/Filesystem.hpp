@@ -56,9 +56,9 @@ inline std::vector<std::string> Findfiles(std::string Searchpath, std::string_vi
 
     // Find the first plugin.
     Filehandle = FindFirstFileA(Searchpath.c_str(), &Filedata);
-    if (Filehandle == (void *)ERROR_INVALID_HANDLE || Filehandle == (void *)INVALID_HANDLE_VALUE)
+    if ( Filehandle == (void *)INVALID_HANDLE_VALUE)
     {
-        if(Filehandle) FindClose(Filehandle);
+        FindClose(Filehandle);
         return std::move(Filenames);
     }
 
