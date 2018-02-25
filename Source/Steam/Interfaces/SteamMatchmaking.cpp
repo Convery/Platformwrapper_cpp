@@ -222,7 +222,7 @@ public:
     }
     uint64_t JoinLobby1(CSteamID steamIDLobby)
     {
-        Infoprint(va("Joining lobby 0c%llx.", steamIDLobby));
+        Infoprint(va("Joining lobby 0x%llX.", steamIDLobby.ConvertToUint64()));
 
         auto RequestID = Steamcallback::Createrequest();
         LobbyEnter_t *Response = new LobbyEnter_t();
