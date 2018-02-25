@@ -115,5 +115,6 @@ namespace Package
         std::vector<uint8_t> Buffer;
         Newarchive->save(Buffer);
         Archive->load(Buffer);
+		delete Newarchive;
     }
 }
