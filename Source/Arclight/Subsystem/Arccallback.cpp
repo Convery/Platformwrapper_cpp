@@ -57,7 +57,7 @@ namespace Arccallback
             for (auto Resultiterator = Requestresults.begin(); Resultiterator != Requestresults.end(); )
             {
                 // Find a handler for the type.
-                for (auto Handleriterator = Callbackhandlers.begin(); Handleriterator != Callbackhandlers.end(); Handleriterator++)
+                for (auto Handleriterator = Callbackhandlers.begin(); Handleriterator != Callbackhandlers.end(); ++Handleriterator)
                 {
                     if (Resultiterator->CallbackID == (*Handleriterator)->CallbackID)
                     {

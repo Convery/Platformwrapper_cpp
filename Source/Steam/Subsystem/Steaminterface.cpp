@@ -298,7 +298,7 @@ void *Interfacemanager::Fetchinterface(eInterfaceType Type)
         return Result->second;
 
     // Search through the created interfaces to find the latest version as a fallback.
-    for (auto Iterator = Interfacestore->rbegin(); Iterator != Interfacestore->rend(); Iterator++)
+    for (auto Iterator = Interfacestore->rbegin(); Iterator != Interfacestore->rend(); ++Iterator)
     {
         if (Iterator->first == Type)
             return Iterator->second;

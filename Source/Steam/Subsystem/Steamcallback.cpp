@@ -94,7 +94,7 @@ namespace Steamcallback
         {
             // For all our results.
             LABEL_RESTART:
-            for (auto Resultiterator = Requestresults.begin(); Resultiterator != Requestresults.end(); Resultiterator++)
+            for (auto Resultiterator = Requestresults.begin(); Resultiterator != Requestresults.end(); ++Resultiterator)
             {
                 // Delay the result if the request is not synchronized yet.
                 if (!Requeststatus[Resultiterator->RequestID]) continue;
