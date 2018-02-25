@@ -14,7 +14,7 @@
 struct Fakeclass
 {
     void *Vtable;
-    void *Methods[70];
+    void *Methods[70]{};
 
     Fakeclass()
     {

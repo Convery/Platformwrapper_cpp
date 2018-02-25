@@ -28,8 +28,8 @@ namespace Hooking
     struct IHook
     {
         uint8_t Savedcode[20]{};
-        void *Savedlocation;
-        void *Savedtarget;
+        void *Savedlocation{};
+        void *Savedtarget{};
 
         virtual bool Removehook() = 0;
         virtual bool Installhook(void *Location, void *Target) = 0;
