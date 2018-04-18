@@ -1,5 +1,5 @@
 /*
-    Initial author: Convery (tcn@hedgehogscience.com)
+    Initial author: Convery (tcn@ayria.se)
     Started: 03-08-2017
     License: MIT
     Notes:
@@ -337,7 +337,7 @@ public:
         std::memcpy(&Ticketdata[8], Steamconfig::Username, 16);
         std::memcpy(&Ticketdata[24], "\x00", 1);
         /* NOTE(Convery): 7 bytes unused */
-        
+
         // Append the extra data.
         std::memcpy(&Ticketdata[32], pDataToInclude, std::min(cbDataToInclude, (unsigned int)sizeof(Ticketdata) - 32));
 

@@ -1,5 +1,5 @@
 /*
-    Initial author: Convery (tcn@hedgehogscience.com)
+    Initial author: Convery (tcn@ayria.se)
     Started: 03-08-2017
     License: MIT
     Notes:

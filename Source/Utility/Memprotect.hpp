@@ -1,5 +1,5 @@
 /*
-    Initial author: Convery (tcn@hedgehogscience.com)
+    Initial author: Convery (tcn@ayria.se)
     Started: 08-01-2018
     License: MIT
     Notes:
@@ -33,7 +33,7 @@ namespace Memprotect
     {
         int Pagesize = getpagesize();
         *(size_t *)&Address -= size_t(Address) % Pagesize;
-        mprotect(Address, Pagesize, Oldprotection);
+        mprotect(Address, Length + ((Length % Pagesize) ? (Pagesize - (Length % Pagesize)) : 0), Oldprotection);
     }
     inline unsigned long Unprotectrange(void *Address, const size_t Length)
     {
@@ -48,7 +48,7 @@ namespace Memprotect
 
             while(std::fgets(Buffer, 1024, Filehandle))
             {
-                std::sscanf(Buffer, "%lx-%lx %4s %lx %5s %ld %s", &Start, &End, Permissions, &Foo, Device, &Node, Mapname);
+                std::sscanf(Buffer, "%lx-%lx %4s %lx %5s %lu %s", &Start, &End, Permissions, &Foo, Device, &Node, Mapname);
 
                 if(Start <= (unsigned long)Address || End >= (unsigned long)Address)
                 {
@@ -68,9 +68,19 @@ namespace Memprotect
         // Write the new protection.
         int Pagesize = getpagesize();
         *(size_t *)&Address -= size_t(Address) % Pagesize;
-        mprotect(Address, Pagesize, PROT_READ | PROT_WRITE | PROT_EXEC);
+        mprotect(Address, Length + ((Length % Pagesize) ? (Pagesize - (Length % Pagesize)) : 0), PROT_READ | PROT_WRITE | PROT_EXEC);
         return Oldprotection;
     }
 
     #endif
+
+    // Helpers to provide more readable code.
+    inline void Protectrange(std::uintptr_t Address, const size_t Length, unsigned long Oldprotection)
+    {
+        return Protectrange(reinterpret_cast<void *>(Address), Length, Oldprotection);
+    }
+    inline unsigned long Unprotectrange(std::uintptr_t Address, const size_t Length)
+    {
+        return Unprotectrange(reinterpret_cast<void *>(Address), Length);
+    }
 }

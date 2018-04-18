@@ -1,5 +1,5 @@
 /*
-    Initial author: Convery (tcn@hedgehogscience.com)
+    Initial author: Convery (tcn@ayria.se)
     Started: 08-01-2018
     License: MIT
     Notes:
@@ -19,6 +19,7 @@
 #include <cstdint>
 #include <cstdarg>
 #include <cstring>
+#include <cassert>
 #include <atomic>
 #include <cstdio>
 #include <vector>
@@ -47,6 +48,7 @@
 
 // Utility modules.
 #include "Utility/Variadicstring.hpp"
+#include "Utility/Patternscan.hpp"
 #include "Utility/Filesystem.hpp"
 #include "Utility/Memprotect.hpp"
 #include "Utility/Bytebuffer.hpp"

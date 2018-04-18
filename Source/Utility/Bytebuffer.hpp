@@ -1,5 +1,5 @@
 /*
-    Initial author: Convery (tcn@hedgehogscience.com)
+    Initial author: Convery (tcn@ayria.se)
     Started: 08-01-2018
     License: MIT
     Notes:
@@ -9,31 +9,31 @@
 #pragma once
 #include "../Stdinclude.hpp"
 
+// The types of data that can be handled.
+enum Bytebuffertype : uint8_t
+{
+    BB_NONE = 0,
+    BB_BOOL = 1,
+    BB_SINT8 = 2,
+    BB_UINT8 = 3,
+    BB_SINT16 = 4,
+    BB_UINT16 = 5,
+    BB_SINT32 = 6,
+    BB_UINT32 = 7,
+    BB_SINT64 = 8,
+    BB_UINT64 = 9,
+    BB_FLOAT32 = 10,
+    BB_FLOAT64 = 11,
+    BB_STRING_WIDE = 12,
+    BB_STRING_ASCII = 13,
+    BB_BLOB = 14,
+    BB_ARRAY = 15,
+    BB_MAX
+};
+
 class Bytebuffer
 {
-    // The types of data that can be handled.
-    enum Bytebuffertype : uint8_t
-    {
-        BB_NONE = 0,
-        BB_BOOL = 1,
-        BB_SINT8 = 2,
-        BB_UINT8 = 3,
-        BB_SINT16 = 4,
-        BB_UINT16 = 5,
-        BB_SINT32 = 6,
-        BB_UINT32 = 7,
-        BB_SINT64 = 8,
-        BB_UINT64 = 9,
-        BB_FLOAT32 = 10,
-        BB_FLOAT64 = 11,
-        BB_STRING_WIDE = 12,
-        BB_STRING_ASCII = 13,
-        BB_BLOB = 14,
-        BB_ARRAY = 15,
-        BB_MAX
-    };
-
-    // Generic storage-types.
+    // Generic storage-type.
     using Type_t = std::pair<Bytebuffertype, void *>;
 
     // Internal state properties.
@@ -42,13 +42,13 @@ class Bytebuffer
     size_t Internaliterator;
     size_t Internalsize;
 
+public:
     // Core functionality.
     bool Readdatatype(Bytebuffertype Type);                         // Compares the next byte with the input.
     bool Writedatatype(Bytebuffertype Type);                        // Writes the input as the next byte.
     bool Rawread(size_t Readcount, void *Buffer = nullptr);         // Reads from the internal buffer.
     bool Rawwrite(size_t Writecount, const void *Buffer = nullptr); // Writes to the internal buffer.
 
-public:
     // Creates the internal state.
     Bytebuffer(size_t Datasize, const void *Databuffer);
     void Setbuffer(std::vector<uint8_t> &Data);
@@ -61,12 +61,12 @@ public:
 
     // Access the internal state.
     bool Setposition(size_t Newposition);                           // Sets the internal read/write iterator.
-    const size_t Getposition();                                     // Gets the internal read/write iterator.
     std::string to_string();                                        // Print Internalvariables.
     const uint8_t *Data();                                          // Returns a pointer to the internal buffer.
-    const uint8_t Peek();                                           // Returns the next byte in the buffer or -1.
-    const size_t Size();                                            // Returns the size of the current buffer.
+    size_t Getposition();                                           // Gets the internal read/write iterator.
     void Deserialize();                                             // Deserialize the buffer into variables.
+    uint8_t Peek();                                                 // Returns the next byte in the buffer or -1.
+    size_t Size();                                                  // Returns the size of the current buffer.
     void Rewind();                                                  // Resets the internal read/write iterator.
     void Clear();                                                   // Clears the internal buffer.
 
@@ -91,5 +91,4 @@ public:
     Bytebuffer &operator = (const Bytebuffer &Right) noexcept;
     Bytebuffer &operator = (Bytebuffer &&Right) noexcept;
     bool operator == (const Bytebuffer &Right) noexcept;
-    Type_t &operator [](size_t Index) noexcept;
 };

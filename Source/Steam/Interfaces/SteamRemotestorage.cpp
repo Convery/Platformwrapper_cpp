@@ -1,5 +1,5 @@
 /*
-    Initial author: Convery (tcn@hedgehogscience.com)
+    Initial author: Convery (tcn@ayria.se)
     Started: 03-08-2017
     License: MIT
     Notes:
@@ -29,7 +29,7 @@ public:
         Printfunction();
 
         // Read the file from our archive.
-        auto Filebuffer = Package::Read(va("Steam/Remotestorage/%s", filename));
+        auto Filebuffer = Package::Readfile(va("Steam/Remotestorage/%s", filename));
         if (0 == Filebuffer.size()) return false;
 
         // Copy as much data as we can.
@@ -40,14 +40,14 @@ public:
     {
         Printfunction();
 
-        return Package::Exists(va("Steam/Remotestorage/%s", filename));
+        return Package::Fileexists(va("Steam/Remotestorage/%s", filename));
     }
     bool FileDelete(const char *filename)
     {
         Printfunction();
 
-        if (!Package::Exists(va("Steam/Remotestorage/%s", filename))) return false;
-        else Package::Delete(va("Steam/Remotestorage/%s", filename)); return true;
+        if (!Package::Fileexists(va("Steam/Remotestorage/%s", filename))) return false;
+        else Package::Deletefile(va("Steam/Remotestorage/%s", filename)); return true;
     }
     const char *GetFileNameAndSize(int index, int *size)
     {
@@ -58,7 +58,7 @@ public:
         if (List.size() < size_t(index)) return "";
 
         // TODO(Convery): Maybe replace this with something more efficient.
-        *size = (int)Package::Read(List[index]).size();
+        *size = (int)Package::Readfile(List[index]).size();
         return List[index].c_str();
     }
     bool GetQuota(int *current, int *maximum)
@@ -75,7 +75,7 @@ public:
 
         // Write the file from the archive.
         std::string Filebuffer((char *)pvData, cubData);
-        Package::Write(va("Steam/Remotestorage/%s", pchFile), Filebuffer);
+        Package::Writefile(va("Steam/Remotestorage/%s", pchFile), Filebuffer);
         return true;
     }
     int32_t GetFileSize(const char *pchFile)
@@ -83,7 +83,7 @@ public:
         Printfunction();
 
         // Read the file from our archive.
-        auto Filebuffer = Package::Read(va("Steam/Remotestorage/%s", pchFile));
+        auto Filebuffer = Package::Readfile(va("Steam/Remotestorage/%s", pchFile));
         return int32_t(Filebuffer.size());
     }
     int32_t FileRead1(const char *pchFile, void *pvData, int32_t cubDataToRead)
@@ -91,7 +91,7 @@ public:
         Printfunction();
 
         // Read the file from our archive.
-        auto Filebuffer = Package::Read(va("Steam/Remotestorage/%s", pchFile));
+        auto Filebuffer = Package::Readfile(va("Steam/Remotestorage/%s", pchFile));
         if (0 == Filebuffer.size()) return 0;
 
         // Copy as much data as we can.
@@ -109,7 +109,7 @@ public:
     {
         Printfunction();
 
-        return Package::Exists(va("Steam/Remotestorage/%s", pchFile));
+        return Package::Fileexists(va("Steam/Remotestorage/%s", pchFile));
     }
     int64_t GetFileTimestamp(const char *pchFile)
     {
@@ -150,7 +150,7 @@ public:
         Response->m_hFile = hContent;
         Response->m_nAppID = Steamconfig::ApplicationID;
         Response->m_ulSteamIDOwner = Steamconfig::UserID;
-        Response->m_nSizeInBytes = (int32_t)Package::Read(List[hContent]).size();
+        Response->m_nSizeInBytes = (int32_t)Package::Readfile(List[hContent]).size();
         std::strcpy(Response->m_pchFileName, List[hContent].substr(List[hContent].find_last_of('/')).c_str());
 
         Steamcallback::Completerequest({ Response, sizeof(*Response), Response->k_iCallback, RequestID });
@@ -168,7 +168,7 @@ public:
         *ppchName = (char *)std::malloc(Localfilename.size() + 1);
         std::strcpy(*ppchName, Localfilename.c_str());
 
-        *pnFileSizeInBytes = (int32_t)Package::Read(List[hContent]).size();
+        *pnFileSizeInBytes = (int32_t)Package::Readfile(List[hContent]).size();
         *pSteamIDOwner = Steamconfig::UserID;
         *pnAppID = Steamconfig::ApplicationID;
 
@@ -182,7 +182,7 @@ public:
         auto List = Package::Findfiles("Steam/Remotestorage");
         if (List.size() < hContent) return 0;
 
-        auto Filebuffer = Package::Read(List[hContent]);
+        auto Filebuffer = Package::Readfile(List[hContent]);
         std::memcpy(pvData, Filebuffer.data(), std::min(Filebuffer.size(), size_t(cubDataToRead)));
 
         return std::min((int32_t)Filebuffer.size(), cubDataToRead);

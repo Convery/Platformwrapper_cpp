@@ -1,5 +1,5 @@
 /*
-    Initial author: Convery (tcn@hedgehogscience.com)
+    Initial author: Convery (tcn@ayria.se)
     Started: 08-01-2018
     License: MIT
     Notes:
@@ -62,8 +62,6 @@ Bytebuffer::Bytebuffer(size_t Datasize, const void *Databuffer)
     Internalsize = Datasize;
     Internalbuffer = std::make_unique<uint8_t[]>(Internalsize);
     std::memcpy(Internalbuffer.get(), Databuffer, Internalsize);
-
-    Deserialize();
 }
 void Bytebuffer::Setbuffer(std::vector<uint8_t> &Data)
 {
@@ -71,8 +69,6 @@ void Bytebuffer::Setbuffer(std::vector<uint8_t> &Data)
     Internalsize = Data.size();
     Internalbuffer = std::make_unique<uint8_t[]>(Internalsize);
     std::memcpy(Internalbuffer.get(), Data.data(), Internalsize);
-
-    Deserialize();
 }
 Bytebuffer::Bytebuffer(std::vector<uint8_t> &Data)
 {
@@ -85,9 +81,6 @@ Bytebuffer::Bytebuffer(const Bytebuffer &Right)
 
     Internaliterator = Right.Internaliterator;
     Internalsize = Right.Internalsize;
-
-    Internalvariables.clear();
-    Deserialize();
 }
 void Bytebuffer::Setbuffer(std::string &Data)
 {
@@ -95,17 +88,12 @@ void Bytebuffer::Setbuffer(std::string &Data)
     Internalsize = Data.size();
     Internalbuffer = std::make_unique<uint8_t[]>(Internalsize);
     std::memcpy(Internalbuffer.get(), Data.data(), Internalsize);
-
-    Deserialize();
 }
 Bytebuffer::Bytebuffer(Bytebuffer &&Right)
 {
     Internaliterator = std::exchange(Right.Internaliterator, NULL);
     Internalbuffer = std::exchange(Right.Internalbuffer, nullptr);
     Internalsize = std::exchange(Right.Internalsize, NULL);
-
-    Internalvariables.clear();
-    Deserialize();
 }
 Bytebuffer::Bytebuffer(std::string &Data)
 {
@@ -125,7 +113,7 @@ bool Bytebuffer::Setposition(size_t Newposition)
     Internaliterator = Newposition;
     return true;
 }
-const size_t Bytebuffer::Getposition()
+size_t Bytebuffer::Getposition()
 {
     return Internaliterator;
 }
@@ -156,9 +144,9 @@ std::string Bytebuffer::to_string()
             case Bytebuffertype::BB_STRING_ASCII: Result += va("std::string = \"%s\";\n", ((std::string *)Item.second)->c_str()); break;
 
             case Bytebuffertype::BB_BLOB:
-                Result += va("std::array<uint8_t>[%u] = { \"", ((std::string *)Item.second)->size());
+                Result += va("Blob[%u] = { \"", ((std::string *)Item.second)->size());
                 for (size_t i = 0; i < ((std::string *)Item.second)->size(); ++i)
-                    Result += va("\\x%02X", ((std::string *)Item.second)->at(i));
+                    Result += va("\\x%02X", (uint8_t)((std::string *)Item.second)->at(i));
                 Result += "\" };\n";
                 break;
 
@@ -169,6 +157,7 @@ std::string Bytebuffer::to_string()
         return Result;
     };
 
+    Deserialize();
     for (auto &Item : Internalvariables)
     {
         // Simple type.
@@ -204,7 +193,7 @@ const uint8_t *Bytebuffer::Data()
 {
     return Internalbuffer.get();
 }
-const uint8_t Bytebuffer::Peek()
+uint8_t Bytebuffer::Peek()
 {
     uint8_t Byte = uint8_t(-1);
 
@@ -217,7 +206,7 @@ const uint8_t Bytebuffer::Peek()
 
     return Byte;
 }
-const size_t Bytebuffer::Size()
+size_t Bytebuffer::Size()
 {
     return Internalsize;
 }
@@ -283,7 +272,7 @@ void Bytebuffer::Deserialize()
         Localiterator += sizeof(uint8_t);
 
         // Simple type.
-        if (Localtype >= BB_BOOL && Localtype <= BB_STRING_ASCII)
+        if (Localtype >= BB_BOOL && Localtype <= BB_STRING_WIDE)
         {
             Internalvariables.push_back(Localread(Localtype));
             Localincrement(Localtype);
@@ -291,8 +280,9 @@ void Bytebuffer::Deserialize()
         }
 
         // Collection.
-        if (Localtype >= BB_BOOL + 100 && Localtype <= BB_STRING_ASCII + 100)
+        if (Localtype >= BB_BOOL + 100 && Localtype <= BB_STRING_WIDE + 100)
         {
+            
             uint32_t Arraysize = *(uint32_t *)(Localpointer + Localiterator);
             auto Arraydata = new std::vector<Type_t>();
             Localiterator += sizeof(uint32_t);
@@ -320,12 +310,6 @@ void Bytebuffer::Deserialize()
         }
 
         break;
-    }
-
-    if (Localiterator != Internalsize)
-    {
-        Internalvariables.clear();
-        Internalvariables.shrink_to_fit();
     }
 }
 void Bytebuffer::Rewind()
@@ -360,18 +344,18 @@ template <> bool Bytebuffer::Write(const Type Buffer, bool Typechecked)     \
     return Rawwrite(sizeof(Buffer), &Buffer);                               \
 }                                                                           \
 
-SINGLE_TEMPLATE(bool, BB_BOOL);
-SINGLE_TEMPLATE(char, BB_SINT8);
-SINGLE_TEMPLATE(int8_t, BB_SINT8);
-SINGLE_TEMPLATE(uint8_t, BB_UINT8);
-SINGLE_TEMPLATE(int16_t, BB_SINT16);
-SINGLE_TEMPLATE(uint16_t, BB_UINT16);
-SINGLE_TEMPLATE(int32_t, BB_SINT32);
-SINGLE_TEMPLATE(uint32_t, BB_UINT32);
-SINGLE_TEMPLATE(int64_t, BB_SINT64);
-SINGLE_TEMPLATE(uint64_t, BB_UINT64);
-SINGLE_TEMPLATE(float, BB_FLOAT32);
-SINGLE_TEMPLATE(double, BB_FLOAT64);
+SINGLE_TEMPLATE(bool, BB_BOOL)
+SINGLE_TEMPLATE(char, BB_SINT8)
+SINGLE_TEMPLATE(int8_t, BB_SINT8)
+SINGLE_TEMPLATE(uint8_t, BB_UINT8)
+SINGLE_TEMPLATE(int16_t, BB_SINT16)
+SINGLE_TEMPLATE(uint16_t, BB_UINT16)
+SINGLE_TEMPLATE(int32_t, BB_SINT32)
+SINGLE_TEMPLATE(uint32_t, BB_UINT32)
+SINGLE_TEMPLATE(int64_t, BB_SINT64)
+SINGLE_TEMPLATE(uint64_t, BB_UINT64)
+SINGLE_TEMPLATE(float, BB_FLOAT32)
+SINGLE_TEMPLATE(double, BB_FLOAT64)
 
 template <> bool Bytebuffer::Read(std::string &Buffer, bool Typechecked)
 {
@@ -479,22 +463,22 @@ template <> bool Bytebuffer::Writearray(std::vector<Type> Data)             \
     return true;                                                            \
 }                                                                           \
 
-MULTI_TEMPLATE(bool, BB_BOOL);
-MULTI_TEMPLATE(char, BB_SINT8);
-MULTI_TEMPLATE(int8_t, BB_SINT8);
-MULTI_TEMPLATE(uint8_t, BB_UINT8);
-MULTI_TEMPLATE(int16_t, BB_SINT16);
-MULTI_TEMPLATE(uint16_t, BB_UINT16);
-MULTI_TEMPLATE(int32_t, BB_SINT32);
-MULTI_TEMPLATE(uint32_t, BB_UINT32);
-MULTI_TEMPLATE(int64_t, BB_SINT64);
-MULTI_TEMPLATE(uint64_t, BB_UINT64);
-MULTI_TEMPLATE(float, BB_FLOAT32);
+MULTI_TEMPLATE(bool, BB_BOOL)
+MULTI_TEMPLATE(char, BB_SINT8)
+MULTI_TEMPLATE(int8_t, BB_SINT8)
+MULTI_TEMPLATE(uint8_t, BB_UINT8)
+MULTI_TEMPLATE(int16_t, BB_SINT16)
+MULTI_TEMPLATE(uint16_t, BB_UINT16)
+MULTI_TEMPLATE(int32_t, BB_SINT32)
+MULTI_TEMPLATE(uint32_t, BB_UINT32)
+MULTI_TEMPLATE(int64_t, BB_SINT64)
+MULTI_TEMPLATE(uint64_t, BB_UINT64)
+MULTI_TEMPLATE(float, BB_FLOAT32)
 MULTI_TEMPLATE(double, BB_FLOAT64);
 
-MULTI_TEMPLATE(std::string, BB_STRING_ASCII);
-MULTI_TEMPLATE(std::wstring, BB_STRING_WIDE);
-MULTI_TEMPLATE(std::vector<uint8_t>, BB_BLOB);
+MULTI_TEMPLATE(std::string, BB_STRING_ASCII)
+MULTI_TEMPLATE(std::wstring, BB_STRING_WIDE)
+MULTI_TEMPLATE(std::vector<uint8_t>, BB_BLOB)
 
 #pragma endregion
 
@@ -506,22 +490,22 @@ template <> Bytebuffer &Bytebuffer::operator += (const Type &Right) noexcept    
 template <> Bytebuffer &Bytebuffer::operator << (const Type &Right) noexcept    \
 { Write(Right); return *this; }                                                 \
 
-DIRECT_TEMPLATE(bool);
-DIRECT_TEMPLATE(char);
-DIRECT_TEMPLATE(int8_t);
-DIRECT_TEMPLATE(uint8_t);
-DIRECT_TEMPLATE(int16_t);
-DIRECT_TEMPLATE(uint16_t);
-DIRECT_TEMPLATE(int32_t);
-DIRECT_TEMPLATE(uint32_t);
-DIRECT_TEMPLATE(int64_t);
-DIRECT_TEMPLATE(uint64_t);
-DIRECT_TEMPLATE(float);
-DIRECT_TEMPLATE(double);
+DIRECT_TEMPLATE(bool)
+DIRECT_TEMPLATE(char)
+DIRECT_TEMPLATE(int8_t)
+DIRECT_TEMPLATE(uint8_t)
+DIRECT_TEMPLATE(int16_t)
+DIRECT_TEMPLATE(uint16_t)
+DIRECT_TEMPLATE(int32_t)
+DIRECT_TEMPLATE(uint32_t)
+DIRECT_TEMPLATE(int64_t)
+DIRECT_TEMPLATE(uint64_t)
+DIRECT_TEMPLATE(float)
+DIRECT_TEMPLATE(double)
 
-DIRECT_TEMPLATE(std::string);
-DIRECT_TEMPLATE(std::wstring);
-DIRECT_TEMPLATE(std::vector<uint8_t>);
+DIRECT_TEMPLATE(std::string)
+DIRECT_TEMPLATE(std::wstring)
+DIRECT_TEMPLATE(std::vector<uint8_t>)
 
 template <> Bytebuffer &Bytebuffer::operator += (const char *Right) noexcept
 { Write(std::string(Right)); return *this; }
@@ -579,10 +563,4 @@ bool Bytebuffer::operator == (const Bytebuffer &Right) noexcept
 {
     if (Internalsize != Right.Internalsize) return false;
     return 0 == std::memcmp(Internalbuffer.get(), Right.Internalbuffer.get(), Internalsize);
-}
-Bytebuffer::Type_t &Bytebuffer::operator [](size_t Index) noexcept
-{
-    static Type_t Defaultvalue = { Bytebuffertype::BB_NONE, nullptr };
-    if (Internalvariables.size() < Index) return Defaultvalue;
-    else return Internalvariables[Index];
 }

@@ -1,5 +1,5 @@
 /*
-    Initial author: Convery (tcn@hedgehogscience.com)
+    Initial author: Convery (tcn@ayria.se)
     Started: 03-08-2017
     License: MIT
     Notes:
@@ -217,7 +217,7 @@ extern "C"
 
         // Check if we should override the username (mainly for developers).
         {
-            auto Filebuffer = Package::Read("Username.txt");
+            auto Filebuffer = Package::Readfile("Username.txt");
             if (Filebuffer.size())
             {
                 std::memcpy(Steamconfig::Username, Filebuffer.c_str(), std::min(Filebuffer.size(), size_t(16)));

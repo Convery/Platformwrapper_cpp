@@ -1,5 +1,5 @@
 /*
-    Initial author: Convery (tcn@hedgehogscience.com)
+    Initial author: Convery (tcn@ayria.se)
     Started: 08-01-2018
     License: MIT
     Notes:
@@ -19,7 +19,7 @@ extern "C" EXPORT_ATTR void onInitializationStart(bool Reserved)
     #endif
     #define INSTALL_HOOK(Module, Import, Replacement)                       \
     {auto Address = GETFUNC(Module, Import);                                \
-    if(Address) Hooking::Stomphook().Installhook(Address, Replacement);}    \
+    if(Address) Hooking::Stomphook<>::Install(Address, Replacement);}       \
 
     /*
         TODO(Convery):

@@ -1,5 +1,5 @@
 /*
-    Initial author: Convery (tcn@hedgehogscience.com)
+    Initial author: Convery (tcn@ayria.se)
     Started: 03-08-2017
     License: MIT
     Notes:
@@ -151,7 +151,7 @@ std::unordered_map<const char *, std::pair<const char *, eInterfaceType>> Scanda
     { "SteamClient015", {"SteamClient015", eInterfaceType::STEAM_CLIENT } },
     { "SteamClient016", {"SteamClient016", eInterfaceType::STEAM_CLIENT } },
     { "SteamClient017", {"SteamClient017", eInterfaceType::STEAM_CLIENT } },
-        
+
     /* More interfaces */
 };
 
@@ -197,15 +197,15 @@ void Createcache(std::FILE *Filehandle)
         for (auto &Item : Results)
             Databuffer += va("%s\n", Item);
 
-        Package::Write("Steaminterfacecache", Databuffer);
+        Package::Writefile("Steaminterfacecache", Databuffer);
     }
 }
 bool Readcache()
 {
-    if (!Package::Exists("Steaminterfacecache"))
+    if (!Package::Fileexists("Steaminterfacecache"))
         return false;
 
-    auto Filebuffer = Package::Read("Steaminterfacecache");
+    auto Filebuffer = Package::Readfile("Steaminterfacecache");
     if (Filebuffer.size() == 0)
         return false;
 
