@@ -116,6 +116,57 @@ namespace Pattern
         return std::move(Result);
     }
 
+    // Scan a module to find an import.
+    #if defined(_WIN32)
+    size_t Findimportaddress(std::string_view Modulename, std::string_view Functionname)
+    {
+        // Get the address to look for.
+        auto Target = GetProcAddress(LoadLibraryA(Modulename.data()), Functionname.data());
+        if (!Target) return 0;
+
+        // Fetch the NT headers.
+        PIMAGE_NT_HEADERS Imageheader{};
+        auto Baseaddress = GetModuleHandleA(NULL);
+        auto Header = (PIMAGE_DOS_HEADER)Baseaddress;
+        if (Header->e_magic == IMAGE_DOS_SIGNATURE)
+        {
+            auto Image = (PIMAGE_NT_HEADERS)(Header->e_lfanew + (size_t)Baseaddress);
+            if (Image->Signature == IMAGE_NT_SIGNATURE)
+            {
+                Imageheader = Image;
+            }
+        }
+        if (!Imageheader) return 0;
+
+        // Fetch the descriptor.
+        auto Descriptor = (PIMAGE_IMPORT_DESCRIPTOR)((Imageheader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress) + (size_t)Baseaddress);
+        if (!Descriptor) return 0;
+
+        // Iterate over the descriptors.
+        while (Descriptor->OriginalFirstThunk != NULL)
+        {
+            // Iterate over the thunks.
+            for (size_t i = 0; ; ++i)
+            {
+                auto Thunk = (PIMAGE_THUNK_DATA)((size_t)Descriptor->FirstThunk + i * sizeof(IMAGE_THUNK_DATA) + (size_t)Baseaddress);
+                if (Thunk->u1.Function == (size_t)Target) return (size_t)&Thunk->u1.Function;
+                if (Thunk->u1.Function == 0) break;
+            }
+
+            // Get the next entry.
+            Descriptor++;
+        }
+
+        return 0;
+    }
+    #else
+    size_t Findimport(std::string_view Modulename, std::string_view Functionname)
+    {
+        /* TODO(Convery): Add NIX */
+        return 0;
+    }
+    #endif
+
     // Fetch the segment information on startup.
     void Updatesegments()
     {

@@ -25,4 +25,7 @@ namespace Pattern
     // Create a pattern or mask from a readable string.
     std::vector<uint8_t> Stringtopattern(std::string Humanreadable);
     std::vector<uint8_t> Stringtomask(std::string Humanreadable);
+
+    // Scan a module to find an import.
+    size_t Findimportaddress(std::string_view Modulename, std::string_view Functionname);
 }
